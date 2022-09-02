@@ -1,0 +1,43 @@
+extends 'base.pug'
+-load static compress
+
+block title
+  | Hello Django
+
+block content
+  .hello-world
+    span(v-text='intro')
+  .joke(v-text="joke")
+
+
+block footer
+  .container
+    input#who(v-model='intro')
+    a.button.is-small(:class="{'is-loading': isLoading}"
+      @click="loadJoke()" href="#") get me another joke
+
+
+block extra_js
+  script.
+    let app = new Vue({
+      el: '#app',
+      data: {
+        intro: "Django + VueJs = ❤",
+        joke: '',
+        isLoading: false
+      },
+      methods: {
+        loadJoke: function () {
+          this.isLoading = true
+          axios.get('https://api.chucknorris.io/jokes/random')
+              .then(function (response) {
+                app.joke = response.data.value
+                app.isLoading = false
+              })
+        }
+      },
+      created () {
+        this.loadJoke()
+      }
+    });
+    who.focus();
