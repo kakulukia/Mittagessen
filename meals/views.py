@@ -18,7 +18,11 @@ class WeekViewSet(ModelViewSet):
     @action(url_path='current-week', detail=False, methods=['GET'])
     def get_current_week(self, request):
         start = pendulum.today().start_of('week')
-        week = Week.data.get(start=start.date())
+        week = Week.data.filter(start=start.date())
+        if week:
+            week = week.get()
+        else:
+            week = Week.data.create(start=start.date())
         return Response(WeekSerializer(week).data)
 
 

@@ -5,6 +5,8 @@ from django.db import models
 from django.template.defaultfilters import date
 from django_undeletable.models import BaseModel
 
+from meals.utils import pendulum_instance
+
 
 class Meal(BaseModel):
     name = models.CharField(verbose_name='Name', max_length=200)
@@ -30,8 +32,20 @@ class Week(BaseModel):
     def __str__(self):
         return f'KW {self.kw} ({date(self.start)})'
 
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
+        super().save(force_insert, force_update, using, update_fields)
+
+        if not self.days.count():
+            current_date = pendulum_instance(self.start)
+            for i in range(5):
+                self.days.create(date=current_date.date())
+                current_date = current_date.add(days=1)
+
+    @property
     def kw(self):
-        start = pendulum.datetime(*self.start.timetuple()[:3], tz='local')
+        start = pendulum_instance(self.start)
         return start.week_of_year
 
 
