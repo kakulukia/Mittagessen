@@ -63,7 +63,7 @@ class Plan(BaseModel):
         self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
         if not self.price:
-            qs = Plan.data.filter(meal=self.meal).order_by('-created')
+            qs = Plan.data.filter(meal=self.meal, price__gt=0).order_by('-created')
             if qs:
                 self.price = qs.first().price
             else:

@@ -10,9 +10,10 @@
         :items="meals"
         item-text="name"
         item-value="id"
-        @keydown.stop.prevent.enter="handleEnter($event, day.id)"
+        @keydown.stop.prevent.enter="handleEnter($event)"
         :search-input.sync="search"
         dense
+        hide-details="auto"
       )
         template(v-slot:no-data)
           v-list-item
@@ -47,7 +48,7 @@
     created () {
     },
     methods: {
-      handleEnter(event, dayId) {
+      handleEnter(event) {
         event.preventDefault()
         let searchText = this.search ? this.search.trim() : '';
         const box = this.$refs.newEntry
@@ -57,20 +58,20 @@
           this.axios.post('meals/', {name: searchText})
               .then((response) => {
                 this.store.loadItems()
-                this.addPlan(response.data.id, dayId)
+                this.addPlan(response.data.id)
                 box.isMenuActive = false
                 this.search = ""
               })
         }
         if (itemFound) {
           setTimeout(() => {
-            this.addPlan(this.newMeal.id, dayId)
+            this.addPlan(this.newMeal.id)
             this.newMeal = undefined
           },100)
         }
       },
-      addPlan(mealId, dayId) {
-        this.axios.post('plans/', {day: dayId, meal_id: mealId})
+      addPlan(mealId) {
+        this.axios.post('plans/', {day: this.day.id, meal_id: mealId})
             .then(() => {
               this.$emit('reload-week')
               this.newMeal = undefined
@@ -81,6 +82,20 @@
 </script>
 
 <style lang="sass">
-.left
-  margin-left: 200px
+.mealPlan
+  display: grid
+  grid-template-columns: 1fr 80px 50px
+  column-gap: 20px
+
+.v-text-field
+    margin-top: 0
+
+@media screen and (min-width: 400px)
+  .left
+    margin-left: 200px
+
+@media screen and (max-width: 400px)
+  .mealPlan
+    grid-template-columns: 1fr 60px 25px
+    column-gap: 10px
 </style>

@@ -9,6 +9,7 @@
       item-value="id"
       dense
       @change="updatePlan()"
+      hide-details="auto"
     )
   v-text-field.right(v-model="plan.price"
     hide-details
@@ -16,10 +17,11 @@
     type="number"
     dense
     @change="updatePlan()"
+    @focus="$event.target.select()"
   )
     v-icon(slot="append") mdi-currency-eur
 
-  v-btn(icon color="red darken-4" @click="deleteMe()")
+  v-btn(icon x-small color="red darken-4" @click="deleteMe()")
     v-icon mdi-delete-outline
 </template>
 
@@ -59,10 +61,3 @@
     }
   }
 </script>
-
-<style lang="sass">
-.mealPlan
-  display: grid
-  grid-template-columns: 1fr 80px 50px
-  column-gap: 20px
-</style>
