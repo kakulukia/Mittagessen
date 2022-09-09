@@ -33,9 +33,19 @@ v-app
 
 <script>
 
+import {useStore} from '@/store'
+import {storeToRefs} from 'pinia'
+
 export default {
   name: 'App',
-
+  setup(){
+    const store = useStore()
+    const { meals } = storeToRefs(store)
+    store.loadItems()
+    return {
+      meals,
+    }
+  },
   data: () => ({
     user: undefined,
     menuItems: [],

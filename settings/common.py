@@ -29,11 +29,10 @@ ALLOWED_HOSTS = [
     '*',
     '7379-185-89-39-27.eu.ngrok.io',
 ]
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",
+CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS = CORS_ORIGIN_WHITELIST = [
+    'http://localhost:8080',
 ]
-# CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = True  # allow cookies
 
 INSTALLED_APPS = [
     # our own stuff
@@ -62,7 +61,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    # "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -191,3 +190,11 @@ EMAIL_FOOTER = ""
 EMAIL_BACKEND = "post_office.EmailBackend"
 
 SILENCED_SYSTEM_CHECKS = ["debug_toolbar.W006"]
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        'meals.utils.CsrfExemptSessionAuthentication'
+    ]
+}

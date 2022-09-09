@@ -1,15 +1,19 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { defineStore } from 'pinia'
 
-Vue.use(Vuex)
-
-export default new Vuex.Store({
-  state: {
-  },
-  mutations: {
-  },
+export const useStore = defineStore('main', {
+  state: () => {
+		return {
+			meals: [],
+		}
+	},
+  // could also be defined as
+  // state: () => ({ count: 0 })
   actions: {
+    loadItems() {
+      this.api.get('meals')
+        .then((response) => {
+          this.meals = response.data
+      })
+    },
   },
-  modules: {
-  }
 })

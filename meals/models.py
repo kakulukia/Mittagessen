@@ -14,7 +14,6 @@ class Meal(BaseModel):
     headline = models.BooleanField(verbose_name='FETT', default=False)
     vegi = models.BooleanField(verbose_name='vegetarisch', default=False)
     side_dish = models.BooleanField(verbose_name='Beilage', default=False)
-    price = models.DecimalField(verbose_name='Preis', decimal_places=2, max_digits=7)
 
     class Meta(BaseModel.Meta):
         verbose_name = 'Mahlzeit'

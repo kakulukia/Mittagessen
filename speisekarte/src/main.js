@@ -5,6 +5,7 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
+import { createPinia, PiniaVuePlugin } from 'pinia'
 
 import axios from 'axios'
 import VueAxios from 'vue-axios'
@@ -36,6 +37,13 @@ const moment = require('moment')
 require('moment/locale/de')
 Vue.use(require('vue-moment'), {moment})
 
+Vue.use(PiniaVuePlugin)
+function AxiosPiniaPlugin() {
+  return { api: client }
+}
+const pinia = createPinia()
+pinia.use(AxiosPiniaPlugin)
+
 Vue.filter('de', function (value) {
   if (!value) return '0'
   return value.toLocaleString('de', {minimumFractionDigits: 2, maximumFractionDigits: 2})
@@ -52,6 +60,7 @@ const app = new Vue({
   data: {
     apiHost
   },
+  pinia,
   render: h => h(App)
 })
 

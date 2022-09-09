@@ -15,7 +15,6 @@ class MealSerializer(serializers.ModelSerializer):
             'headline',
             'vegi',
             'side_dish',
-            'price',
         )
 
 
