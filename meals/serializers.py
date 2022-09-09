@@ -19,16 +19,25 @@ class MealSerializer(serializers.ModelSerializer):
 
 
 class PlanSerializer(serializers.ModelSerializer):
-    meal = MealSerializer()
+    meal = MealSerializer(read_only=True)
+    meal_id = serializers.PrimaryKeyRelatedField(queryset=Meal.data.all(), source='meal')
 
     class Meta:
         model = Plan
         fields = (
             'id',
             'meal',
+            'meal_id',
+            'day',
             'price',
             'order',
         )
+
+    def create(self, validated_data):
+        plan = Plan(**validated_data)
+        plan.save()
+        return plan
+
 
 
 class DaySerializer(serializers.ModelSerializer):

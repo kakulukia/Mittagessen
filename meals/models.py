@@ -16,6 +16,7 @@ class Meal(BaseModel):
     side_dish = models.BooleanField(verbose_name='Beilage', default=False)
 
     class Meta(BaseModel.Meta):
+        ordering = ['name']
         verbose_name = 'Mahlzeit'
         verbose_name_plural = 'Mahlzeiten'
 
@@ -52,11 +53,23 @@ class Plan(BaseModel):
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE, related_name="plans")
     day = models.ForeignKey("Day", on_delete=models.CASCADE, related_name="plans")
 
-    price = models.DecimalField(verbose_name='Preis', decimal_places=2, max_digits=7)
+    price = models.DecimalField(verbose_name='Preis', decimal_places=2, max_digits=7, blank=True)
     order = models.IntegerField(verbose_name="Sortierung", default=0)
 
     class Meta(BaseModel.Meta):
         ordering = ('order',)
+
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
+        if not self.price:
+            qs = Plan.data.filter(meal=self.meal).order_by('-created')
+            if qs:
+                self.price = qs.first().price
+            else:
+                self.price = 0
+
+        super().save(force_insert, force_update, using, update_fields)
 
 
 class Day(BaseModel):
