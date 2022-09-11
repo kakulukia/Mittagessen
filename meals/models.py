@@ -23,11 +23,19 @@ class Meal(BaseModel):
     def __str__(self):
         return self.name
 
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
+        self.side_dish = self.name.startswith('-')
+
+        super().save(force_insert, force_update, using, update_fields)
+
 
 class Week(BaseModel):
     start = models.DateField(verbose_name='Wochenstart')
     headline = models.TextField(verbose_name='Überschrift', blank=True)
     footer = models.TextField(verbose_name='Fußzeile', blank=True)
+    published = models.BooleanField(verbose_name="veröffentlicht", default=False)
 
     def __str__(self):
         return f'KW {self.kw} ({date(self.start)})'
@@ -57,7 +65,7 @@ class Plan(BaseModel):
     order = models.IntegerField(verbose_name="Sortierung", default=0)
 
     class Meta(BaseModel.Meta):
-        ordering = ('order',)
+        ordering = ('order', 'created')
 
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None
@@ -69,7 +77,13 @@ class Plan(BaseModel):
             else:
                 self.price = 0
 
+        if not self.order:
+            self.order = self.day.plans.count() + 1
+
         super().save(force_insert, force_update, using, update_fields)
+
+    def __str__(self):
+        return f'({self.order}) {self.meal.name}'
 
 
 class Day(BaseModel):

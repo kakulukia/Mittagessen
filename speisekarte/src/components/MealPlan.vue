@@ -10,8 +10,12 @@
       dense
       @change="updatePlan()"
       hide-details="auto"
+      @keydown.meta="checkBold($event)"
+      :class="{'bold': plan.meal.headline}"
     )
-  v-text-field.right(v-model="plan.price"
+  v-text-field.right(
+    :class="{'hidden': plan.meal.headline}"
+    v-model="plan.price"
     hide-details
     single-line
     type="number"
@@ -57,7 +61,30 @@
         }
         this.axios.put('plans/' + this.plan.id + '/', this.plan)
             .then((response) => {this.plan = response.data})
+      },
+      checkMeta(event) {
+        this.$refs.newEntry.isMenuActive = false
+        if (event.key === 'b') {
+          const data = {headline: !this.plan.meal.headline}
+          this.axios.patch('meals/' + this.plan.meal.id + '/', data)
+          this.$emit('reload-week')
+        }
+        // if (event.key === 'ArrowUp') {
+        //   this.axios.patch('plans/' + this.plan.id + '/', {order: this.plan.order + 1})
+        //     .then(() => {this.$emit('reload-week')})
+        // }
+        // if (event.key === 'ArrowDown') {
+        //   this.axios.patch('plans/' + this.plan.id + '/', {order: this.plan.order - 1})
+        //     .then(() => {this.$emit('reload-week')})
+        // }
       }
     }
   }
 </script>
+
+<style lang="sass">
+.left.bold
+  font-weight: bold
+.right.hidden
+  opacity: 0
+</style>

@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
 
-from meals.views import WeekViewSet, index, CurrentUserView, PlanViewSet, DayViewSet, MealViewSet
+from meals.views import WeekViewSet, alexa_today, CurrentUserView, PlanViewSet, DayViewSet, MealViewSet, show_menu
 
 router = routers.DefaultRouter()
 router.register('weeks', WeekViewSet)
@@ -14,7 +14,8 @@ router.register('meals', MealViewSet)
 urlpatterns = [
     path("admin/", admin.site.urls),
 
-    path('', index, {'path': ''}),
+    path('today', alexa_today, {'path': ''}),
+    path('', show_menu),
 
     path('api/', include(router.urls)),
     path('api/current-user/', CurrentUserView.as_view()),

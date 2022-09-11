@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "django_secrets",
     "post_office",
     "rest_framework",
+    'sass_processor',
 ]
 
 MIDDLEWARE = [

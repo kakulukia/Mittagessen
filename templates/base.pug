@@ -1,58 +1,49 @@
--load static compress
+- load sass_tags static compress
+!!! 5
 
-!!!5
 html(lang='de')
-  head
-    meta(charset='utf-8')
-    meta(http-equiv='X-UA-Compatible', content='IE=edge')
-    meta(name='viewport', content='initial-scale=1.0')
-    //link(rel="shortcut icon", href="{% static 'img/favicon.ico' %}")
-    title
-      block title
-        | Give me a title
-    link(href="https://fonts.googleapis.com/css?family=Barrio", rel="stylesheet")
+head
+  meta(charset="UTF-8")
+  title Speisekarte
 
-    -compress css
-      link(rel="stylesheet", href="{% static 'css/bootstrap.min.css' %}")
-      link(rel="stylesheet", href="{% static 'css/font-awesome.css' %}")
-      link(rel='stylesheet', type='text/x-sass', href='{% static "sass/styles.sass" %}')
+  link(rel="preconnect" href="https://fonts.googleapis.com")
+  link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+  link(href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet")
+
+  link(href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet")
+  link(href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet")
+  meta(name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui")
+  -compress css
+    link(href='{% static "sass/menu.sass" %}', rel="stylesheet", type="text/x-sass")
 
 body
-  #app
-    header
-      block header
-    main
-      block content
-    footer
-      block footer
+  #app(v-cloak)
+    v-app
+      v-main
+        block content
 
 
-  script(src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js")
-
-  // error reporting for the frontend
-  script(src="https://browser.sentry-cdn.com/6.19.1/bundle.min.js" integrity="sha384-GRagWAKYasaEEyhq5NqRz9Hs7zZOXt+DwzY/WGbWZBkpvt5+lZxITNyU3bD7SFk5" crossorigin="anonymous")
+script(src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js")
+script(src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js")
+script.
+  Date.prototype.addDays = function (days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+  }
+  if (!Date.prototype.toISODate) {
+    Date.prototype.toISODate = function () {
+      return this.getFullYear() + '-' +
+        ('0' + (this.getMonth() + 1)).slice(-2) + '-' +
+        ('0' + this.getDate()).slice(-2);
+    }
+  }
+block vue
   script.
-    // user this to enable frontend debugging
-    // Sentry.init({
-    //   dsn: "SENTRY_DSN_HERE",
-    //   release: "my-project-name@X",
-    //
-    //   // We recommend adjusting this value in production, or using tracesSampler
-    //   // for finer control
-    //   tracesSampleRate: 1.0,
-    // });
+    new Vue({
+      el: '#app',
+      data: {
+      },
+      vuetify: new Vuetify(),
+    })
 
-  // the missing javascript functions
-  script(src="https://unpkg.com/lodash@4.17.21/lodash.min.js")
-
-  // ajax calls
-  script(src="https://unpkg.com/axios@0.26.1/dist/axios.min.js")
-
-  // Buefy UI framework
-  script(src="https://unpkg.com/buefy@0.9.19/dist/buefy.min.js")
-  link(rel="stylesheet", href="https://unpkg.com/buefy@0.9.19/dist/buefy.min.css")
-  link(rel="stylesheet", href="//cdn.materialdesignicons.com/2.0.46/css/materialdesignicons.min.css")
-  Vue.use(Buefy.default)
-
-  -compress js
-     block extra_js

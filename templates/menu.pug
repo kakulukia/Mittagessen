@@ -1,0 +1,37 @@
+- extends "base.pug"
+
+block content
+  .header-menu
+    v-btn(icon @click="switchWeek(false)")
+      v-icon mdi-arrow-left-bold-circle-outline
+    h1 Speiseplan
+    v-btn(icon @click="switchWeek(true)")
+      v-icon mdi-arrow-right-bold-circle-outline
+
+
+block vue
+  script.
+    new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+      data: {
+        date: undefined
+      },
+      created() {
+        const query = new URL(location.href).searchParams.get('date')
+        if (query) {
+          this.date = new Date(query)
+        } else {
+          this.date = new Date()
+        }
+        console.log(this.date)
+      },
+      methods: {
+        switchWeek(next) {
+          if (next) this.date = this.date.addDays(7)
+          else this.date = this.date.addDays(-7)
+          window.location = '/?date=' + this.date.toISODate()
+        }
+      }
+    })
+

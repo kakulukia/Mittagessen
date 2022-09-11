@@ -90,7 +90,10 @@
 .v-text-field
     margin-top: 0
 
-@media screen and (min-width: 400px)
+.theme--light.v-text-field > .v-input__control > .v-input__slot:before
+  border-color: #ddd
+
+@media screen and (min-width: 540px)
   .left
     margin-left: 200px
 

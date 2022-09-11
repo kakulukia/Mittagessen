@@ -71,5 +71,10 @@ if (!Date.prototype.toISODate) {
       ('0' + this.getDate()).slice(-2);
   }
 }
+Date.prototype.addDays = function(days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+}
 
 app.$mount('#app')
