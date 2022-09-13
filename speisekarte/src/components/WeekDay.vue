@@ -1,25 +1,28 @@
 <template lang="pug">
   .weekDay
-    h2 {{ day.dateDisplay }}
-    MealPlan(v-for="plan in day.plans" :plan="plan" :key="plan.id" @reload-week="$emit('reload-week')")
-    .mealPlan
-      v-combobox.left(
-        ref="newEntry"
-        auto-select-first
-        v-model="newMeal"
-        :items="meals"
-        item-text="name"
-        item-value="id"
-        @keydown.stop.prevent.enter="handleEnter($event)"
-        :search-input.sync="search"
-        dense
-        hide-details="auto"
-      )
-        template(v-slot:no-data)
-          v-list-item
-            v-list-item-content
-              v-list-item-title Keine Übereinstimmung für "<strong>{{ search }}</strong>".
-                |  <kbd>Enter</kbd> speichert das neue Gericht.
+    .date
+      h4 {{ day.weekday }}
+      h4.green-text {{ day.dateDisplay }}
+    .plans
+      MealPlan(v-for="plan in day.plans" :plan="plan" :key="plan.id" @reload-week="$emit('reload-week')")
+      .mealPlan
+        v-combobox.left(
+          ref="newEntry"
+          auto-select-first
+          v-model="newMeal"
+          :items="meals"
+          item-text="name"
+          item-value="id"
+          @keydown.stop.prevent.enter="handleEnter($event)"
+          :search-input.sync="search"
+          dense
+          hide-details="auto"
+        )
+          template(v-slot:no-data)
+            v-list-item
+              v-list-item-content
+                v-list-item-title Keine Übereinstimmung für "<strong>{{ search }}</strong>".
+                  |  <kbd>Enter</kbd> speichert das neue Gericht.
 
 </template>
 
@@ -82,9 +85,14 @@
 </script>
 
 <style lang="sass">
+.weekDay
+  display: grid
+  grid-template-columns: 120px 1fr
+  margin-bottom: 1em
+
 .mealPlan
   display: grid
-  grid-template-columns: 1fr 80px 50px
+  grid-template-columns: 1fr 80px 25px
   column-gap: 20px
 
 .v-text-field
@@ -93,12 +101,11 @@
 .theme--light.v-text-field > .v-input__control > .v-input__slot:before
   border-color: #ddd
 
-@media screen and (min-width: 540px)
-  .left
-    margin-left: 200px
-
 @media screen and (max-width: 400px)
   .mealPlan
     grid-template-columns: 1fr 60px 25px
     column-gap: 10px
+
+.green-text
+  color: green
 </style>

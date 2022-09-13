@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from meals.models import Meal, Week, Day, Plan
+from meals.models import Day, Meal, Plan, Week
 
 
 @admin.register(Meal)

@@ -25,7 +25,7 @@
   )
     v-icon(slot="append") mdi-currency-eur
 
-  v-btn(icon x-small color="red darken-4" @click="deleteMe()")
+  v-btn.delete(icon x-small color="red darken-4" @click="deleteMe()" tabindex="-1")
     v-icon mdi-delete-outline
 </template>
 
@@ -87,4 +87,6 @@
   font-weight: bold
 .right.hidden
   opacity: 0
+.v-btn.delete
+  justify-self: end
 </style>

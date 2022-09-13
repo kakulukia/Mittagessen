@@ -1,0 +1,4 @@
+Heute gibt es:
+{% for plan in day.plans.all %}
+{{ plan.meal.name }} {{ plan.price_transcription }}.
+{% endfor %}

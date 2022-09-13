@@ -7,7 +7,7 @@ ALLOWED_HOSTS += ["localhost", "127.0.0.1", "0.0.0.0"]
 INSTALLED_APPS += [  # noqa
     # debugging
     "debug_toolbar",
-    "livereload",
+    "django_browser_reload",
 ]
 
 DEBUG_TOOLBAR_PANELS = (
@@ -46,12 +46,9 @@ DEBUG_TOOLBAR_CONFIG = {
 
 MIDDLEWARE += [  # noqa
     "debug_toolbar.middleware.DebugToolbarMiddleware",
-    "livereload.middleware.LiveReloadScript",
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 INTERNAL_IPS = ALLOWED_HOSTS
-
-# unset sentry configuration for development
-sentry_sdk.init()
 
 POST_OFFICE = {"BACKENDS": {"default": "django.core.mail.backends.console.EmailBackend"}}

@@ -1,12 +1,15 @@
 <template lang="pug">
-.container(v-if="week" )
-  .menu
-    v-btn(icon @click="switchWeek(false)")
-      v-icon mdi-arrow-left-bold-circle-outline
-    h1 Woche vom {{ week.dateDisplay}} (KW {{ week.kw }})
-    v-btn(icon @click="switchWeek(true)")
-      v-icon mdi-arrow-right-bold-circle-outline
-  WeekDay(v-for="day in week.days" :key="day.id" :day="day" @reload-week="reloadWeek()")
+.week
+  .menu-wrapper
+    .container(v-if="week" )
+      .menu
+        v-btn(icon @click="switchWeek(false)")
+          v-icon mdi-arrow-left-bold-circle-outline
+        h1 Woche vom {{ week.dateDisplay}} (KW {{ week.kw }})
+        v-btn(icon @click="switchWeek(true)")
+          v-icon mdi-arrow-right-bold-circle-outline
+  .container
+    WeekDay(v-for="day in week.days" :key="day.id" :day="day" @reload-week="reloadWeek()")
 </template>
 
 <script>
@@ -54,4 +57,7 @@ import WeekDay from '@/components/WeekDay'
 .menu
   display: flex
   justify-content: space-between
+  align-items: center
+.menu-wrapper
+  border-bottom: 2px solid #ddd
 </style>

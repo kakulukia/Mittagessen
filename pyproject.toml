@@ -44,6 +44,7 @@ ipdb = "^0.13.6"
 djdt-flamegraph = "^0.2.12"
 isort = "^5.10.1"
 flake8 = "^5.0.4"
+django-browser-reload = "^1.6.0"
 
 [tool.black]
 line-length = 99

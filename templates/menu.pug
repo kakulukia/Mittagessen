@@ -1,13 +1,43 @@
 - extends "base.pug"
+-load static
 
 block content
   .header-menu
-    v-btn(icon @click="switchWeek(false)")
-      v-icon mdi-arrow-left-bold-circle-outline
-    h1 Speiseplan
-    v-btn(icon @click="switchWeek(true)")
-      v-icon mdi-arrow-right-bold-circle-outline
+    .container
+      v-btn(icon @click="switchWeek(false)")
+        v-icon mdi-arrow-left-bold-circle-outline
+      h1 Speiseplan
+      v-btn(icon @click="switchWeek(true)")
+        v-icon mdi-arrow-right-bold-circle-outline
 
+  .container.speiseplan
+    img.logo(src="{% static 'img/logo.png' %}")
+    .start
+      |  Täglich frisches Mittagessen
+      br
+      | Verkauf auf dem Gelände von Berkhauer in der Miersdorfer Chaussee 9
+    .week.green-text Speiseplan in der Woche vom {{week.start| date:'d.m.'}} - {{week.end| date:'d.m.Y'}}
+
+    .days
+      for day in week.days.all
+        .day
+          .tag
+            span {{ day.date| date:'l'}}
+            span.green-text {{ day.date | date:'d.m.y' }}
+          .gerichte
+            for plan in day.plans.all
+              .name(class={'heading': plan.meal.headline, 'vegi': plan.meal.vegi})
+                | {{ plan.meal.name }}
+
+              .price
+                if plan.price
+                  span {{ plan.price }} €
+
+    .footer
+      | Frühstück von 6:30 Uhr - 10 Uhr
+      br
+      | Mittagessen von 11 - 14 Uhr
+      .red-text Zusatzstoffe und Allergene bitte beim Personal erfragen
 
 block vue
   script.
@@ -18,13 +48,16 @@ block vue
         date: undefined
       },
       created() {
+        window.addEventListener('keypress', this.onKeyPress)
         const query = new URL(location.href).searchParams.get('date')
         if (query) {
           this.date = new Date(query)
         } else {
           this.date = new Date()
         }
-        console.log(this.date)
+      },
+      beforeDestroy() {
+        window.removeEventListener('keypress', this.onKeyPress)
       },
       methods: {
         switchWeek(next) {
@@ -32,6 +65,9 @@ block vue
           else this.date = this.date.addDays(-7)
           window.location = '/?date=' + this.date.toISODate()
         }
+      },
+      onKeyPress(event) {
+        console.log(event)
       }
     })
 

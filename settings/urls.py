@@ -14,7 +14,7 @@ router.register('meals', MealViewSet)
 urlpatterns = [
     path("admin/", admin.site.urls),
 
-    path('today', alexa_today, {'path': ''}),
+    path('today', alexa_today),
     path('', show_menu),
 
     path('api/', include(router.urls)),
@@ -23,4 +23,7 @@ urlpatterns = [
 
 if settings.DEBUG:
     import debug_toolbar
-    urlpatterns = [path(r"__debug__/", include(debug_toolbar.urls))] + urlpatterns
+    urlpatterns = [
+      path(r"__debug__/", include(debug_toolbar.urls)),
+      path("__reload__/", include("django_browser_reload.urls")),
+    ] + urlpatterns
