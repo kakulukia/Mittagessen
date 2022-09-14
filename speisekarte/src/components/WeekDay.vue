@@ -3,7 +3,9 @@
     .date
       h4 {{ day.weekday }}
       h4.green-text {{ day.dateDisplay }}
-    .plans
+      v-icon(small v-if="!day.closed" @click="updateDayClosed()") mdi-minus-circle
+      v-icon(small v-if="day.closed" @click="updateDayClosed()") mdi-checkbox-marked-circle-outline
+    .plans(v-if="!day.closed" )
       MealPlan(v-for="plan in day.plans" :plan="plan" :key="plan.id" @reload-week="$emit('reload-week')")
       .mealPlan
         v-combobox.left(
@@ -23,7 +25,8 @@
               v-list-item-content
                 v-list-item-title Keine Übereinstimmung für "<strong>{{ search }}</strong>".
                   |  <kbd>Enter</kbd> speichert das neue Gericht.
-
+    .altText(v-if="day.closed")
+      vue-editor(v-model="day.alt_text" :editor-toolbar="customToolbar" @text-change="updateText()")
 </template>
 
 <script>
@@ -46,6 +49,10 @@
       return {
         newMeal: "",
         search: "",
+        customToolbar: [
+          ["bold", "italic", "image", { 'color': [] }],
+          // [{ list: "ordered" }, { list: "bullet" }],
+        ]
       }
     },
     created () {
@@ -79,6 +86,13 @@
               this.$emit('reload-week')
               this.newMeal = undefined
             })
+      },
+      updateDayClosed() {
+        this.day.closed = !this.day.closed
+        this.axios.patch(`days/${this.day.id}/`, {closed: this.day.closed})
+      },
+      updateText() {
+        this.axios.patch(`days/${this.day.id}/`, {alt_text: this.day.alt_text})
       }
     }
   }
@@ -95,7 +109,7 @@
     display: block
     .date
       display: flex
-      h4:nth-of-type(1)
+      h4
         margin-right: 5px
 
 .mealPlan

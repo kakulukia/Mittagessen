@@ -4,6 +4,7 @@ from random import choice
 import pendulum
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.template.defaultfilters import date
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -57,21 +58,32 @@ class MealViewSet(ModelViewSet):
 
 def alexa_today(request):
     day_qs = Day.data.filter(date=datetime.date.today())
+    next_day = Day.data.filter(date__gt=datetime.date.today(), closed=False).first()
+    day_name = f"{date(next_day.date, 'l')} den {date(next_day.date, 'd.m.')}"
+
     closed = [
         "Heute ist leider geschlossen.",
         "Tut mir leid, aber heute musst du leider selber kochen.",
-        "Hoch die Hände, Wochennde! Wir sind Montag wieder für dich da.",
     ]
+    if pendulum.today().weekday() > 4:
+        closed += [
+            f"Hoch die Hände, Wochennde!",
+        ]
 
     if day_qs:
         day = day_qs.first()
 
-        content = {
-            "text": day.transcribe(),
-        }
+        if day.closed:
+            content = {
+                "text": choice(closed) + f" Wir sind {day_name} wieder für dich da.",
+            }
+        else:
+            content = {
+                "text": day.transcribe(),
+            }
     else:
         content = {
-            "text": choice(closed),
+            "text": choice(closed) + f" Wir sind {day_name} wieder für dich da.",
         }
 
     return JsonResponse(content)

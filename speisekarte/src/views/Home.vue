@@ -1,7 +1,7 @@
 <template lang="pug">
-.week
+.week(v-if="week")
   .menu-wrapper
-    .container(v-if="week" )
+    .container
       .menu
         v-btn(icon @click="switchWeek(false)")
           v-icon mdi-arrow-left-bold-circle-outline

@@ -6,6 +6,7 @@ from django.db import models
 # Create your models here.
 from django.template.defaultfilters import date
 from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
 from django_undeletable.models import BaseModel
 
 from meals.utils import pendulum_instance
@@ -94,9 +95,9 @@ class Plan(BaseModel):
         back = self.price.as_tuple().digits[-2:]
         back = str.join("", [str(val) for val in back])
 
-        string = f"für {front} € "
+        string = f"für {front} €"
         if not back == "00":
-            string += back
+            string += f' {back}'
 
         return string
 
@@ -117,3 +118,6 @@ class Day(BaseModel):
     def transcribe(self):
         string = render_to_string("day_transcription.txt", {"day": self})
         return string
+
+    def altText(self):
+        return mark_safe(self.alt_text)

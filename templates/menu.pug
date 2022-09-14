@@ -28,13 +28,17 @@ block content
               span {{ day.date| date:'l'}}
               span.green-text {{ day.date | date:'d.m.y' }}
             .gerichte
-              for plan in day.plans.all
-                .name(class={'heading': plan.meal.headline, 'vegi': plan.meal.vegi})
-                  | {{ plan.meal.name }}
+              if day.closed
+                .altText.text-center
+                  {{ day.altText }}
+              else
+                for plan in day.plans.all
+                  .name(class={'heading': plan.meal.headline, 'vegi': plan.meal.vegi})
+                    | {{ plan.meal.name }}
 
-                .price
-                  if plan.price
-                    span {{ plan.price }} €
+                  .price
+                    if plan.price
+                      span {{ plan.price }} €
 
       .footer
         | Frühstück von 6:30 Uhr - 10 Uhr

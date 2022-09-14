@@ -44,6 +44,8 @@ class DaySerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "date",
+            "closed",
+            "alt_text",
         )
 
     def to_representation(self, day: Day):

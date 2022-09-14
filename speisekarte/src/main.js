@@ -6,6 +6,7 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import { createPinia, PiniaVuePlugin } from 'pinia'
+import Vue2Editor from "vue2-editor";
 
 import axios from 'axios'
 import VueAxios from 'vue-axios'
@@ -43,6 +44,8 @@ function AxiosPiniaPlugin() {
 }
 const pinia = createPinia()
 pinia.use(AxiosPiniaPlugin)
+Vue.use(Vue2Editor);
+
 
 Vue.filter('de', function (value) {
   if (!value) return '0'
