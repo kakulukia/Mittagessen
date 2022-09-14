@@ -105,6 +105,8 @@ class Day(BaseModel):
     date = models.DateField()
     week = models.ForeignKey(Week, on_delete=models.CASCADE, related_name="days")
     meals = models.ManyToManyField(Meal, through=Plan)
+    closed = models.BooleanField(verbose_name="geschlossen", default=False)
+    alt_text = models.TextField()
 
     class Meta(BaseModel.Meta):
         ordering = ("date",)

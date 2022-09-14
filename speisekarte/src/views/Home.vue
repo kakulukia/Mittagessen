@@ -5,7 +5,16 @@
       .menu
         v-btn(icon @click="switchWeek(false)")
           v-icon mdi-arrow-left-bold-circle-outline
-        h1 Woche vom {{ week.dateDisplay}} (KW {{ week.kw }})
+        h1 KW{{ week.kw }} {{ week.dateDisplay}}
+          v-checkbox(
+            v-model="week.published"
+            label="freigegeben"
+            dense
+            hide-details
+            :success="week.published"
+            :error="!week.published"
+            @click="updatePublished()"
+          )
         v-btn(icon @click="switchWeek(true)")
           v-icon mdi-arrow-right-bold-circle-outline
   .container
@@ -43,6 +52,9 @@ import WeekDay from '@/components/WeekDay'
         if (next) this.date = this.date.addDays(7)
         else this.date = this.date.addDays(-7)
         this.reloadWeek()
+      },
+      updatePublished() {
+        this.axios.patch(`weeks/${this.week.id}/ `, {published: this.week.published})
       }
     },
     computed: {
@@ -60,4 +72,11 @@ import WeekDay from '@/components/WeekDay'
   align-items: center
 .menu-wrapper
   border-bottom: 2px solid #ddd
+h1
+  display: flex
+  align-items: center
+  .v-input--checkbox.v-input--dense
+    margin-top: 0
+    padding-top: 0
+    margin-left: 1em
 </style>

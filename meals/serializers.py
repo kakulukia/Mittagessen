@@ -66,11 +66,12 @@ class WeekSerializer(serializers.ModelSerializer):
             "start",
             "days",
             "kw",
+            "published",
         )
 
     def to_representation(self, week: Week):
         representation = super().to_representation(week)
-        week_dates = f'{date(week.start, "d.m.")} - {date(week.end, "d.m.Y")}'
+        week_dates = f'{date(week.start, "d.")}-{date(week.end, "d.m.Y")}'
         representation["dateDisplay"] = week_dates
         return representation
 

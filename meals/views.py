@@ -1,4 +1,5 @@
 import datetime
+from random import choice
 
 import pendulum
 from django.http import JsonResponse
