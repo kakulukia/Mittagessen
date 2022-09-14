@@ -23,14 +23,14 @@ block content
     if week.published
       .days
         for day in week.days.all
-          .day
+          .day(style="background-image: url('{{ day.background }}')")
             .tag
               span {{ day.date| date:'l'}}
               span.green-text {{ day.date | date:'d.m.y' }}
             .gerichte
               if day.closed
                 .altText.text-center
-                  {{ day.altText }}
+                  {{ day.safe_alt_text }}
               else
                 for plan in day.plans.all
                   .name(class={'heading': plan.meal.headline, 'vegi': plan.meal.vegi})
@@ -46,7 +46,7 @@ block content
         | Mittagessen von 11 - 14 Uhr
         .red-text Zusatzstoffe und Allergene bitte beim Personal erfragen
     else
-      .text-center.undone Der Speiseplan dieser Woche ist noch nicht fertig
+      .text-center.undone Der Speiseplan dieser Woche ist noch nicht fertig.
 
 block vue
   script.

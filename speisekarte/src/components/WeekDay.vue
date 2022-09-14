@@ -3,8 +3,8 @@
     .date
       h4 {{ day.weekday }}
       h4.green-text {{ day.dateDisplay }}
-      v-icon(small v-if="!day.closed" @click="updateDayClosed()") mdi-minus-circle
-      v-icon(small v-if="day.closed" @click="updateDayClosed()") mdi-checkbox-marked-circle-outline
+      v-icon(small v-if="!day.closed" @click="updateDayClosed()" color="red darken-4") mdi-minus-circle
+      v-icon(small v-if="day.closed" @click="updateDayClosed()" color="success darken-2") mdi-checkbox-marked-circle-outline
     .plans(v-if="!day.closed" )
       MealPlan(v-for="plan in day.plans" :plan="plan" :key="plan.id" @reload-week="$emit('reload-week')")
       .mealPlan

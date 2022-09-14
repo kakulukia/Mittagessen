@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 
 import pendulum
@@ -119,5 +120,15 @@ class Day(BaseModel):
         string = render_to_string("day_transcription.txt", {"day": self})
         return string
 
-    def altText(self):
-        return mark_safe(self.alt_text)
+    @property
+    def safe_alt_text(self):
+        text = re.sub('<img[^>]*>', '', self.alt_text)
+        return mark_safe(text)
+
+    @property
+    def background(self):
+        match = re.search('<img src="([^>]*)">', self.alt_text)
+
+        if match:
+            return match.groups()[0]
+        return None
