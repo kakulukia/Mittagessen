@@ -5,7 +5,7 @@
       .menu
         v-btn(icon @click="switchWeek(false)")
           v-icon mdi-arrow-left-bold-circle-outline
-        h1 KW{{ week.kw }} {{ week.dateDisplay}}
+        h1 KW{{ week.kw }}
           v-checkbox(
             v-model="week.published"
             label="freigegeben"

@@ -42,7 +42,6 @@ body
 
 .start, .week, .footer
   text-align: center
-  font-size: 20px
   font-weight: bold
   z-index: 1
 
@@ -75,14 +74,16 @@ body
 .theme--light.v-application
   background: none
 
+.undone
+  margin-top: 3em
+
 @media screen and (max-width: 450px)
-  .container.speiseplan
-    img.logo
-      opacity: 0.1
-  .start, .week, .footer
-    font-size: 14px
+  body
+    .container.speiseplan
+      font-size: 14px
+      img.logo
+        opacity: 0.1
   .days
-    font-size: 14px
     .day
       grid-template-columns: none
       .tag

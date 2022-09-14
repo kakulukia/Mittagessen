@@ -90,6 +90,14 @@
   grid-template-columns: 120px 1fr
   margin-bottom: 1em
 
+@media screen and (max-width: 800px)
+  .weekDay
+    display: block
+    .date
+      display: flex
+      h4:nth-of-type(1)
+        margin-right: 5px
+
 .mealPlan
   display: grid
   grid-template-columns: 1fr 80px 25px

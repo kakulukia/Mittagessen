@@ -13,12 +13,10 @@ class CsrfExemptSessionAuthentication(SessionAuthentication):
         return  # To not perform the csrf check previously happening
 
 
-def get_or_create_week(start, only_public=False):
+def get_or_create_week(start):
     from meals.models import Week
 
     week_qs = Week.data.filter(start=start)
-    if only_public:
-        week_qs = week_qs.filter(published=True)
 
     if week_qs:
         week = week_qs.get()
