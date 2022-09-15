@@ -2,7 +2,7 @@ module.exports = {
   transpileDependencies: [
     'vuetify'
   ],
-  publicPath: '/admin/',
+  publicPath: '/kueche/',
   pwa: {
     name: 'SaltAdmin',
     iconPaths: {

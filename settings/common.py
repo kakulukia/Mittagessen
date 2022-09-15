@@ -29,10 +29,11 @@ SITE_ID = 1
 DEBUG = False
 ALLOWED_HOSTS = [
     '*',
-    '7379-185-89-39-27.eu.ngrok.io',
+    'https://menue.mama-filmcatering.de',
 ]
 CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS = CORS_ORIGIN_WHITELIST = [
     'http://localhost:8080',
+    'https://menue.mama-filmcatering.de'
 ]
 CORS_ALLOW_CREDENTIALS = True  # allow cookies
 

@@ -6,10 +6,10 @@ from fabric.state import env
 
 env.shell = "/bin/zsh -c"
 
-APP_NAME = "app_name"
+APP_NAME = "mittag"
 
 env.path = f"/opt/www/{APP_NAME}"
-env.hosts = ["servername"]
+env.hosts = ["mamasystems.de"]
 
 
 # # DEPLOYMENT TARGETS
