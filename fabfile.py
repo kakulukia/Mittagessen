@@ -12,18 +12,6 @@ env.path = f"/opt/www/{APP_NAME}"
 env.hosts = ["mamasystems.de"]
 
 
-# # DEPLOYMENT TARGETS
-# # ####################
-# def stage():
-#     env.environment = "stage"
-#     env.hosts = ["servername"]
-
-
-# def live():
-#     env.environment = "live"
-#     env.hosts = ["servername"]
-
-
 # T A S K S
 # ###########
 def deploy_only():
