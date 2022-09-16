@@ -4,7 +4,7 @@ module.exports = {
   ],
   publicPath: '/kueche/',
   pwa: {
-    name: 'SaltAdmin',
+    name: 'Kueche',
     iconPaths: {
       faviconSVG: null,
       favicon32: 'favicon.ico',

@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pendulum
 from django.db import models
@@ -61,6 +61,13 @@ class Week(BaseModel):
     def end(self):
         dings = pendulum_instance(self.start).add(days=4)
         return datetime.fromisoformat(dings.to_datetime_string())
+
+    def next_week(self):
+        next_start = self.start + timedelta(days=7)
+        week = Week.data.filter(start=next_start)
+        if week:
+            return week.get()
+        return None
 
 
 class Plan(BaseModel):

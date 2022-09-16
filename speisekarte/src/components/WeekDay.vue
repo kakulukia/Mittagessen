@@ -23,7 +23,7 @@
           template(v-slot:no-data)
             v-list-item
               v-list-item-content
-                v-list-item-title Keine Übereinstimmung für "<strong>{{ search }}</strong>".
+                v-list-item-title Keine Übereinstimmung.
                   |  <kbd>Enter</kbd> speichert das neue Gericht.
     .altText(v-if="day.closed")
       vue-editor(v-model="day.alt_text" :editor-toolbar="customToolbar" @text-change="updateText()")
