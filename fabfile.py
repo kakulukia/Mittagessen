@@ -37,7 +37,6 @@ def clear_cache():
     with cd(env.path):
         print(green("\ndeleting cache .."))
         manage("clear_cache")
-        manage("thumbnail clear_delete_all")
 
 
 def restart():
