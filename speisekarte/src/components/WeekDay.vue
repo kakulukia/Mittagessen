@@ -19,6 +19,7 @@
           :search-input.sync="search"
           dense
           hide-details="auto"
+          tabindex="1"
         )
           template(v-slot:no-data)
             v-list-item

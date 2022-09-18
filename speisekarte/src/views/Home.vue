@@ -19,6 +19,12 @@
           v-icon mdi-arrow-right-bold-circle-outline
   .container
     WeekDay(v-for="day in week.days" :key="day.id" :day="day" @reload-week="reloadWeek()")
+    .footer
+      vue-editor(
+        v-model="week.footer"
+        :editor-toolbar="customToolbar"
+        @text-change="updateFooter()"
+      )
 </template>
 
 <script>
@@ -30,7 +36,11 @@ import WeekDay from '@/components/WeekDay'
     data () {
       return {
         week: null,
-        date: undefined
+        date: undefined,
+        customToolbar: [
+          ["bold", "italic", "image", { 'color': [] }, { 'align': [] }],
+          // [{ list: "ordered" }, { list: "bullet" }],
+        ]
       }
     },
     created () {
@@ -55,6 +65,9 @@ import WeekDay from '@/components/WeekDay'
       },
       updatePublished() {
         this.axios.patch(`weeks/${this.week.id}/ `, {published: this.week.published})
+      },
+      updateFooter() {
+        this.axios.patch(`weeks/${this.week.id}/`, {footer: this.week.footer})
       }
     },
     computed: {

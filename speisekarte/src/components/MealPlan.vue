@@ -12,9 +12,9 @@
       hide-details="auto"
       @keydown.meta="checkBold($event)"
       :class="{'bold': plan.meal.headline}"
+      tabindex="1"
     )
-  v-text-field.right(
-    :class="{'hidden': plan.meal.headline}"
+  v-text-field.right(v-if="!plan.meal.headline"
     v-model="plan.price"
     hide-details
     single-line
@@ -22,8 +22,10 @@
     dense
     @change="updatePlan()"
     @focus="$event.target.select()"
+    tabindex="2"
   )
     v-icon(slot="append") mdi-currency-eur
+  span(v-if="plan.meal.headline" )
 
   v-btn.delete(icon x-small color="red darken-4" @click="deleteMe()" tabindex="-1")
     v-icon mdi-delete-outline

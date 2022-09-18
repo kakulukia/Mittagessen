@@ -47,10 +47,7 @@ block content
                       span {{ plan.price }} €
 
       .footer
-        | Frühstück von 6:30 Uhr - 10 Uhr
-        br
-        | Mittagessen von 11 - 14 Uhr
-        .red-text Zusatzstoffe und Allergene bitte beim Personal erfragen
+        {{ week.footer|safe }}
     else
       .text-center.undone Der Speiseplan dieser Woche ist noch nicht fertig.
 
