@@ -1,7 +1,7 @@
 <template lang="pug">
 .week(v-if="week")
   .menu-wrapper
-    .container
+    .container.speiseplan
       .menu
         v-btn(icon @click="switchWeek(false)")
           v-icon mdi-arrow-left-bold-circle-outline
@@ -17,7 +17,7 @@
           )
         v-btn(icon @click="switchWeek(true)")
           v-icon mdi-arrow-right-bold-circle-outline
-  .container
+  .container.speiseplan
     WeekDay(v-for="day in week.days" :key="day.id" :day="day" @reload-week="reloadWeek()")
     .footer
       vue-editor(
@@ -92,4 +92,5 @@ h1
     margin-top: 0
     padding-top: 0
     margin-left: 1em
+
 </style>

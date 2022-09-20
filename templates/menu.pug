@@ -3,7 +3,7 @@
 
 block content
   .header-menu
-    .container
+    .container.speiseplan
       v-btn(
         icon @click="switchWeek(false)"
         :disabled="{% if week.start_in_past %}true{%else%}false{% endif %}"
