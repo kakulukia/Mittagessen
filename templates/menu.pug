@@ -29,7 +29,7 @@ block content
     if week.published
       .days
         for day in week.days.all
-          .day(style="background-image: url('{{ day.background }}')")
+          .day()
             .tag
               span {{ day.date| date:'l'}}
               span.green-text {{ day.date | date:'d.m.y' }}
