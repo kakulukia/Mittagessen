@@ -36,7 +36,6 @@ CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS = CORS_ORIGIN_WHITELIST = [
     'https://menue.mama-filmcatering.de'
 ]
 CORS_ALLOW_CREDENTIALS = True  # allow cookies
-COMPRESS_OFFLINE = True
 
 INSTALLED_APPS = [
     # our own stuff
@@ -158,12 +157,13 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
     "compressor.finders.CompressorFinder",
+    'sass_processor.finders.CssFinder',
 ]
 STATIC_URL = "/static/"
 MEDIA_URL = "/media/"
-STATIC_ROOT = BASE_DIR / "static"
-MEDIA_ROOT = BASE_DIR / "media"
-COMPRESS_ENABLED = True
+STATIC_ROOT = str(BASE_DIR / "static")
+MEDIA_ROOT = str(BASE_DIR / "media")
+SASS_TEMPLATE_EXTS = ['.html', '.pug']
 
 
 # sentry_sdk.init(
