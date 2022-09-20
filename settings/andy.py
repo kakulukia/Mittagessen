@@ -1,4 +1,4 @@
 from .dev import *  # noqa
 
-DEBUG = False
-# DEBUG = True
+# DEBUG = False
+DEBUG = True

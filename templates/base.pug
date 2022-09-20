@@ -1,10 +1,11 @@
-- load sass_tags compress
+- load sass_tags compress static
 !!! 5
 
 html(lang='de')
 head
   meta(charset="UTF-8")
   title MAMAs Speisekarte
+  link#favicon(rel="shortcut icon" href="{% static 'img/cropped-fav-32x32.png' %}")
 
   link(rel="preconnect" href="https://fonts.googleapis.com")
   link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)

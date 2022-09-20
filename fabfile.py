@@ -69,7 +69,7 @@ def update_static():
 
         print(green("compressing files .."))
         manage("compilescss")
-        manage("compress -e pug,html --force")
+        # manage("compress -e pug,html --force")
 
         print(green("collecting static files .."))
         manage("collectstatic --noinput")

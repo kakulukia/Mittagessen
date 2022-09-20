@@ -1,6 +1,8 @@
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+from django.views.static import serve
 from rest_framework import routers
 
 from meals.views import WeekViewSet, alexa_today, CurrentUserView, PlanViewSet, DayViewSet, MealViewSet, show_menu
@@ -13,6 +15,7 @@ router.register('meals', MealViewSet)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+
 
     path('today', alexa_today),
     path('', show_menu),

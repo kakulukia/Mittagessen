@@ -24,3 +24,4 @@ class WeekAdmin(admin.ModelAdmin):
 @admin.register(Day)
 class DayAdmin(admin.ModelAdmin):
     inlines = [PlanInline]
+    list_display = ['created', 'date']
