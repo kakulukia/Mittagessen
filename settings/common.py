@@ -36,6 +36,7 @@ CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS = CORS_ORIGIN_WHITELIST = [
     'https://menue.mama-filmcatering.de'
 ]
 CORS_ALLOW_CREDENTIALS = True  # allow cookies
+COMPRESS_OFFLINE = True
 
 INSTALLED_APPS = [
     # our own stuff
