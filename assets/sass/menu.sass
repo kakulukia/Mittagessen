@@ -82,6 +82,12 @@ body
 .undone
   margin-top: 3em
 
+img.qr-code
+  width: 100px
+  position: absolute
+  bottom: 15px
+  right: 0
+
 @media screen and (max-width: 450px)
   body
     .container.speiseplan
@@ -97,9 +103,5 @@ body
           margin-right: 5px
       .gerichte
         grid-template-columns: 1fr 70px
-
-img.qr-code
-  width: 100px
-  position: absolute
-  bottom: 15px
-  right: 0
+  img.qr-code
+    display: none
