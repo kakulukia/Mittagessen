@@ -51,6 +51,8 @@ block content
     else
       .text-center.undone Der Speiseplan dieser Woche ist noch nicht fertig.
 
+    img.qr-code(src="{% static 'img/qr-code.png' %}")
+
 block vue
   script.
     new Vue({
