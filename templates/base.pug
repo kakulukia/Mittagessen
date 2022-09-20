@@ -2,48 +2,48 @@
 !!! 5
 
 html(lang='de')
-head
-  meta(charset="UTF-8")
-  title MAMAs Speisekarte
-  link#favicon(rel="shortcut icon" href="https://menue.mama-filmcatering.de{% static 'img/cropped-fav-32x32.png' %}" type="image/png")
+  head
+    meta(charset="UTF-8")
+    title MAMAs Speisekarte
+    link#favicon(rel="shortcut icon" href="{% static 'img/cropped-fav-32x32.png' %}" type="image/png")
 
-  link(rel="preconnect" href="https://fonts.googleapis.com")
-  link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
-  link(href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet")
+    link(rel="preconnect" href="https://fonts.googleapis.com")
+    link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+    link(href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet")
 
-  link(href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet")
-  link(href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet")
-  meta(name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui")
-  link(href='{% sass_src "sass/menu.sass" %}', rel="stylesheet", type="text/css")
+    link(href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet")
+    link(href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet")
+    meta(name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui")
+    link(href='{% sass_src "sass/menu.sass" %}', rel="stylesheet", type="text/css")
 
-body
-  #app(v-cloak)
-    v-app
-      v-main
-        block content
+  body
+    #app(v-cloak)
+      v-app
+        v-main
+          block content
 
 
-script(src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js")
-script(src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js")
-script.
-  Date.prototype.addDays = function (days) {
-    var date = new Date(this.valueOf());
-    date.setDate(date.getDate() + days);
-    return date;
-  }
-  if (!Date.prototype.toISODate) {
-    Date.prototype.toISODate = function () {
-      return this.getFullYear() + '-' +
-        ('0' + (this.getMonth() + 1)).slice(-2) + '-' +
-        ('0' + this.getDate()).slice(-2);
-    }
-  }
-block vue
+  script(src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js")
+  script(src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js")
   script.
-    new Vue({
-      el: '#app',
-      data: {
-      },
-      vuetify: new Vuetify(),
-    })
+    Date.prototype.addDays = function (days) {
+      var date = new Date(this.valueOf());
+      date.setDate(date.getDate() + days);
+      return date;
+    }
+    if (!Date.prototype.toISODate) {
+      Date.prototype.toISODate = function () {
+        return this.getFullYear() + '-' +
+          ('0' + (this.getMonth() + 1)).slice(-2) + '-' +
+          ('0' + this.getDate()).slice(-2);
+      }
+    }
+  block vue
+    script.
+      new Vue({
+        el: '#app',
+        data: {
+        },
+        vuetify: new Vuetify(),
+      })
 
