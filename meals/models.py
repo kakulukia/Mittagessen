@@ -110,10 +110,11 @@ class Plan(BaseModel):
         back = self.price.as_tuple().digits[-2:]
         back = str.join("", [str(val) for val in back])
 
-        string = f"für {front} Euro"
+        string = f"für {front}"
         if not back == "00":
             string += f' {back}'
-
+        else:
+            string += " €"
         return string
 
 
