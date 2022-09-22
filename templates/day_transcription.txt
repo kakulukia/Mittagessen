@@ -1,1 +1,1 @@
-Heute gibt es: {% for plan in day.plans.all %} {{ plan.meal.name }} {{ plan.price_transcription }} .{% endfor %}
+Heute gibt es: {% for plan in day.plans.all %}{% if forloop.last%} und{% endif %} {{ plan.meal.name }} {{ plan.price_transcription }} .{% endfor %}

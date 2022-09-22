@@ -101,6 +101,9 @@ class Plan(BaseModel):
         return f"({self.order}) {self.meal.name}"
 
     def price_transcription(self):
+        if self.meal.headline:
+            return ''
+        
         front = self.price.as_tuple().digits[:-2]
         front = str.join("", [str(val) for val in front])
 
