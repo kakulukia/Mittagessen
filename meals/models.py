@@ -85,7 +85,7 @@ class Plan(BaseModel):
         ordering = ("order", "created")
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        if not self.price:
+        if not self.price and not self.id:
             qs = Plan.data.filter(meal=self.meal, price__gt=0).order_by("-created")
             if qs:
                 self.price = qs.first().price
@@ -101,20 +101,22 @@ class Plan(BaseModel):
         return f"({self.order}) {self.meal.name}"
 
     def price_transcription(self):
-        if self.meal.headline:
+        if self.meal.headline or not self.price:
             return ''
 
-        front = self.price.as_tuple().digits[:-2]
-        front = str.join("", [str(val) for val in front])
+        # front = self.price.as_tuple().digits[:-2]
+        # front = str.join("", [str(val) for val in front])
+        #
+        # back = self.price.as_tuple().digits[-2:]
+        # back = str.join("", [str(val) for val in back])
+        #
+        # string = f"für {front}"
+        # if not back == "00":
+        #     string += f' {back}'
+        # else:
+        #     string += " €"
 
-        back = self.price.as_tuple().digits[-2:]
-        back = str.join("", [str(val) for val in back])
-
-        string = f"für {front}"
-        if not back == "00":
-            string += f' {back}'
-        else:
-            string += " €"
+        string = f'{self.price} €'
         return string
 
 
