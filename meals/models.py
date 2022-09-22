@@ -103,14 +103,14 @@ class Plan(BaseModel):
     def price_transcription(self):
         if self.meal.headline:
             return ''
-        
+
         front = self.price.as_tuple().digits[:-2]
         front = str.join("", [str(val) for val in front])
 
         back = self.price.as_tuple().digits[-2:]
         back = str.join("", [str(val) for val in back])
 
-        string = f"für {front} €"
+        string = f"für {front} Euro"
         if not back == "00":
             string += f' {back}'
 
