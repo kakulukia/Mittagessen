@@ -116,7 +116,7 @@ class Plan(BaseModel):
         # else:
         #     string += " €"
 
-        string = f' für {self.price} €'
+        string = f'für {self.price} €'
         return string
 
 

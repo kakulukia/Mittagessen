@@ -1,5 +1,4 @@
 import datetime
-from datetime import timedelta
 from random import choice
 
 import pendulum
@@ -58,7 +57,7 @@ class MealViewSet(ModelViewSet):
 
 
 def alexa_today(request):
-    day_qs = Day.data.filter(date=datetime.date.today() + timedelta(days=1))
+    day_qs = Day.data.filter(date=datetime.date.today())
     next_day = Day.data.filter(date__gt=datetime.date.today(), closed=False).first()
     day_name = f"{date(next_day.date, 'l')} den {date(next_day.date, 'd.m.')}"
 
