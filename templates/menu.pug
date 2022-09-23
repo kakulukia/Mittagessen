@@ -11,7 +11,7 @@ block content
         v-icon mdi-arrow-left-bold-circle-outline
       h1 Speiseplan
         if user.is_authenticated
-          v-btn(icon href="/kueche")
+          v-btn(icon href="/kueche?date={{week.start|date:'Y-m-d'}}")
             v-icon mdi-file-document-edit-outline
       v-btn(
         icon @click="switchWeek(true)"
