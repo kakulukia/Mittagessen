@@ -112,7 +112,7 @@ class PrintWeekView(WeasyTemplateResponseMixin, DetailView):
     context_object_name = 'week'
 
     # show pdf in-line (default: True, show download dialog)
-    pdf_attachment = False
+    pdf_attachment = True
 
     def get_object(self, **kwargs):
         if "date" in self.request.GET:
