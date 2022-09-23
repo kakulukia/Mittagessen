@@ -17,7 +17,7 @@
           )
           v-btn.print(
             icon v-if="week.published" target="_blank"
-            :href="this.$root.apiHost + '/print?date=' + this.week.start"
+            :href="this.$root.apiHost + '?date=' + this.week.start"
           )
             v-icon mdi-printer-outline
         v-btn(icon @click="switchWeek(true)")
