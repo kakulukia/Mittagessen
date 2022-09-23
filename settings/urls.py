@@ -5,7 +5,7 @@ from django.urls import include, path
 from django.views.static import serve
 from rest_framework import routers
 
-from meals.views import WeekViewSet, alexa_today, CurrentUserView, PlanViewSet, DayViewSet, MealViewSet, show_menu
+from meals.views import WeekViewSet, alexa_today, CurrentUserView, PlanViewSet, DayViewSet, MealViewSet, show_menu, PrintWeekView
 
 router = routers.DefaultRouter()
 router.register('weeks', WeekViewSet)
@@ -19,6 +19,7 @@ urlpatterns = [
 
     path('today', alexa_today),
     path('', show_menu),
+    path('print', PrintWeekView.as_view()),
 
     path('api/', include(router.urls)),
     path('api/current-user/', CurrentUserView.as_view()),

@@ -405,6 +405,18 @@ python-versions = ">=3.3"
 Django = ">=2.0.13"
 
 [[package]]
+name = "django-weasyprint"
+version = "2.2.0"
+description = "Django WeasyPrint CBV"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+Django = ">=2.2"
+WeasyPrint = ">=53"
+
+[[package]]
 name = "djangorestframework"
 version = "3.13.1"
 description = "Web APIs for Django, made easy."
@@ -1248,7 +1260,7 @@ test = ["pytest"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9.9"
-content-hash = "910ff6227822474bb0730380d76129f4220728249ce842c280a9dfd011cdd5be"
+content-hash = "566d9d79a71d5989ccb884114f3c0fa2d807d78e9cfc55af4ab413fe4700a6a8"
 
 [metadata.files]
 appnope = [
@@ -1585,6 +1597,10 @@ django-secrets = [
 ]
 django-undeletable = [
     {file = "django_undeletable-1.1.2-py2.py3-none-any.whl", hash = "sha256:b63981a84f0d1ee17c916124910d578266348487604567ee137013a91d0c5b85"},
+]
+django-weasyprint = [
+    {file = "django-weasyprint-2.2.0.tar.gz", hash = "sha256:b1934ced06cc31f53a84f027ceab5cbfe5a889b8640bede7462bc0af0ee7e0f8"},
+    {file = "django_weasyprint-2.2.0-py3-none-any.whl", hash = "sha256:a883e407fdc88faebfef1bb773e4e9a88cba3beb7da839a0ba5946371799f4d7"},
 ]
 djangorestframework = [
     {file = "djangorestframework-3.13.1-py3-none-any.whl", hash = "sha256:24c4bf58ed7e85d1fe4ba250ab2da926d263cd57d64b03e8dcef0ac683f8b1aa"},

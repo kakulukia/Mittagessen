@@ -1,0 +1,86 @@
+-load static sass_tags
+
+html(lang='de')
+  head
+    meta(charset="UTF-8")
+
+    link(rel="preconnect" href="https://fonts.googleapis.com")
+    link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+    link(href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700" rel="stylesheet")
+
+    link(href='{% sass_src "sass/print.sass" %}', rel="stylesheet", type="text/css")
+
+  body
+    .page
+      .top
+        img.logo(src="{% static 'img/logo.png' %}")
+        img.qr-code(src="{% static 'img/qr-code.png' %}")
+        .start
+          |  Täglich frisches Mittagessen
+          br
+          | Verkauf auf dem Gelände von Berkhauer in der
+          |
+          a(href="https://www.google.de/maps/place/52%C2%B020'54.1%22N+13%C2%B037'31.1%22E/@52.3483611,13.6253056,124m/data=!3m2!1e3!4b1!4m13!1m6!3m5!1s0x47a83edf853712e3:0x9338b8f0b4c6672b!2sMAMA+Filmcatering+GmbH!8m2!3d52.3249441!4d13.6196438!3m5!1s0x0:0xa2105ef65dcfd989!7e2!8m2!3d52.3483687!4d13.6253051") Miersdorfer Chaussee 9
+        .week.green-text Speiseplan in der Woche vom {{week.start| date:'d.m.'}} - {{week.end| date:'d.m.Y'}}
+
+      .middle
+        .days
+          for day in week.days.all
+            .day
+              .tag
+                span {{ day.date| date:'l'}}
+                span.green-text {{ day.date | date:'d.m.y' }}
+              .gerichte
+                if day.closed
+                 .entry.altText.text-center
+                   | {{ day.safe_alt_text }}
+                else
+                  for plan in day.plans.all
+                    .entry
+                      .name(class={'heading': plan.meal.headline, 'vegi': plan.meal.vegi})
+                        | {{ plan.meal.name }}
+
+                      .price
+                        if plan.price
+                          span {{ plan.price }} €
+
+      .footer
+        | {{ week.footer|safe }}
+
+
+    .page
+      .top
+        img.logo(src="{% static 'img/logo.png' %}")
+        img.qr-code(src="{% static 'img/qr-code.png' %}")
+        .start
+          |  Täglich frisches Mittagessen
+          br
+          | Verkauf auf dem Gelände von Berkhauer in der
+          |
+          a(href="https://www.google.de/maps/place/52%C2%B020'54.1%22N+13%C2%B037'31.1%22E/@52.3483611,13.6253056,124m/data=!3m2!1e3!4b1!4m13!1m6!3m5!1s0x47a83edf853712e3:0x9338b8f0b4c6672b!2sMAMA+Filmcatering+GmbH!8m2!3d52.3249441!4d13.6196438!3m5!1s0x0:0xa2105ef65dcfd989!7e2!8m2!3d52.3483687!4d13.6253051") Miersdorfer Chaussee 9
+        .week.green-text Speiseplan in der Woche vom {{week.start| date:'d.m.'}} - {{week.end| date:'d.m.Y'}}
+
+      .middle
+        .days
+          for day in week.days.all
+            .day
+              .tag
+                span {{ day.date| date:'l'}}
+                span.green-text {{ day.date | date:'d.m.y' }}
+              .gerichte
+                if day.closed
+                  .entry.altText.text-center
+                    | {{ day.safe_alt_text }}
+                else
+                  for plan in day.plans.all
+                    .entry
+                      .name(class={'heading': plan.meal.headline, 'vegi': plan.meal.vegi})
+                        | {{ plan.meal.name }}
+
+                      .price
+                        if plan.price
+                          span {{ plan.price }} €
+
+      .footer
+        | {{ week.footer|safe }}
+

@@ -15,6 +15,11 @@
             :error="!week.published"
             @click="updatePublished()"
           )
+          v-btn.print(
+            icon v-if="week.published" target="_blank"
+            :href="this.$root.apiHost + '/print?date=' + this.week.start"
+          )
+            v-icon mdi-printer-outline
         v-btn(icon @click="switchWeek(true)")
           v-icon mdi-arrow-right-bold-circle-outline
   .container.speiseplan
@@ -92,5 +97,8 @@ h1
     margin-top: 0
     padding-top: 0
     margin-left: 1em
+
+.print
+  margin-left: 10px
 
 </style>

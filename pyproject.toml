@@ -36,6 +36,7 @@ libsass = "^0.21.0"
 django-sass-processor = "^1.2.1"
 gunicorn = "^20.1.0"
 Fabric3 = "^1.14.post1"
+django-weasyprint = "^2.2.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"

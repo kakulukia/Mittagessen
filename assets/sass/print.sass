@@ -1,0 +1,89 @@
+@page
+  size: A4
+  margin: 1.5cm 0.5cm
+  padding: 0
+
+body
+  font-family: Roboto,sans-serif
+  line-height: 25px
+
+a
+  color: black
+  text-decoration: none
+img.logo
+    position: absolute
+    top: 20px
+    right: 20px
+    height: 250px
+    z-index: -1
+    opacity: 0.2
+
+.page
+  height: 26.5cm
+  display: flex
+  flex-direction: column
+  //border: 1px solid green
+  .top, .footer
+    //border: 1px solid blue
+    height: 3cm
+  .middle
+    //border: 1px solid pink
+    flex-grow: 1
+    display: flex
+    align-items: center
+    height: 21cm
+
+.start, .week, .footer
+  text-align: center
+  font-weight: bold
+
+.green-text
+  color: green
+.red-text
+  color: #A70000
+.days
+  //border: 1px solid blue
+  display: flex
+  justify-content: space-between
+  flex-direction: column
+  width: 100%
+  .day
+    //border: 1px solid pink
+    width: 19.5cm
+    display: flex
+    margin-bottom: 2em
+    .tag
+      //border: 1px solid pink
+      width: 4cm
+      font-weight: bold
+      display: flex
+      flex-direction: column
+    .gerichte
+      flex-grow: 1
+      //border: 1px solid pink
+      .entry
+        //border: 1px solid red
+        display: flex
+        flex-direction: row
+      .name
+        //border: 1px solid green
+        flex-grow: 1
+        text-align: center
+        &.heading
+          font-weight: bold
+      .price
+        font-weight: bold
+        text-align: right
+        width: 4cm
+
+.footer
+  //border: 1px solid red
+  p
+    margin: 0
+
+img.qr-code
+  width: 80px
+  position: absolute
+  bottom: 0
+  right: 0
+  z-index: -1
