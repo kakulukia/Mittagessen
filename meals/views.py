@@ -69,7 +69,7 @@ def alexa_today(request):
     ]
     if pendulum.today().weekday() > 4:
         closed += [
-            f"Hoch die Hände, Wochennde!",
+            f"Hoch die Hände, Wochenende!",
         ]
 
     if day_qs:
