@@ -59,7 +59,8 @@ block content
       .top
         img.logo(src="{% static 'img/logo.png' %}")
         img.qr-code(src="{% static 'img/qr-code.png' %}")
-        .start {{ week.headline|safe }}
+        .start
+          {{ week.headline|safe }}
         .week.green-text Speiseplan in der Woche vom {{week.start| date:'d.m.'}} - {{week.end| date:'d.m.Y'}}
 
       .middle
