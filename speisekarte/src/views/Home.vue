@@ -23,13 +23,27 @@
         v-btn(icon @click="switchWeek(true)")
           v-icon mdi-arrow-right-bold-circle-outline
   .container.speiseplan
+    vue-editor.head(
+        v-if="editHeadline"
+        v-model="week.headline"
+        :editor-toolbar="customToolbar"
+        @text-change="updateHeadline()"
+      )
+    div.text-center.head(v-if="!editHeadline" @click="editHeadline=true")
+      div(v-html="week.headline")
+      div.green-text.bold Speiseplan in der Woche vom 26.09. - 30.09.2022
+
     WeekDay(v-for="day in week.days" :key="day.id" :day="day" @reload-week="reloadWeek()")
+
     .footer
       vue-editor(
+        v-if="editFooter"
         v-model="week.footer"
         :editor-toolbar="customToolbar"
         @text-change="updateFooter()"
       )
+      div.text-center.footer(v-if="!editFooter" v-html="week.footer" @click="editFooter=true")
+
 </template>
 
 <script>
@@ -42,6 +56,8 @@ import WeekDay from '@/components/WeekDay'
       return {
         week: null,
         date: undefined,
+        editHeadline: false,
+        editFooter: false,
         customToolbar: [
           ["bold", "italic", "image", { 'color': [] }, { 'align': [] }],
           // [{ list: "ordered" }, { list: "bullet" }],
@@ -73,6 +89,9 @@ import WeekDay from '@/components/WeekDay'
       },
       updateFooter() {
         this.axios.patch(`weeks/${this.week.id}/`, {footer: this.week.footer})
+      },
+      updateHeadline() {
+        this.axios.patch(`weeks/${this.week.id}/`, {headline: this.week.headline})
       }
     },
     computed: {
@@ -100,5 +119,13 @@ h1
 
 .print
   margin-left: 10px
+
+.v-application p
+  margin-bottom: 0
+
+.head, .footer
+  margin-bottom: 1em
+.bold
+  font-weight: bold
 
 </style>
