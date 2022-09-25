@@ -21,5 +21,11 @@ def get_or_create_week(start):
     if week_qs:
         week = week_qs.get()
     else:
-        week = Week.data.create(start=start)
+        last_week = Week.data.order_by('-created').first()
+        week = Week.data.create(
+            start=start,
+            headline=last_week.headline,
+            footer=last_week.footer
+        )
+
     return week

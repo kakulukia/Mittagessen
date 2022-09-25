@@ -41,6 +41,9 @@ class Week(BaseModel):
     footer = models.TextField(verbose_name="Fußzeile", blank=True)
     published = models.BooleanField(verbose_name="veröffentlicht", default=False)
 
+    class Meta(BaseModel.Meta):
+        ordering = ['-start']
+
     def __str__(self):
         return f"KW {self.kw} ({date(self.start)})"
 
