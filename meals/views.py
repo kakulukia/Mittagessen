@@ -1,4 +1,5 @@
 import datetime
+import re
 from random import choice
 
 import pendulum
@@ -61,34 +62,39 @@ class MealViewSet(ModelViewSet):
 def alexa_today(request):
     day_qs = Day.data.filter(date=datetime.date.today())
     next_day = Day.data.filter(date__gt=datetime.date.today(), closed=False).first()
-    day_name = f"{date(next_day.date, 'l')} den {date(next_day.date, 'd.m.')}"
+    day_name = f"{date(next_day.date, 'l')}"
 
     closed = [
         "Heute ist leider geschlossen.",
         "Tut mir leid, aber heute musst du leider selber kochen.",
+        "Die Kochteufel haben heut frei.",
     ]
+
+    added = [
+        " Wir sind DAY-NAME wieder für dich da.",
+        " Wir freuen uns darauf, am DAY-NAME wieder für dich da zu sein.",
+    ]
+
+    weekend_only = [
+        "Hoch die Hände, Wochenende!",
+    ]
+
     if pendulum.today().weekday() > 4:
-        closed += [
-            f"Hoch die Hände, Wochenende!",
-        ]
+        closed += weekend_only
 
     if day_qs:
         day = day_qs.first()
 
         if day.closed:
-            content = {
-                "text": choice(closed) + f" Wir sind {day_name} wieder für dich da.",
-            }
+            text = choice(closed) + choice(added),
         else:
-            content = {
-                "text": day.transcribe(),
-            }
+            text = day.transcribe()
     else:
-        content = {
-            "text": choice(closed) + f" Wir sind {day_name} wieder für dich da.",
-        }
+        text = choice(closed) + choice(added)
 
-    return JsonResponse(content)
+    text = re.sub('DAY-NAME', day_name, text)
+
+    return JsonResponse({"text": text})
 
 
 class CurrentUserView(APIView):
