@@ -25,3 +25,4 @@ class WeekAdmin(admin.ModelAdmin):
 class DayAdmin(admin.ModelAdmin):
     inlines = [PlanInline]
     list_display = ['created', 'date']
+    ordering = ['-date']

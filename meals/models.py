@@ -36,7 +36,7 @@ class Meal(BaseModel):
 
 
 class Week(BaseModel):
-    start = models.DateField(verbose_name="Wochenstart")
+    start = models.DateField(verbose_name="Wochenstart", unique=True)
     headline = models.TextField(verbose_name="Überschrift", blank=True)
     footer = models.TextField(verbose_name="Fußzeile", blank=True)
     published = models.BooleanField(verbose_name="veröffentlicht", default=False)
@@ -124,7 +124,7 @@ class Plan(BaseModel):
 
 
 class Day(BaseModel):
-    date = models.DateField()
+    date = models.DateField(unique=True)
     week = models.ForeignKey(Week, on_delete=models.CASCADE, related_name="days")
     meals = models.ManyToManyField(Meal, through=Plan)
     closed = models.BooleanField(verbose_name="geschlossen", default=False)
