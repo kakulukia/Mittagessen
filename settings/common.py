@@ -245,7 +245,7 @@ JAZZMIN_SETTINGS = {
 
     # Links to put along the top menu
     "topmenu_links": [
-        {"name": "Speisekarte",  "url": "/kueche"},
+        {"name": "Speisekarte",  "url": "/kueche/"},
         # App with dropdown menu to all its models pages (Permissions checked against models)
         {"model": "meals.meal"},
     ],
