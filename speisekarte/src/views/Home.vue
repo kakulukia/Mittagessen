@@ -20,6 +20,11 @@
             :href="this.$root.apiHost + '?date=' + this.week.start"
           )
             v-icon mdi-printer-outline
+          v-btn.print(
+            icon target="_blank"
+            :href="this.$root.apiHost + '/admin/'"
+          )
+            v-icon mdi-cog-outline
         v-btn(icon @click="switchWeek(true)")
           v-icon mdi-arrow-right-bold-circle-outline
   .container.speiseplan

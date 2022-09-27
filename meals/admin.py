@@ -5,7 +5,8 @@ from meals.models import Day, Meal, Plan, Week
 
 @admin.register(Meal)
 class MealAdmin(admin.ModelAdmin):
-    ...
+    list_display = ['name', 'created']
+    ordering = ['-created']
 
 
 class DayInlineAdmin(admin.TabularInline):

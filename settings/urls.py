@@ -1,11 +1,10 @@
 from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from django.views.static import serve
+from django.views.generic import RedirectView
 from rest_framework import routers
 
-from meals.views import WeekViewSet, alexa_today, CurrentUserView, PlanViewSet, DayViewSet, MealViewSet, show_menu, PrintWeekView
+from meals.views import WeekViewSet, alexa_today, CurrentUserView, PlanViewSet, DayViewSet, MealViewSet, show_menu
 
 router = routers.DefaultRouter()
 router.register('weeks', WeekViewSet)
@@ -19,7 +18,7 @@ urlpatterns = [
 
     path('today', alexa_today),
     path('', show_menu),
-    path('print', PrintWeekView.as_view()),
+    path('kueche', RedirectView.as_view(url="http://localhost:8080/kueche")),
 
     path('api/', include(router.urls)),
     path('api/current-user/', CurrentUserView.as_view()),

@@ -6,8 +6,6 @@ import pendulum
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.template.defaultfilters import date
-from django.views.generic import DetailView
-from django_weasyprint import WeasyTemplateResponseMixin
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -111,23 +109,3 @@ def show_menu(request):
         start = pendulum.today().add(days=2).start_of("week")
     week = get_or_create_week(start.date())
     return render(request, "menu.pug", {"week": week})
-
-
-class PrintWeekView(WeasyTemplateResponseMixin, DetailView):
-    template_name = 'print-week.pug'
-    context_object_name = 'week'
-
-    # show pdf in-line (default: True, show download dialog)
-    pdf_attachment = True
-
-    def get_object(self, **kwargs):
-        if "date" in self.request.GET:
-            start = pendulum.parse(self.request.GET.get("date")).add(days=2).start_of("week")
-        else:
-            start = pendulum.today().add(days=2).start_of("week")
-        week = get_or_create_week(start.date())
-        return week
-
-    def get_pdf_filename(self):
-        return f'Speiseplan {self.request.GET.get("date")}.pdf'
-

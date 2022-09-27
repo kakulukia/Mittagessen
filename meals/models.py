@@ -23,8 +23,8 @@ class Meal(BaseModel):
 
     class Meta(BaseModel.Meta):
         ordering = ["name"]
-        verbose_name = "Mahlzeit"
-        verbose_name_plural = "Mahlzeiten"
+        verbose_name = "Gericht"
+        verbose_name_plural = "Gerichte"
 
     def __str__(self):
         return self.name
@@ -43,6 +43,8 @@ class Week(BaseModel):
 
     class Meta(BaseModel.Meta):
         ordering = ['-start']
+        verbose_name = "Woche"
+        verbose_name_plural = "Wochen"
 
     def __str__(self):
         return f"KW {self.kw} ({date(self.start)})"
@@ -132,6 +134,8 @@ class Day(BaseModel):
 
     class Meta(BaseModel.Meta):
         ordering = ("date",)
+        verbose_name = "Tag"
+        verbose_name_plural = "Tage"
 
     def __str__(self):
         return date(self.date)
