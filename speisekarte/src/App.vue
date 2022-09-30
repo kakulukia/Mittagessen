@@ -56,7 +56,7 @@ export default {
           this.user = response.data
       }).catch((error) => {
         if (error.response.status === 401) {
-          window.location.href = this.$root.apiHost + '/admin/login/'
+          window.location.href = this.$root.apiHost + '/admin/login/?next=/kueche/'
         }
       });
   },
