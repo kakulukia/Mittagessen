@@ -22,6 +22,8 @@ block content
   .page
     .container.speiseplan
       .top
+        if week.background
+          img.background(src="{{week.background}}")
         img.logo(src="{% static 'img/logo.png' %}")
         img.qr-code(src="{% static 'img/qr-code.png' %}")
         .start
@@ -52,11 +54,13 @@ block content
           .text-center.undone Der Speiseplan dieser Woche ist noch nicht fertig.
 
       .footer
-        {{ week.footer|safe }}
+        {{ week.safe_footer }}
 
   .page.two
     .container.speiseplan
       .top
+        if week.background
+          img.background(src="{{week.background}}")
         img.logo(src="{% static 'img/logo.png' %}")
         img.qr-code(src="{% static 'img/qr-code.png' %}")
         .start
@@ -87,7 +91,7 @@ block content
           .text-center.undone Der Speiseplan dieser Woche ist noch nicht fertig.
 
       .footer
-        {{ week.footer|safe }}
+        {{ week.safe_footer }}
 
 
 block vue

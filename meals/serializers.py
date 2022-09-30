@@ -64,11 +64,13 @@ class WeekSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "headline",
-            "footer",
             "start",
             "days",
             "kw",
+            "footer",
+            "safe_footer",
             "published",
+            "background",
         )
 
     def to_representation(self, week: Week):

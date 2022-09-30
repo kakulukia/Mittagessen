@@ -78,6 +78,19 @@ class Week(BaseModel):
     def start_in_past(self):
         return now().date() >= self.start
 
+    @property
+    def safe_footer(self):
+        text = re.sub('<img[^>]*>', '', self.footer)
+        return mark_safe(text)
+
+    @property
+    def background(self):
+        match = re.search('<img src="([^>]*)">', self.footer)
+
+        if match:
+            return match.groups()[0]
+        return None
+
 
 class Plan(BaseModel):
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE, related_name="plans")

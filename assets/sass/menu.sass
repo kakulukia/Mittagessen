@@ -8,8 +8,6 @@ body
   background: white
   .v-application
     font-family: Lato, sans-serif
-.container.speiseplan
-  max-width: 900px
 
 .page
   position: relative
@@ -51,13 +49,16 @@ body
     width: 100px
     position: absolute
     bottom: 15px
-    right: 0
+    right: 12px
 
 @media screen
   .page.two
     display: none
   img.qr-code
     display: none
+  .container.speiseplan
+    max-width: 707px
+
 
 .container.speiseplan
   position: relative
@@ -78,6 +79,7 @@ body
 
 .middle
   border: 1px solid rgba(255, 255, 255, 0.001)
+  position: relative
 
 .green-text
   color: green
@@ -114,6 +116,15 @@ body
 .undone
   margin-top: 3em
 
+.background
+  width: 100%
+  position: absolute
+  z-index: -1
+  background-size: cover
+  opacity: 0.2
+  bottom: 0
+  left: 0
+
 
 @media screen and (max-width: 450px)
   body
@@ -132,3 +143,4 @@ body
         grid-template-columns: 1fr 70px
   img.qr-code
     display: none
+

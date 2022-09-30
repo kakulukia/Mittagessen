@@ -47,7 +47,12 @@
         :editor-toolbar="customToolbar"
         @text-change="updateFooter()"
       )
-      div.text-center.footer(v-if="!editFooter" v-html="week.footer" @click="editFooter=true")
+      div.text-center.footer(v-if="!editFooter" v-html="week.safe_footer" @click="editFooter=true")
+      v-btn.imageHint(
+          icon v-if="!editFooter"
+          @click="editFooter=true"
+        )
+          v-icon mdi-file-image
 
 </template>
 
@@ -132,5 +137,12 @@ h1
   margin-bottom: 1em
 .bold
   font-weight: bold
+
+.footer
+  position: relative
+  .imageHint
+    position: absolute
+    top: 0
+    right: 0
 
 </style>
