@@ -49,7 +49,7 @@
       )
       div.text-center.footer(v-if="!editFooter" v-html="week.safe_footer" @click="editFooter=true")
       v-btn.imageHint(
-          icon v-if="!editFooter"
+          icon v-if="!editFooter && week.background"
           @click="editFooter=true"
         )
           v-icon mdi-file-image

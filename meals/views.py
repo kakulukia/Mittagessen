@@ -84,7 +84,7 @@ def alexa_today(request):
         day = day_qs.first()
 
         if day.closed:
-            text = choice(closed) + choice(added),
+            text = choice(closed) + choice(added)
         else:
             text = day.transcribe()
     else:
