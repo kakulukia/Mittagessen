@@ -1,26 +1,28 @@
 <template lang="pug">
 .mealPlan
   v-combobox.left(
-      ref="newEntry"
-      auto-select-first
-      v-model="plan.meal"
-      :items="meals"
-      item-text="name"
-      item-value="id"
-      dense
-      @change="updatePlan()"
-      hide-details="auto"
-      :class="{'bold': plan.meal.headline}"
-      @keydown.meta="checkMeta($event)"
-      tabindex="1"
-      @keydown.stop.prevent.enter="handleEnter($event)"
-      :search-input.sync="search"
-    )
-      template(v-slot:no-data)
-        v-list-item
-          v-list-item-content
-            v-list-item-title Keine Übereinstimmung.
-              |  <kbd>Enter</kbd> speichert das neue Gericht.
+    ref="newEntry"
+    auto-select-first
+    v-model="plan.meal"
+    :items="meals"
+    item-text="name"
+    item-value="id"
+    dense
+    @change="updatePlan()"
+    hide-details="auto"
+    @keydown.alt.prevent="checkAlt($event)"
+    tabindex="1"
+    @keydown.stop.prevent.enter="handleEnter($event)"
+    :search-input.sync="search"
+    :class="{vegi: plan.meal.vegi, nonVegi: !plan.meal.vegi, bold: plan.meal.headline}"
+  )
+    //template(slot="selection" slot-scope="data")
+      div(:class="{vegi: data.item.vegi}") {{ data.item.name }}
+    template(v-slot:no-data)
+      v-list-item
+        v-list-item-content
+          v-list-item-title Keine Übereinstimmung.
+            |  <kbd>Enter</kbd> speichert das neue Gericht.
 
   v-text-field.right(v-if="!plan.meal.headline"
     v-model="plan.price"
@@ -61,6 +63,11 @@
     created () {
     },
     methods: {
+      nameDisplay(data) {
+        let name = data.item.name
+        if (data.item.vegi) { name += ' <span class="vegi">*</span>'}
+        return name
+      },
       handleEnter() {
         let searchText = this.search ? this.search.trim() : '';
         const box = this.$refs.newEntry
@@ -89,10 +96,15 @@
         this.axios.put('plans/' + this.plan.id + '/', this.plan)
             .then((response) => {this.plan = response.data})
       },
-      checkMeta(event) {
+      checkAlt(event) {
         this.$refs.newEntry.isMenuActive = false
-        if (event.key === 'b') {
+        if (event.code === 'KeyB') {
           const data = {headline: !this.plan.meal.headline}
+          this.axios.patch('meals/' + this.plan.meal.id + '/', data)
+          this.$emit('reload-week')
+        }
+        if (event.code === 'KeyV') {
+          const data = {vegi: !this.plan.meal.vegi}
           this.axios.patch('meals/' + this.plan.meal.id + '/', data)
           this.$emit('reload-week')
         }
@@ -108,4 +120,12 @@
   opacity: 0
 .v-btn.delete
   justify-self: end
+
+.vegi:after
+  color: green
+  content: " *"
+.nonVegi:after
+  color: white
+  content: " *"
+
 </style>

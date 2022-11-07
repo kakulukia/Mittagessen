@@ -7,7 +7,7 @@
     .plans(v-if="!day.closed" )
       MealPlan(v-for="plan in day.plans" :plan="plan" :key="plan.id" @reload-week="$emit('reload-week')")
       .mealPlan
-        v-combobox.left(
+        v-combobox.left.nonVegi(
           ref="newEntry"
           auto-select-first
           v-model="newMeal"
@@ -134,7 +134,7 @@
   color: green
 
 .altText
-  width: calc(100% - 145px)
+  width: calc(100% - 153px)
 
 .closed
   cursor: pointer
