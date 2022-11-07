@@ -3,7 +3,6 @@
     .date
       h4 {{ day.weekday }}
       h4.green-text {{ day.dateDisplay }}
-      v-icon(small v-if="!day.closed" @click="updateDayClosed()" color="red darken-4") mdi-minus-circle
       v-icon(small v-if="day.closed" @click="updateDayClosed()" color="success darken-2") mdi-checkbox-marked-circle-outline
     .plans(v-if="!day.closed" )
       MealPlan(v-for="plan in day.plans" :plan="plan" :key="plan.id" @reload-week="$emit('reload-week')")
@@ -26,6 +25,8 @@
               v-list-item-content
                 v-list-item-title Keine Übereinstimmung.
                   |  <kbd>Enter</kbd> speichert das neue Gericht.
+
+      .mealPlan.closed(v-if="day.plans.length === 0 && !day.closed" @click="updateDayClosed()") heute geschlossen
     .altText(v-if="day.closed")
       vue-editor(v-model="day.alt_text" :editor-toolbar="customToolbar" @text-change="updateText()")
 </template>
@@ -131,4 +132,14 @@
 
 .green-text
   color: green
+
+.altText
+  width: calc(100% - 145px)
+
+.closed
+  cursor: pointer
+  margin-top: 5px
+  color: #ccc
+  &:hover
+    color: #000
 </style>
