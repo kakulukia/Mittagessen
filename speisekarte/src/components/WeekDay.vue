@@ -68,12 +68,12 @@
         console.log(itemFound)
         if (!itemFound && searchText.length) {
           this.axios.post('meals/', {name: searchText})
-              .then((response) => {
-                this.store.loadItems()
-                this.addPlan(response.data.id)
-                box.isMenuActive = false
-                this.search = ""
-              })
+            .then((response) => {
+              this.store.loadItems()
+              this.addPlan(response.data.id)
+              box.isMenuActive = false
+              this.search = ""
+            })
         }
         if (itemFound) {
           setTimeout(() => {

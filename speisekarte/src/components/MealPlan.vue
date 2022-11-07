@@ -10,10 +10,18 @@
       dense
       @change="updatePlan()"
       hide-details="auto"
-      @keydown.meta="checkBold($event)"
       :class="{'bold': plan.meal.headline}"
+      @keydown.meta="checkMeta($event)"
       tabindex="1"
+      @keydown.stop.prevent.enter="handleEnter($event)"
+      :search-input.sync="search"
     )
+      template(v-slot:no-data)
+        v-list-item
+          v-list-item-content
+            v-list-item-title Keine Übereinstimmung.
+              |  <kbd>Enter</kbd> speichert das neue Gericht.
+
   v-text-field.right(v-if="!plan.meal.headline"
     v-model="plan.price"
     hide-details
@@ -47,11 +55,28 @@
     },
     data () {
       return {
+        search: ""
       }
     },
     created () {
     },
     methods: {
+      handleEnter() {
+        let searchText = this.search ? this.search.trim() : '';
+        const box = this.$refs.newEntry
+        let itemFound = box.filteredItems.length;
+        if (!itemFound && searchText.length) {
+          this.axios.post('meals/', {name: searchText})
+            .then((firstResponse) => {
+              this.store.loadItems()
+              box.isMenuActive = false
+              this.plan.meal = firstResponse.data
+              this.plan.meal_id = firstResponse.data.id
+              this.axios.put('plans/' + this.plan.id + '/', this.plan)
+                .then(() => {this.$emit('reload-week')})
+            })
+        }
+      },
       deleteMe() {
         this.axios.delete('plans/' + this.plan.id + '/')
             .then(() => {this.$emit('reload-week')})
@@ -71,14 +96,6 @@
           this.axios.patch('meals/' + this.plan.meal.id + '/', data)
           this.$emit('reload-week')
         }
-        // if (event.key === 'ArrowUp') {
-        //   this.axios.patch('plans/' + this.plan.id + '/', {order: this.plan.order + 1})
-        //     .then(() => {this.$emit('reload-week')})
-        // }
-        // if (event.key === 'ArrowDown') {
-        //   this.axios.patch('plans/' + this.plan.id + '/', {order: this.plan.order - 1})
-        //     .then(() => {this.$emit('reload-week')})
-        // }
       }
     }
   }
