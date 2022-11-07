@@ -79,6 +79,12 @@ class WeekSerializer(serializers.ModelSerializer):
         representation["dateDisplay"] = week_dates
         return representation
 
+    def validate(self, attrs):
+        if attrs['published']:
+            if Plan.data.filter(day__in=self.instance.days.all(), price=0).exists():
+                raise serializers.ValidationError('Bitte erst alle Preise hinterlegen!')
+        return self.initial_data
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

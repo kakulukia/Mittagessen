@@ -95,7 +95,12 @@ import WeekDay from '@/components/WeekDay'
         this.reloadWeek()
       },
       updatePublished() {
-        this.axios.patch(`weeks/${this.week.id}/ `, {published: this.week.published})
+        const week = this.week
+        this.axios.patch(`weeks/${week.id}/ `, {published: week.published})
+          .catch((error) => {
+            alert(error.response.data.non_field_errors)
+            window.location.reload()
+          })
       },
       updateFooter() {
         this.axios.patch(`weeks/${this.week.id}/`, {footer: this.week.footer})
