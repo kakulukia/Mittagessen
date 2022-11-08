@@ -17,8 +17,9 @@ from meals.utils import pendulum_instance
 class Meal(BaseModel):
     name = models.CharField(verbose_name="Name", max_length=200)
 
-    headline = models.BooleanField(verbose_name="FETT", default=False)
+    headline = models.BooleanField(verbose_name="Wahlessen", default=False)
     vegi = models.BooleanField(verbose_name="vegetarisch", default=False)
+    vegan = models.BooleanField(verbose_name="vegan", default=False)
     side_dish = models.BooleanField(verbose_name="Beilage", default=False)
 
     class Meta(BaseModel.Meta):

@@ -45,7 +45,11 @@ block content
                   else
                     for plan in day.plans.all
                       .name(class={'heading': plan.meal.headline})
-                        | {{ plan.meal.name }}#[v-icon.leaf(small v-if="{% if not plan.meal.vegi %}false{%endif%}") mdi-leaf]
+                        | {{ plan.meal.name }}
+                        if plan.meal.vegi
+                            v-icon.leaf(small) mdi-leaf
+                        if plan.meal.vegan
+                          v-icon.grain(small) mdi-barley
 
                       .price
                         if plan.price
@@ -82,7 +86,9 @@ block content
                   else
                     for plan in day.plans.all
                       .name(class={'heading': plan.meal.headline})
-                        | {{ plan.meal.name }}#[v-icon.leaf(small v-if="{% if not plan.meal.vegi %}false{%endif%}") mdi-leaf]
+                        | {{ plan.meal.name }}
+                        v-icon.leaf(small v-if="{% if not plan.meal.vegi %}false{%endif%}") mdi-leaf
+                        v-icon.grain(small v-if="{% if not plan.meal.vegan %}false{%endif%}") mdi-barley
 
                       .price
                         if plan.price

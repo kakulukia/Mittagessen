@@ -13,6 +13,7 @@ class MealSerializer(serializers.ModelSerializer):
             "name",
             "headline",
             "vegi",
+            "vegan",
             "side_dish",
         )
 

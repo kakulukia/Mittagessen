@@ -31,6 +31,10 @@
       v-icon(
         small @click="switchVegi()"
         :color="plan.meal.vegi ? 'success darken-2' : 'grey lighten-1'") mdi-leaf
+    v-btn(icon x-small)
+      v-icon(
+        small @click="switchVegan()"
+        :color="plan.meal.vegan ? 'yellow darken-2' : 'grey lighten-1'") mdi-barley
 
   v-text-field.right(v-if="!plan.meal.headline"
     v-model="plan.price"
@@ -110,7 +114,12 @@
         this.$emit('reload-week')
       },
       switchVegi() {
-        const data = {vegi: !this.plan.meal.vegi}
+        const data = {vegi: !this.plan.meal.vegi, vegan: false}
+        this.axios.patch('meals/' + this.plan.meal.id + '/', data)
+        this.$emit('reload-week')
+      },
+      switchVegan() {
+        const data = {vegan: !this.plan.meal.vegan, vegi: false}
         this.axios.patch('meals/' + this.plan.meal.id + '/', data)
         this.$emit('reload-week')
       }
@@ -128,7 +137,7 @@
 
 .combobox
   display: grid
-  grid-template-columns: 1fr 16px 16px
+  grid-template-columns: 1fr 16px 16px 16px
   grid-column-gap: 5px
 
 .v-btn:before
