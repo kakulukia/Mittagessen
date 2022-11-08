@@ -44,7 +44,7 @@ block content
                       {{ day.safe_alt_text }}
                   else
                     for plan in day.plans.all
-                      .name(class={'heading': plan.meal.headline})
+                      .name(class={'heading': plan.meal.headline, 'highlight': plan.meal.highlight})
                         | {{ plan.meal.name }}
                         if plan.meal.vegi
                             v-icon.leaf(small) mdi-leaf
