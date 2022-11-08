@@ -1,28 +1,36 @@
 <template lang="pug">
 .mealPlan
-  v-combobox.left(
-    ref="newEntry"
-    auto-select-first
-    v-model="plan.meal"
-    :items="meals"
-    item-text="name"
-    item-value="id"
-    dense
-    @change="updatePlan()"
-    hide-details="auto"
-    @keydown.alt.prevent="checkAlt($event)"
-    tabindex="1"
-    @keydown.stop.prevent.enter="handleEnter($event)"
-    :search-input.sync="search"
-    :class="{vegi: plan.meal.vegi, nonVegi: !plan.meal.vegi, bold: plan.meal.headline}"
-  )
-    //template(slot="selection" slot-scope="data")
-      div(:class="{vegi: data.item.vegi}") {{ data.item.name }}
-    template(v-slot:no-data)
-      v-list-item
-        v-list-item-content
-          v-list-item-title Keine Übereinstimmung.
-            |  <kbd>Enter</kbd> speichert das neue Gericht.
+  .combobox
+    v-combobox.left(
+      ref="newEntry"
+      auto-select-first
+      v-model="plan.meal"
+      :items="meals"
+      item-text="name"
+      item-value="id"
+      dense
+      @change="updatePlan()"
+      hide-details="auto"
+      tabindex="1"
+      @keydown.stop.prevent.enter="handleEnter($event)"
+      :search-input.sync="search"
+      :class="{vegi: plan.meal.vegi, nonVegi: !plan.meal.vegi, bold: plan.meal.headline}"
+    )
+      //template(slot="selection" slot-scope="data")
+        div(:class="{vegi: data.item.vegi}") {{ data.item.name }}
+      template(v-slot:no-data)
+        v-list-item
+          v-list-item-content
+            v-list-item-title Keine Übereinstimmung.
+              |  <kbd>Enter</kbd> speichert das neue Gericht.
+    v-btn(icon x-small)
+      v-icon(
+        x-small @click="switchHeadline()"
+        :color="plan.meal.headline ? 'black' : 'grey lighten-1'") mdi-ab-testing
+    v-btn(icon x-small)
+      v-icon(
+        small @click="switchVegi()"
+        :color="plan.meal.vegi ? 'success darken-2' : 'grey lighten-1'") mdi-leaf
 
   v-text-field.right(v-if="!plan.meal.headline"
     v-model="plan.price"
@@ -96,18 +104,15 @@
         this.axios.put('plans/' + this.plan.id + '/', this.plan)
             .then((response) => {this.plan = response.data})
       },
-      checkAlt(event) {
-        this.$refs.newEntry.isMenuActive = false
-        if (event.code === 'KeyB') {
-          const data = {headline: !this.plan.meal.headline}
-          this.axios.patch('meals/' + this.plan.meal.id + '/', data)
-          this.$emit('reload-week')
-        }
-        if (event.code === 'KeyV') {
-          const data = {vegi: !this.plan.meal.vegi}
-          this.axios.patch('meals/' + this.plan.meal.id + '/', data)
-          this.$emit('reload-week')
-        }
+      switchHeadline() {
+        const data = {headline: !this.plan.meal.headline}
+        this.axios.patch('meals/' + this.plan.meal.id + '/', data)
+        this.$emit('reload-week')
+      },
+      switchVegi() {
+        const data = {vegi: !this.plan.meal.vegi}
+        this.axios.patch('meals/' + this.plan.meal.id + '/', data)
+        this.$emit('reload-week')
       }
     }
   }
@@ -121,11 +126,11 @@
 .v-btn.delete
   justify-self: end
 
-.vegi:after
-  color: green
-  content: " *"
-.nonVegi:after
-  color: white
-  content: " *"
+.combobox
+  display: grid
+  grid-template-columns: 1fr 16px 16px
+  grid-column-gap: 5px
 
+.v-btn:before
+  display: none
 </style>
