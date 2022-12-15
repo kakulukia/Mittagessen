@@ -1,5 +1,6 @@
 import re
 from datetime import datetime, timedelta
+from functools import cached_property
 
 import pendulum
 from django.db import models
@@ -59,6 +60,11 @@ class Week(BaseModel):
             for i in range(5):
                 self.days.create(date=current_date.date())
                 current_date = current_date.add(days=1)
+
+    @cached_property
+    def is_closed(self):
+        return not self.days.filter(closed=False).exists()
+
 
     @property
     def kw(self):

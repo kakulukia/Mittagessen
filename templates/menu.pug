@@ -35,7 +35,7 @@ block content
           .days
             for day in week.days.all
               .day()
-                .tag
+                .tag(class={'closed': week.is_closed})
                   span {{ day.date| date:'l'}}
                   span.green-text {{ day.date | date:'d.m.y' }}
                 .gerichte
@@ -76,7 +76,7 @@ block content
           .days
             for day in week.days.all
               .day()
-                .tag
+                .tag(class={'closed': week.is_closed})
                   span {{ day.date| date:'l'}}
                   span.green-text {{ day.date | date:'d.m.y' }}
                 .gerichte
