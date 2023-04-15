@@ -31,14 +31,12 @@ icecream = "^2.1.3"
 libsass = "^0.22.0"
 django-sass-processor = "^1.2.1"
 gunicorn = "^20.1.0"
-Fabric3 = "^1.14.post1"
-fabric3 = {git = "https://github.com/kakulukia/fabric3"}
 django-jazzmin = "^2.5.0"
+fabric3 = {git = "https://github.com/kakulukia/fabric3"}
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
 django-debug-toolbar = "^4.0.0"
-fabric = "^3.0.0"
 ipdb = "^0.13.6"
 djdt-flamegraph = "^0.2.12"
 django-browser-reload = "^1.6.0"

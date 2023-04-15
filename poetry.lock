@@ -701,25 +701,6 @@ files = [
 tests = ["asttokens", "littleutils", "pytest", "rich"]
 
 [[package]]
-name = "fabric"
-version = "3.0.0"
-description = "High level SSH command execution"
-category = "dev"
-optional = false
-python-versions = "*"
-files = [
-    {file = "fabric-3.0.0-py3-none-any.whl", hash = "sha256:2a05508854ddef5a020a0be9aa7787e5397b528deb5936bbd2493c0b8eaaefa3"},
-    {file = "fabric-3.0.0.tar.gz", hash = "sha256:bfe960c1ae904e7624af9d40ad5b9b99581ed9c4fd09349c0d02b7486e1d0f89"},
-]
-
-[package.dependencies]
-invoke = ">=2.0"
-paramiko = ">=2.4"
-
-[package.extras]
-pytest = ["pytest (>=7)"]
-
-[[package]]
 name = "Fabric3"
 version = "1.14.post1"
 description = "Fabric is a simple, Pythonic tool for remote execution and deployment (py2.7/py3.4+ compatible fork)."
@@ -810,18 +791,6 @@ python-versions = ">=3.5"
 files = [
     {file = "idna-3.4-py3-none-any.whl", hash = "sha256:90b77e79eaa3eba6de819a0c442c0b4ceefc341a7a2ab77d7562bf49f425c5c2"},
     {file = "idna-3.4.tar.gz", hash = "sha256:814f528e8dead7d329833b91c5faa87d60bf71824cd12a7530b5526063d02cb4"},
-]
-
-[[package]]
-name = "invoke"
-version = "2.0.0"
-description = "Pythonic task execution"
-category = "dev"
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "invoke-2.0.0-py3-none-any.whl", hash = "sha256:a860582bcf7a4b336fe18ef53937f0f28cec1c0053ffa767c2fcf7ba0b850f59"},
-    {file = "invoke-2.0.0.tar.gz", hash = "sha256:7ab5dd9cd76b787d560a78b1a9810d252367ab595985c50612702be21d671dd7"},
 ]
 
 [[package]]
@@ -1621,4 +1590,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9.9"
-content-hash = "e73d9002c059a83919509aa637d36e4c9e62f24e3cfa3a75682e6835936f33b4"
+content-hash = "87088e628c7f3a29af6cda69adbd28b361d26361bc642aabe88609614b71e3e0"
