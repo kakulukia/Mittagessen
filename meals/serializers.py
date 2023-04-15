@@ -81,9 +81,11 @@ class WeekSerializer(serializers.ModelSerializer):
         return representation
 
     def validate(self, attrs):
-        if 'published' in attrs and attrs['published']:
-            if Plan.data.filter(day__in=self.instance.days.all(), price=0, meal__headline=False).exists():
-                raise serializers.ValidationError('Bitte erst alle Preise hinterlegen!')
+        if "published" in attrs and attrs["published"]:
+            if Plan.data.filter(
+                day__in=self.instance.days.all(), price=0, meal__headline=False
+            ).exists():
+                raise serializers.ValidationError("Bitte erst alle Preise hinterlegen!")
         return self.initial_data
 
 

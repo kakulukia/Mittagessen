@@ -45,7 +45,7 @@ class Week(BaseModel):
     published = models.BooleanField(verbose_name="veröffentlicht", default=False)
 
     class Meta(BaseModel.Meta):
-        ordering = ['-start']
+        ordering = ["-start"]
         verbose_name = "Woche"
         verbose_name_plural = "Wochen"
 
@@ -64,7 +64,6 @@ class Week(BaseModel):
     @cached_property
     def is_closed(self):
         return not self.days.filter(closed=False).exists()
-
 
     @property
     def kw(self):
@@ -88,7 +87,7 @@ class Week(BaseModel):
 
     @property
     def safe_footer(self):
-        text = re.sub('<img[^>]*>', '', self.footer)
+        text = re.sub("<img[^>]*>", "", self.footer)
         return mark_safe(text)
 
     @property
@@ -128,7 +127,7 @@ class Plan(BaseModel):
 
     def price_transcription(self):
         if self.meal.headline or not self.price:
-            return ''
+            return ""
 
         # front = self.price.as_tuple().digits[:-2]
         # front = str.join("", [str(val) for val in front])
@@ -142,7 +141,7 @@ class Plan(BaseModel):
         # else:
         #     string += " €"
 
-        string = f'für {self.price} €'
+        string = f"für {self.price} €"
         return string
 
 
@@ -167,7 +166,7 @@ class Day(BaseModel):
 
     @property
     def safe_alt_text(self):
-        text = re.sub('<img[^>]*>', '', self.alt_text)
+        text = re.sub("<img[^>]*>", "", self.alt_text)
         return mark_safe(text)
 
     @property
@@ -177,3 +176,13 @@ class Day(BaseModel):
         if match:
             return match.groups()[0]
         return None
+
+
+class Suggestion(BaseModel):
+    name = models.CharField(max_length=200)
+    seen = models.BooleanField(default=False, verbose_name="gesehen")
+
+    class Meta(BaseModel.Meta):
+        verbose_name = "Vorschlag"
+        verbose_name_plural = "Vorschläge"
+        ordering = ['seen', 'created']

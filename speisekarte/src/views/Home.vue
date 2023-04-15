@@ -38,6 +38,10 @@
       div(v-html="week.headline")
       div.green-text.bold Speiseplan in der Woche vom 26.09. - 30.09.2022
 
+    div
+      a(:href="this.$root.apiHost + '/admin/meals/suggestion/'" target="_blank") Essenswünsche: {{ suggestions }}
+    br
+
     WeekDay(v-for="day in week.days" :key="day.id" :day="day" @reload-week="reloadWeek()")
 
     .footer
@@ -68,6 +72,7 @@ import WeekDay from '@/components/WeekDay'
         date: undefined,
         editHeadline: false,
         editFooter: false,
+        suggestions: 0,
         customToolbar: [
           ["bold", "italic", "image", { 'color': [] }, { 'align': [] }],
           // [{ list: "ordered" }, { list: "bullet" }],
@@ -80,6 +85,11 @@ import WeekDay from '@/components/WeekDay'
       } else {
         this.date = new Date()
       }
+
+      this.axios.get('unseen-suggestions').then((response) => {
+        this.suggestions = response.data.count
+      })
+
       this.reloadWeek()
     },
     methods: {
@@ -149,5 +159,10 @@ h1
     position: absolute
     top: 0
     right: 0
+
+body .v-application a
+  color: green
+  text-decoration: none
+  font-weight: bold
 
 </style>

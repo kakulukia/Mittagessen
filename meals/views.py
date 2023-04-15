@@ -3,16 +3,17 @@ import re
 from random import choice
 
 import pendulum
-from django.http import JsonResponse
-from django.shortcuts import render
+from django.http import JsonResponse, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 from django.template.defaultfilters import date
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from meals.models import Day, Meal, Plan, Week
+from meals.models import Day, Meal, Plan, Week, Suggestion
 from meals.serializers import (
     DaySerializer,
     MealSerializer,
@@ -90,7 +91,7 @@ def alexa_today(request):
     else:
         text = choice(closed) + choice(added)
 
-    text = re.sub('DAY-NAME', day_name, text)
+    text = re.sub("DAY-NAME", day_name, text)
 
     return JsonResponse({"text": text})
 
@@ -109,3 +110,20 @@ def show_menu(request):
         start = pendulum.today().add(days=2).start_of("week")
     week = get_or_create_week(start.date())
     return render(request, "menu.pug", {"week": week})
+
+
+def mark_suggestion_as_seen(request, suggestion_id):
+    suggestion = get_object_or_404(Suggestion, id=suggestion_id)
+    suggestion.seen = True
+    suggestion.save()
+    return HttpResponseRedirect(reverse("admin:meals_suggestion_changelist"))
+
+
+def create_suggestion(request):
+    name = request.POST.get('name')
+    Suggestion.data.create(name=name)
+    return HttpResponseRedirect('/')
+
+
+def unseen_suggestion_number(request):
+    return JsonResponse({'count': Suggestion.data.filter(seen=False).count()})

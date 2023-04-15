@@ -2,6 +2,23 @@
 - load static
 
 block content
+  if user.is_authenticated
+    .suggestion-container
+      .flag ?
+      .form
+        .nix-rand
+        img.wunsch(src="{% static 'img/wunsch.png' %}")
+        br
+        span Wann gibt's eigentlich mal wieder ... ?
+        form(method="POST" action="/create-suggestion/")
+          input(type="text" placeholder="mein Wunschessen" id="name" name="name" required maxlength="200")
+          br
+          .align-right
+            button Wunsch absenden
+        .small.
+          * Wir versuchen Eure Wünsche zu berücksichtigen, aber seid uns nicht böse,
+          wenn's ein paar Wochen dauert. 🙏
+
   .header-menu
     .container.speiseplan
       v-btn(
@@ -26,8 +43,7 @@ block content
           img.background(src="{{week.background}}")
         img.logo(src="{% static 'img/logo.png' %}")
         img.qr-code(src="{% static 'img/qr-code.png' %}")
-        .start
-          {{ week.headline|safe }}
+        .start {{ week.headline|safe }}
         .week.green-text Speiseplan in der Woche vom {{week.start| date:'d.m.'}} - {{week.end| date:'d.m.Y'}}
 
       .middle

@@ -12,6 +12,9 @@ body
 .page
   position: relative
 
+.v-main
+  overflow: hidden
+
 #app
   a
     color: black
@@ -160,3 +163,72 @@ body
 
 .tag.closed
   opacity: 0
+
+.suggestion-container
+  display: flex
+  position: absolute
+  top: 20vh
+  right: -326px
+  z-index: 10
+  transition: all 0.2s ease-in-out
+
+  &:hover
+    right: 0
+
+
+  .flag
+    border: #ddd 2px dashed
+    border-right: none
+    height: 70px
+    width: 40px
+    color: #FD1434
+    font-size: 30px
+    font-weight: bold
+    padding: 12px
+    background: white
+
+  .form
+    border: #ddd 2px dashed
+    border-right: none
+    padding: 12px
+    position: relative
+    background: white
+    width: 324px
+
+    img
+      width: 300px
+
+    .nix-rand
+      background: white
+      position: absolute
+      top: 0
+      left: -2px
+      height: 66px
+      width: 2px
+
+    input
+      margin-top: 1em
+      border-bottom: 2px solid #ddd
+      width: 300px
+      padding: 0 5px
+      outline: none
+      input::placeholder
+        font-weight: bold
+        opacity: 0.5
+        color: red
+    .align-right
+      text-align: right
+      margin-top: 1em
+      button
+        background: #FD1434
+        padding: 6px 12px
+        color: white
+        font-weight: bold
+
+        &:hover
+          background: #BB181A
+
+    .small
+      color: #616060
+      font-size: 10px
+      margin-top: 4em
