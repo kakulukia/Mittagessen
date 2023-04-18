@@ -2,22 +2,21 @@
 - load static
 
 block content
-  if user.is_authenticated
-    .suggestion-container
-      .flag ?
-      .form
-        .nix-rand
-        img.wunsch(src="{% static 'img/wunsch.png' %}")
+  .suggestion-container
+    .flag ?
+    .form
+      .nix-rand
+      img.wunsch(src="{% static 'img/wunsch.png' %}")
+      br
+      span Wann gibt's eigentlich mal wieder ... ?
+      form(method="POST" action="/create-suggestion/")
+        input(type="text" placeholder="mein Wunschessen" id="name" name="name" required maxlength="200")
         br
-        span Wann gibt's eigentlich mal wieder ... ?
-        form(method="POST" action="/create-suggestion/")
-          input(type="text" placeholder="mein Wunschessen" id="name" name="name" required maxlength="200")
-          br
-          .align-right
-            button Wunsch absenden
-        .small.
-          * Wir versuchen Eure Wünsche zu berücksichtigen, aber seid uns nicht böse,
-          wenn's ein paar Wochen dauert. 🙏
+        .align-right
+          button Wunsch absenden
+      .small.
+        * Wir versuchen Eure Wünsche zu berücksichtigen, aber seid uns nicht böse,
+        wenn's ein paar Wochen dauert. 🙏
 
   .header-menu
     .container.speiseplan
