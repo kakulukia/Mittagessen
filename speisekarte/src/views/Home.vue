@@ -36,7 +36,7 @@
       )
     div.text-center.head(v-if="!editHeadline" @click="editHeadline=true")
       div(v-html="week.headline")
-      div.green-text.bold Speiseplan in der Woche vom 26.09. - 30.09.2022
+      div.green-text.bold Speiseplan in der Woche vom {{ week.days[0].dateDisplay }} - {{ week.days[week.days.length - 1].dateDisplay }}
 
     div
       a(:href="this.$root.apiHost + '/admin/meals/suggestion/'" target="_blank") Essenswünsche: {{ suggestions }}
