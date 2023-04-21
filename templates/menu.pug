@@ -2,7 +2,7 @@
 - load static
 
 block content
-  .suggestion-container
+  .suggestion-container(:class="{'hidden': removeSuggestionBox}")
     .flag ?
     .form
       .nix-rand
@@ -14,9 +14,11 @@ block content
         br
         .align-right
           button Wunsch absenden
-      .small.
-        * Wir versuchen Eure Wünsche zu berücksichtigen, aber seid uns nicht böse,
-        wenn's ein paar Wochen dauert. 🙏
+      .small
+        span.
+          * Wir versuchen Eure Wünsche zu berücksichtigen, aber seid uns nicht böse,
+          wenn's ein paar Wochen dauert.
+        span(@click="removeSuggestionBox=true") &nbsp; 🙏
 
   .header-menu
     .container.speiseplan
@@ -121,7 +123,8 @@ block vue
       el: '#app',
       vuetify: new Vuetify(),
       data: {
-        date: undefined
+        date: undefined,
+        removeSuggestionBox: false
       },
       created() {
         window.addEventListener('keypress', this.onKeyPress)
