@@ -3,7 +3,7 @@
 
 block content
   if not user.is_authenticated
-    .suggestion-container(:class="{'hidden': removeSuggestionBox}" onclick="")
+    .suggestion-container(:class="{'hidden': removeSuggestionBox}")
       .flag ?
       .form
         .nix-rand
