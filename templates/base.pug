@@ -1,7 +1,7 @@
 - load sass_tags compress static
 !!! 5
 
-html(lang='de')
+html(lang='de' ontouchmove )
   head
     meta(charset="UTF-8")
     title MAMAs Speisekarte
@@ -20,7 +20,7 @@ html(lang='de')
     -compress css
       link(href='{% sass_src "sass/menu.sass" %}', rel="stylesheet", type="text/css")
 
-  body
+  body(tabIndex=0)
     #app(v-cloak)
       v-app
         v-main
