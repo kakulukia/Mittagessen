@@ -9,6 +9,7 @@ from meals.models import Day, Meal, Plan, Week, Suggestion
 @admin.register(Meal)
 class MealAdmin(admin.ModelAdmin):
     list_display = ["name", "created", "latest"]
+    list_filter = ["vegi"]
     ordering = ["-created"]
     search_fields = ["name"]
     actions = None

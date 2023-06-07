@@ -31,7 +31,7 @@
       v-icon(
         small @click="switchVegi()"
         :color="plan.meal.vegi ? 'success darken-2' : 'grey lighten-1'") mdi-leaf
-    v-btn(icon x-small)
+    //v-btn(icon x-small)
       v-icon(
         small @click="switchVegan()"
         :color="plan.meal.vegan ? 'yellow darken-2' : 'grey lighten-1'") mdi-barley
@@ -137,7 +137,7 @@
 
 .combobox
   display: grid
-  grid-template-columns: 1fr 16px 16px 16px
+  grid-template-columns: 1fr 16px 16px
   grid-column-gap: 5px
 
 .v-btn:before
