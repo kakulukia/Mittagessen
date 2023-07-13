@@ -141,7 +141,7 @@ class Plan(BaseModel):
         # else:
         #     string += " €"
 
-        string = f"für {self.price} €"
+        string = f"für {self.price} €".replace('.', ',')
         return string
 
 
