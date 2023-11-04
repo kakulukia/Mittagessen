@@ -45,10 +45,9 @@ block content
           img.background(src="{{week.background}}")
         img.logo(src="{% static 'img/logo.png' %}")
         img.qr-code(src="{% static 'img/qr-code.png' %}")
-       .start
-          h2.week.green-text {{ week.kw }}. KW
+        h2.week.green-text {{ week.kw }}. KW
+        .start
           | {{ week.headline|safe }}
-        //.week.green-text Speiseplan in der Woche vom {{week.start| date:'d.m.'}} - {{week.end| date:'d.m.Y'}}
 
       .middle
         if week.published
@@ -77,8 +76,9 @@ block content
         else
           .text-center.undone Der Speiseplan dieser Woche ist noch nicht fertig.
 
-      .footer
-        {{ week.safe_footer }}
+      .footer.red-text
+        span Tel.: 0152 / 27767327
+        span Zusatzstoffe und Allergene bitte beim Personal erfragen
 
   .page.two
     .container.speiseplan
@@ -89,7 +89,7 @@ block content
         img.qr-code(src="{% static 'img/qr-code.png' %}")
         h2.week.green-text {{ week.kw }}. KW
         .start
-          {{ week.headline|safe }}
+          | {{ week.headline|safe }}
 
       .middle
         if week.published
@@ -116,8 +116,9 @@ block content
         else
           .text-center.undone Der Speiseplan dieser Woche ist noch nicht fertig.
 
-      .footer
-        {{ week.safe_footer }}
+      .footer.red-text
+        span Tel.: 0152 / 27767327
+        span Zusatzstoffe und Allergene bitte beim Personal erfragen
 
 
 block vue

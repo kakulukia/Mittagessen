@@ -2,7 +2,7 @@
   display: none
 @page
     size: A4
-    margin: 0.5cm 0.3cm 0.3cm 0.2cm
+    margin: 0.5cm 0.3cm 0.2cm 0.3cm
 
 @font-face
   font-family: 'Lato'
@@ -68,16 +68,13 @@ body
       height: 28.8cm
       justify-content: space-between
       align-content: space-between
-    .footer
-      width: 75%
-      margin: auto
   //.page:last-of-type
     page-break-after: avoid
   img.qr-code
-    width: 100px
+    width: 70px
     position: absolute
-    bottom: 15px
-    right: 12px
+    top: 0
+    left: 0
 
 @media screen
   .page.two
@@ -103,7 +100,13 @@ body
   text-align: center
   font-weight: bold
   z-index: 1
-  //border: 1px solid green
+
+.footer
+  width: 90%
+  margin: 0 auto
+  display: flex
+  font-size: 16px
+  justify-content: space-between
 
 .middle
   border: 1px solid rgba(255, 255, 255, 0.001)
@@ -112,7 +115,7 @@ body
 .green-text
   color: green
 .red-text
-  color: #A70000
+  color: red
 .days
   margin-top: 2em
   //border: 1px solid blue
