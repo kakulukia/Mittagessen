@@ -32,6 +32,7 @@ block content
         if user.is_authenticated
           v-btn(icon href="/kueche/?date={{week.start|date:'Y-m-d'}}")
             v-icon mdi-file-document-edit-outline
+          v-switch.a3(:label="pageSize" v-model="a3")
       v-btn(
         icon @click="switchWeek(true)"
         :disabled="{% if not week.next_week.published %}true{%else%}false{% endif %}"
@@ -42,8 +43,8 @@ block content
     .container.speiseplan
       .top
         if week.background
-          img.background(src="{{week.background}}")
-        img.logo(src="{% static 'img/logo.png' %}")
+          img.background(src="{{week.background}}" :class="{a3:a3}")
+        img.logo(src="{% static 'img/logo.png' %}" :class="{a3:a3}")
         img.qr-code(src="{% static 'img/qr-code.png' %}")
         h2.week.green-text {{ week.kw }}. KW
         .start
@@ -84,8 +85,8 @@ block content
     .container.speiseplan
       .top
         if week.background
-          img.background(src="{{week.background}}")
-        img.logo(src="{% static 'img/logo.png' %}")
+          img.background(src="{{week.background}}" :class="{a3:a3}")
+        img.logo(src="{% static 'img/logo.png' %}" :class="{a3:a3}")
         img.qr-code(src="{% static 'img/qr-code.png' %}")
         h2.week.green-text {{ week.kw }}. KW
         .start
@@ -128,7 +129,8 @@ block vue
       vuetify: new Vuetify(),
       data: {
         date: undefined,
-        removeSuggestionBox: false
+        removeSuggestionBox: false,
+        a3: false,
       },
       created() {
         window.addEventListener('keypress', this.onKeyPress)
@@ -151,6 +153,12 @@ block vue
       },
       onKeyPress(event) {
         console.log(event)
-      }
+      },
+      computed: {
+        pageSize() {
+          if (this.a3) return "A3"
+          else return "A4"
+        }
+      },
     })
 
