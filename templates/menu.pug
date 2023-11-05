@@ -32,7 +32,7 @@ block content
         if user.is_authenticated
           v-btn(icon href="/kueche/?date={{week.start|date:'Y-m-d'}}")
             v-icon mdi-file-document-edit-outline
-          v-switch.a3(:label="pageSize" v-model="a3")
+          v-switch.a3(:label="pageSize" v-model="a3" color="#BB181A")
       v-btn(
         icon @click="switchWeek(true)"
         :disabled="{% if not week.next_week.published %}true{%else%}false{% endif %}"
