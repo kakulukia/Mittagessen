@@ -32,7 +32,7 @@ block content
         if user.is_authenticated
           v-btn(icon href="/kueche/?date={{week.start|date:'Y-m-d'}}")
             v-icon mdi-file-document-edit-outline
-          v-switch.a3(:label="pageSize" v-model="a3")
+          v-switch.a5(:label="pageSize" v-model="a5" color="#BB181A")
       v-btn(
         icon @click="switchWeek(true)"
         :disabled="{% if not week.next_week.published %}true{%else%}false{% endif %}"
@@ -43,8 +43,8 @@ block content
     .container.speiseplan
       .top
         if week.background
-          img.background(src="{{week.background}}" :class="{a3:a3}")
-        img.logo(src="{% static 'img/logo.png' %}" :class="{a3:a3}")
+          img.background(src="{{week.background}}" :class="{a5:a5}")
+        img.logo(src="{% static 'img/logo.png' %}" :class="{a5:a5}")
         img.qr-code(src="{% static 'img/qr-code.png' %}")
         h2.week.green-text {{ week.kw }}. KW
         .start
@@ -85,12 +85,12 @@ block content
     .container.speiseplan
       .top
         if week.background
-          img.background(src="{{week.background}}" :class="{a3:a3}")
-        img.logo(src="{% static 'img/logo.png' %}" :class="{a3:a3}")
+          img.background(src="{{week.background}}" :class="{a5:a5}")
+        img.logo(src="{% static 'img/logo.png' %}" :class="{a5:a5}")
         img.qr-code(src="{% static 'img/qr-code.png' %}")
-        h2.week.green-text {{ week.kw }}. KW
         .start
-          | {{ week.headline|safe }}
+          {{ week.headline|safe }}
+        .week.green-text Speiseplan in der Woche vom {{week.start| date:'d.m.'}} - {{week.end| date:'d.m.Y'}}
 
       .middle
         if week.published
@@ -117,9 +117,8 @@ block content
         else
           .text-center.undone Der Speiseplan dieser Woche ist noch nicht fertig.
 
-      .footer.red-text
-        span Tel.: 0152 / 27767327
-        span Zusatzstoffe und Allergene bitte beim Personal erfragen
+      .footer
+        {{ week.safe_footer }}
 
 
 block vue
@@ -130,7 +129,7 @@ block vue
       data: {
         date: undefined,
         removeSuggestionBox: false,
-        a3: false,
+        a5: false,
       },
       created() {
         window.addEventListener('keypress', this.onKeyPress)
@@ -156,7 +155,7 @@ block vue
       },
       computed: {
         pageSize() {
-          if (this.a3) return "A3"
+          if (this.a5) return "A5"
           else return "A4"
         }
       },
