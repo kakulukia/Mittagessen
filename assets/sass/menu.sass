@@ -68,8 +68,18 @@ body
       height: 28.8cm
       justify-content: space-between
       align-content: space-between
-  //.page:last-of-type
-    page-break-after: avoid
+  .middle
+    flex-grow: 1
+    display: flex
+    overflow: hidden
+    .days
+      margin: 0
+      display: flex
+      flex-direction: column
+      justify-content: space-around
+      flex-grow: 1
+      .day
+        margin-bottom: 0.5em
   img.qr-code
     width: 70px
     position: absolute
@@ -96,7 +106,7 @@ body
     z-index: -1
     opacity: 0.2
     &.a5
-      opacity: 0.5
+      opacity: 0.4
 
 .start, .week, .footer
   text-align: center
@@ -160,7 +170,7 @@ body
   bottom: 0
   left: 0
   &.a5
-      opacity: 0.5
+      opacity: 0.4
 
 
 @media screen and (max-width: 450px)
