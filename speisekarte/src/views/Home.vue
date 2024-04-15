@@ -3,8 +3,14 @@
   .menu-wrapper
     .container.speiseplan
       .menu
-        v-btn(icon @click="switchWeek(false)")
-          v-icon mdi-arrow-left-bold-circle-outline
+        span
+          v-btn(icon @click="switchWeek(false)")
+            v-icon mdi-arrow-left-bold-circle-outline
+          v-btn(
+            :class="{'inactive-location': curLocation === 2}"
+            icon @click="loadLocation(1)"
+          )
+            v-icon mdi-map-marker
         h1 KW{{ week.kw }}
           v-checkbox(
             v-model="week.published"
@@ -25,8 +31,14 @@
             :href="this.$root.apiHost + '/admin/'"
           )
             v-icon mdi-cog-outline
-        v-btn(icon @click="switchWeek(true)")
-          v-icon mdi-arrow-right-bold-circle-outline
+        span
+          v-btn(
+            :class="{'inactive-location': curLocation === 1}"
+            icon @click="loadLocation(2)"
+          )
+            v-icon mdi-map-marker
+          v-btn(icon @click="switchWeek(true)")
+            v-icon mdi-arrow-right-bold-circle-outline
   .container.speiseplan
     vue-editor.head(
         v-if="editHeadline"
@@ -40,6 +52,8 @@
 
     div
       a(:href="this.$root.apiHost + '/admin/meals/suggestion/'" target="_blank") Essenswünsche: {{ suggestions }}
+      br
+      a(@click="copyMenu()" v-if="weekIsEmpty") Menü kopieren
     br
 
     WeekDay(v-for="day in week.days" :key="day.id" :day="day" @reload-week="reloadWeek()")
@@ -69,6 +83,7 @@ import WeekDay from '@/components/WeekDay'
     data () {
       return {
         week: null,
+        curLocation: 1,
         date: undefined,
         editHeadline: false,
         editFooter: false,
@@ -93,8 +108,21 @@ import WeekDay from '@/components/WeekDay'
       this.reloadWeek()
     },
     methods: {
+      copyMenu() {
+        this.axios.get('weeks/copy-menu/', {params: {date: this.date, location: this.curLocation}})
+          .then(() => {
+            this.reloadWeek()
+          })
+      },
+      loadLocation(locationId) {
+        this.curLocation = locationId
+        this.axios.get('weeks/get-week/',{params: {date: this.date, location: locationId}})
+          .then((response) => {
+            this.week = response.data
+          })
+      },
       reloadWeek() {
-        this.axios.get('weeks/get-week/',{params: {date: this.date}})
+        this.axios.get('weeks/get-week/',{params: {date: this.date, location: this.curLocation}})
         .then((response) => {
           this.week = response.data
         })
@@ -122,6 +150,9 @@ import WeekDay from '@/components/WeekDay'
     computed: {
       isoDate () {
         return this.date.toISODate()
+      },
+      weekIsEmpty () {
+        return this.week && this.week.days.every(day => day.plans.length === 0)
       }
     }
   }
@@ -164,5 +195,8 @@ body .v-application a
   color: green
   text-decoration: none
   font-weight: bold
+
+.inactive-location
+  opacity: 0.5
 
 </style>

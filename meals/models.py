@@ -3,7 +3,9 @@ from datetime import datetime, timedelta
 from functools import cached_property
 
 import pendulum
+from ckeditor.fields import RichTextField
 from django.db import models
+from django.db.models import UniqueConstraint
 
 # Create your models here.
 from django.template.defaultfilters import date
@@ -13,6 +15,14 @@ from django.utils.timezone import now
 from django_undeletable.models import BaseModel
 
 from meals.utils import pendulum_instance
+
+
+class Location(BaseModel):
+    name = models.CharField(verbose_name="Name", max_length=50)
+    headline = RichTextField(verbose_name="Überschrift", blank=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Meal(BaseModel):
@@ -39,7 +49,8 @@ class Meal(BaseModel):
 
 
 class Week(BaseModel):
-    start = models.DateField(verbose_name="Wochenstart", unique=True)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="weeks")
+    start = models.DateField(verbose_name="Wochenstart")
     headline = models.TextField(verbose_name="Überschrift", blank=True)
     footer = models.TextField(verbose_name="Fußzeile", blank=True)
     published = models.BooleanField(verbose_name="veröffentlicht", default=False)
@@ -48,6 +59,9 @@ class Week(BaseModel):
         ordering = ["-start"]
         verbose_name = "Woche"
         verbose_name_plural = "Wochen"
+        constraints = [
+            UniqueConstraint(fields=["location", "start"], name="unique_week")
+        ]
 
     def __str__(self):
         return f"KW {self.kw} ({date(self.start)})"
@@ -98,6 +112,31 @@ class Week(BaseModel):
             return match.groups()[0]
         return None
 
+    def copy_from_other_location(self):
+
+        if Plan.data.filter(day__week=self).count() > 0:
+            return
+
+        other_location_id = 2 if self.location_id == 1 else 1
+
+        qs = Week.data.filter(start=self.start, location=other_location_id)
+        if not qs.exists():
+            return
+        other_week = qs.get()
+        for other_day in other_week.days.all():
+            this_day = self.days.get(date=other_day.date)
+            for plan in other_day.plans.all():
+                new_plan = plan
+                new_plan.pk = None
+                new_plan.day = this_day
+
+                # update price if possible
+                qs = Plan.data.filter(meal=plan.meal, day__week__location=self.location)
+                if qs.exists():
+                    new_plan.price = qs.order_by('-created').first().price
+
+                new_plan.save()
+
 
 class Plan(BaseModel):
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE, related_name="plans")
@@ -111,7 +150,11 @@ class Plan(BaseModel):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.price and not self.id:
-            qs = Plan.data.filter(meal=self.meal, price__gt=0).order_by("-created")
+            qs = Plan.data.filter(
+                meal=self.meal,
+                price__gt=0,
+                day__week__location=self.day.week.location
+            ).order_by("-modified")
             if qs:
                 self.price = qs.first().price
             else:
@@ -146,7 +189,7 @@ class Plan(BaseModel):
 
 
 class Day(BaseModel):
-    date = models.DateField(unique=True)
+    date = models.DateField()
     week = models.ForeignKey(Week, on_delete=models.CASCADE, related_name="days")
     meals = models.ManyToManyField(Meal, through=Plan)
     closed = models.BooleanField(verbose_name="geschlossen", default=False)
@@ -156,6 +199,9 @@ class Day(BaseModel):
         ordering = ("date",)
         verbose_name = "Tag"
         verbose_name_plural = "Tage"
+        constraints = [
+            UniqueConstraint(fields=["date", "week"], name="unique_day")
+        ]
 
     def __str__(self):
         return date(self.date)

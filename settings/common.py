@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     # "post_office",
     "rest_framework",
     "sass_processor",
+    "ckeditor",
 ]
 
 MIDDLEWARE = [
@@ -271,6 +272,8 @@ JAZZMIN_SETTINGS = {
         "meals.week": "fas fa-calendar-week",
         "meals.meal": "fas fa-drumstick-bite",
         "users.user": "fas fa-users",
+        "meals.location": "fas fa-map-marker-alt",
+        "meals.suggestion": "fas fa-lightbulb",
     },
     # Icons that are used when one is not manually specified
     "default_icon_parents": "fas fa-chevron-circle-right",

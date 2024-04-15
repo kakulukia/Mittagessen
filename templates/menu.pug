@@ -23,28 +23,41 @@ block content
 
   .header-menu
     .container.speiseplan
-      v-btn(
-        icon @click="switchWeek(false)"
-        :disabled="{% if week.start_in_past %}true{%else%}false{% endif %}"
-      )
-        v-icon mdi-arrow-left-bold-circle-outline
+      div
+        v-btn(
+          icon @click="switchWeek(false)"
+          :disabled="{% if week.start_in_past %}true{%else%}false{% endif %}"
+        )
+          v-icon mdi-arrow-left-bold-circle-outline
+        v-btn(
+          :class="{'inactive-location': location == 2}"
+          icon @click="loadLocation(1)"
+        )
+          v-icon mdi-map-marker
+
       h1 Speiseplan
         if user.is_authenticated
           v-btn(icon href="/kueche/?date={{week.start|date:'Y-m-d'}}")
             v-icon mdi-file-document-edit-outline
           v-switch.a5(:label="pageSize" v-model="a5" color="#BB181A")
-      v-btn(
-        icon @click="switchWeek(true)"
-        :disabled="{% if not week.next_week.published %}true{%else%}false{% endif %}"
-      )
-        v-icon mdi-arrow-right-bold-circle-outline
+      div
+        v-btn(
+          :class="{'inactive-location': location == 1}"
+          icon @click="loadLocation(2)"
+        )
+          v-icon mdi-map-marker
+        v-btn(
+          icon @click="switchWeek(true)"
+          :disabled="{% if not week.next_week.published %}true{%else%}false{% endif %}"
+        )
+          v-icon mdi-arrow-right-bold-circle-outline
 
   .page
     .container.speiseplan
       .top
         if week.background
           img.background(src="{{week.background}}" :class="{a5:a5}")
-        img.logo(src="{% static 'img/logo.png' %}" :class="{a5:a5}")
+        img.logo(src="{% static 'img/logo-luise.png' %}" :class="{a5:a5}")
         img.qr-code(src="{% static 'img/qr-code.png' %}")
         .start {{ week.headline|safe }}
         .week.green-text Speiseplan in der Woche vom {{week.start| date:'d.m.'}} - {{week.end| date:'d.m.Y'}}
@@ -71,7 +84,7 @@ block content
                           v-icon.grain(small) mdi-barley
 
                       .price
-                        if plan.price
+                        if plan.price and not plan.meal.headline
                           span {{ plan.price }} €
         else
           .text-center.undone Der Speiseplan dieser Woche ist noch nicht fertig.
@@ -84,7 +97,7 @@ block content
       .top
         if week.background
           img.background(src="{{week.background}}" :class="{a5:a5}")
-        img.logo(src="{% static 'img/logo.png' %}" :class="{a5:a5}")
+        img.logo(src="{% static 'img/logo-luise.png' %}" :class="{a5:a5}")
         img.qr-code(src="{% static 'img/qr-code.png' %}")
         .start
           {{ week.headline|safe }}
@@ -128,6 +141,7 @@ block vue
         date: undefined,
         removeSuggestionBox: false,
         a5: false,
+        location: 1,
       },
       created() {
         window.addEventListener('keypress', this.onKeyPress)
@@ -137,6 +151,12 @@ block vue
         } else {
           this.date = new Date()
         }
+
+        const locationId = new URL(window.location.href).searchParams.get('location')
+        if (location) {
+          this.location = locationId
+        }
+
       },
       beforeDestroy() {
         window.removeEventListener('keypress', this.onKeyPress)
@@ -146,6 +166,9 @@ block vue
           if (next) this.date = this.date.addDays(7)
           else this.date = this.date.addDays(-7)
           window.location = '/?date=' + this.date.toISODate()
+        },
+        loadLocation(locationId) {
+          window.location = `/?location=${locationId}&date=` + this.date.toISODate()
         }
       },
       onKeyPress(event) {

@@ -3,7 +3,14 @@ from django.db.models import OuterRef, Subquery
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from meals.models import Day, Meal, Plan, Week, Suggestion
+from meals.models import Day, Meal, Plan, Week, Suggestion, Location
+
+
+@admin.register(Location)
+class LocationAdmin(admin.ModelAdmin):
+    list_display = ["name"]
+    ordering = ["name"]
+    search_fields = ["name"]
 
 
 @admin.register(Meal)

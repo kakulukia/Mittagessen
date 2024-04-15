@@ -13,15 +13,17 @@ class CsrfExemptSessionAuthentication(SessionAuthentication):
         return  # To not perform the csrf check previously happening
 
 
-def get_or_create_week(start):
+def get_or_create_week(start, location, copy=False):
     from meals.models import Week
 
-    week_qs = Week.data.filter(start=start)
+    week_qs = Week.data.filter(start=start, location=location)
 
     if week_qs:
         week = week_qs.get()
     else:
-        last_week = Week.data.order_by("-created").first()
-        week = Week.data.create(start=start, headline=last_week.headline, footer=last_week.footer)
+        week = Week.data.create(start=start, location=location)
+
+    if copy:
+        week.copy_from_other_location()
 
     return week
