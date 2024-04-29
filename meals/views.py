@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from meals.models import Day, Meal, Plan, Week, Suggestion
+from meals.models import Day, Meal, Plan, Week, Suggestion, Location
 from meals.serializers import (
     DaySerializer,
     MealSerializer,
@@ -30,17 +30,29 @@ class WeekViewSet(ModelViewSet):
 
     @action(url_path="current-week", detail=False, methods=["GET"])
     def get_current_week(self, request):
+
+        location_id = request.GET.get("location", 1)
+        location = get_object_or_404(Location, id=location_id)
+
         start = pendulum.today().add(days=2).start_of("week")
-        week = get_or_create_week(start.date())
+        week = get_or_create_week(start.date(), location=location)
         return Response(WeekSerializer(week).data)
 
     @action(url_path="get-week", detail=False, methods=["GET"])
-    def get_week(self, request):
+    def get_week(self, request, copy=False):
         if "date" not in request.GET:
-            return Response(status=400)
+            return Response(status=400, data={"error": "date is required"})
+
+        location_id = request.GET.get("location", 1)
+        location = get_object_or_404(Location, id=location_id)
+
         start = pendulum.parse(request.GET.get("date")).add(days=2).start_of("week")
-        week = get_or_create_week(start.date())
+        week = get_or_create_week(start.date(), location=location, copy=copy)
         return Response(WeekSerializer(week).data)
+
+    @action(url_path="copy-menu", detail=False, methods=["GET"])
+    def copy_menu(self, request):
+        return self.get_week(request, copy=True)
 
 
 class DayViewSet(ModelViewSet):
@@ -104,11 +116,15 @@ class CurrentUserView(APIView):
 
 
 def show_menu(request):
+
+    location_id = request.GET.get("location", "1")
+    location = get_object_or_404(Location, id=location_id)
+
     if "date" in request.GET:
         start = pendulum.parse(request.GET.get("date")).add(days=2).start_of("week")
     else:
         start = pendulum.today().add(days=2).start_of("week")
-    week = get_or_create_week(start.date())
+    week = get_or_create_week(start.date(), location=location)
     return render(request, "menu.pug", {"week": week})
 
 
