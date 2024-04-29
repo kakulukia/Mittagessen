@@ -23,7 +23,7 @@
           )
           v-btn.print(
             icon v-if="week.published" target="_blank"
-            :href="this.$root.apiHost + '?date=' + this.week.start"
+            :href="this.$root.apiHost + `?date=${this.week.start}&location=${curLocation}`"
           )
             v-icon mdi-printer-outline
           v-btn.print(
@@ -56,6 +56,8 @@
       a(@click="copyMenu()" v-if="weekIsEmpty") Menü kopieren
     br
 
+    Special(:week="week" @reload-week="reloadWeek()" v-if="curLocation === 2")
+
     WeekDay(v-for="day in week.days" :key="day.id" :day="day" @reload-week="reloadWeek()")
 
     .footer
@@ -76,10 +78,11 @@
 
 <script>
 import WeekDay from '@/components/WeekDay'
+import Special from '@/components/Special'
 
   export default {
     name: 'Home',
-    components: {WeekDay},
+    components: {WeekDay, Special},
     data () {
       return {
         week: null,
@@ -100,6 +103,9 @@ import WeekDay from '@/components/WeekDay'
       } else {
         this.date = new Date()
       }
+      if (this.$route.query.location) {
+        this.curLocation = parseInt(this.$route.query.location)
+      }
 
       this.axios.get('unseen-suggestions').then((response) => {
         this.suggestions = response.data.count
@@ -109,20 +115,17 @@ import WeekDay from '@/components/WeekDay'
     },
     methods: {
       copyMenu() {
-        this.axios.get('weeks/copy-menu/', {params: {date: this.date, location: this.curLocation}})
+        this.axios.get('weeks/copy-menu/', {params: {date: this.isoDate, location: this.curLocation}})
           .then(() => {
             this.reloadWeek()
           })
       },
       loadLocation(locationId) {
         this.curLocation = locationId
-        this.axios.get('weeks/get-week/',{params: {date: this.date, location: locationId}})
-          .then((response) => {
-            this.week = response.data
-          })
+        this.reloadWeek()
       },
       reloadWeek() {
-        this.axios.get('weeks/get-week/',{params: {date: this.date, location: this.curLocation}})
+        this.axios.get('weeks/get-week/',{params: {date: this.isoDate, location: this.curLocation}})
         .then((response) => {
           this.week = response.data
         })

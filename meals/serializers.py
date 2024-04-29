@@ -60,7 +60,8 @@ class DaySerializer(serializers.ModelSerializer):
 
 
 class WeekSerializer(serializers.ModelSerializer):
-    days = DaySerializer(many=True)
+    days = DaySerializer(many=True, read_only=True)
+    special_menu = PlanSerializer(read_only=True)
 
     class Meta:
         model = Week
@@ -73,6 +74,7 @@ class WeekSerializer(serializers.ModelSerializer):
             "safe_footer",
             "published",
             "background",
+            "special_menu",
         )
 
     def to_representation(self, week: Week):

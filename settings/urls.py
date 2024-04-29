@@ -30,7 +30,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("today", alexa_today),
     path("", show_menu),
-    path("kueche/", RedirectView.as_view(url="http://localhost:8080/kueche")),
+    path("kueche/", RedirectView.as_view(url="http://localhost:8080/kueche", query_string=True)),
     path("api/", include(router.urls)),
     path("api/current-user/", CurrentUserView.as_view()),
     path("api/unseen-suggestions", unseen_suggestion_number),

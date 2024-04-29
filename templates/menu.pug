@@ -36,7 +36,7 @@ block content
 
       h1 Speiseplan
         if user.is_authenticated
-          v-btn(icon href="/kueche/?date={{week.start|date:'Y-m-d'}}")
+          v-btn(icon href="/kueche/?date={{week.start|date:'Y-m-d'}}&location={{week.location.id}}")
             v-icon mdi-file-document-edit-outline
           v-switch.a5(:label="pageSize" v-model="a5" color="#BB181A")
       div
@@ -64,8 +64,24 @@ block content
       .middle
         if week.published
           .days
+            if week.special_menu
+              .day.special-menu
+                .tag
+                  span.orange-text Späzialität der Woche:
+                .gerichte
+                  .name(class={'heading': week.special_menu.meal.headline, 'highlight': week.special_menu.meal.highlight})
+                    | {{ week.special_menu.meal.name }}
+                    if week.special_menu.meal.vegi
+                      v-icon.leaf(small) mdi-leaf
+                    if week.special_menu.meal.vegan
+                      v-icon.grain(small) mdi-barley
+
+                  .price
+                    if week.special_menu.price and not week.special_menu.headline
+                      span {{ week.special_menu.price }} €
+
             for day in week.days.all
-              .day()
+              .day
                 .tag(class={'closed': week.is_closed})
                   span {{ day.date| date:'l'}}
                   span.green-text {{ day.date | date:'d.m.y' }}

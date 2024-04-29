@@ -61,6 +61,7 @@ class PlanInline(admin.TabularInline):
 @admin.register(Week)
 class WeekAdmin(admin.ModelAdmin):
     inlines = (DayInlineAdmin,)
+    list_display = ["created", "start", "location"]
 
 
 @admin.register(Day)

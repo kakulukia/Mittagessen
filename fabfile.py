@@ -62,6 +62,9 @@ def migrate():
 
         update_static()
 
+        with cd("speisekarte"):
+            run("yarn build")
+
     restart()
 
 

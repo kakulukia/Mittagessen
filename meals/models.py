@@ -57,10 +57,15 @@ class Meal(BaseModel):
 
 class Week(BaseModel):
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="weeks")
-    start = models.DateField(verbose_name="Wochenstart")
+    start = models.DateField(verbose_name="Wochenstart", blank=True)
     headline = models.TextField(verbose_name="Überschrift", blank=True)
     footer = models.TextField(verbose_name="Fußzeile", blank=True)
     published = models.BooleanField(verbose_name="veröffentlicht", default=False)
+    special_menu = models.ForeignKey(
+        to="meals.Plan", on_delete=models.SET_NULL,
+        verbose_name="Gericht der Woche", null=True, blank=True,
+        editable=False,
+    )
 
     class Meta(BaseModel.Meta):
         ordering = ["-start"]
@@ -160,7 +165,7 @@ class Week(BaseModel):
 
 class Plan(BaseModel):
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE, related_name="plans")
-    day = models.ForeignKey("Day", on_delete=models.CASCADE, related_name="plans")
+    day = models.ForeignKey("Day", on_delete=models.CASCADE, related_name="plans", null=True, blank=True)
 
     price = models.DecimalField(verbose_name="Preis", decimal_places=2, max_digits=7, blank=True)
     order = models.IntegerField(verbose_name="Sortierung", default=0)
@@ -170,17 +175,20 @@ class Plan(BaseModel):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.price and not self.id:
+            search_location = 2
+            if self.day:
+                search_location = self.day.week.location_id
             qs = Plan.data.filter(
                 meal=self.meal,
                 price__gt=0,
-                day__week__location=self.day.week.location
+                day__week__location=search_location
             ).order_by("-modified")
             if qs:
                 self.price = qs.first().price
             else:
                 self.price = 0
 
-        if not self.order:
+        if not self.order and self.day:
             self.order = self.day.plans.count() + 1
 
         super().save(force_insert, force_update, using, update_fields)
