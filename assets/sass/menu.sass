@@ -50,6 +50,15 @@ body
     align-items: center
     .v-btn
       color: #555
+      &.location
+        font-weight: bold
+        &.luise
+          color: #ED7A18
+        &.krimi
+          color: #BB171A
+        &.inactive-location
+          opacity: 0.2
+          color: #555
 
 @media print
   .header-menu, body .suggestion-container
@@ -272,8 +281,3 @@ body
       color: #616060
       font-size: 10px
       margin-top: 4em
-
-.location
-  font-weight: bold
-  &.inactive-location
-    opacity: 0.5

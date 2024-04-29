@@ -116,7 +116,7 @@
 
 .mealPlan
   display: grid
-  grid-template-columns: 1fr 80px 25px
+  grid-template-columns: 1fr 85px 25px
   column-gap: 20px
 
 .v-text-field

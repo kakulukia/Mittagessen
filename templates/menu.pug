@@ -29,7 +29,7 @@ block content
           :disabled="{% if week.start_in_past %}true{%else%}false{% endif %}"
         )
           v-icon mdi-arrow-left-bold-circle-outline
-        v-btn.location(
+        v-btn.location.krimi(
           :class="{'inactive-location': location == 2}"
           @click="loadLocation(1)" text
         ) Krimis
@@ -40,7 +40,7 @@ block content
             v-icon mdi-file-document-edit-outline
           v-switch.a5(:label="pageSize" v-model="a5" color="#BB181A")
       div
-        v-btn.location(
+        v-btn.location.luise(
           :class="{'inactive-location': location == 1}" text
           @click="loadLocation(2)"
         ) Luises
@@ -96,12 +96,12 @@ block content
     .container.speiseplan
       .top
         if week.background
-          img.background(src="{{week.background}}" :class="{a5:a5}")
-        img.logo(src="{% static 'img/logo-luise.png' %}" :class="{a5:a5}")
+          img.background(src="{{ week.background }}" :class="{a5:a5}")
+        img.logo(src="media/{{ week.location.logo }}")
         img.qr-code(src="{% static 'img/qr-code.png' %}")
+        //.green-text KW {{ week.kw }}
         .start
-          {{ week.headline|safe }}
-        .week.green-text Speiseplan in der Woche vom {{week.start| date:'d.m.'}} - {{week.end| date:'d.m.Y'}}
+          | {{ week.location.headline|safe }}
 
       .middle
         if week.published
@@ -117,19 +117,22 @@ block content
                       {{ day.safe_alt_text }}
                   else
                     for plan in day.plans.all
-                      .name(class={'heading': plan.meal.headline})
+                      .name(class={'heading': plan.meal.headline, 'highlight': plan.meal.highlight})
                         | {{ plan.meal.name }}
-                        v-icon.leaf(small v-if="{% if not plan.meal.vegi %}false{%endif%}") mdi-leaf
-                        v-icon.grain(small v-if="{% if not plan.meal.vegan %}false{%endif%}") mdi-barley
+                        if plan.meal.vegi
+                            v-icon.leaf(small) mdi-leaf
+                        if plan.meal.vegan
+                          v-icon.grain(small) mdi-barley
 
                       .price
-                        if plan.price
+                        if plan.price and not plan.meal.headline
                           span {{ plan.price }} €
         else
           .text-center.undone Der Speiseplan dieser Woche ist noch nicht fertig.
 
-      .footer
-        {{ week.safe_footer }}
+      .footer.red-text
+        span Tel.: 0152 / 27767327
+        span Zusatzstoffe und Allergene bitte beim Personal erfragen
 
 
 block vue
