@@ -1,3 +1,5 @@
+import re
+
 from django.template.defaultfilters import date
 from rest_framework import serializers
 
@@ -31,6 +33,7 @@ class PlanSerializer(serializers.ModelSerializer):
             "day",
             "price",
             "order",
+            "published",
         )
 
     def create(self, validated_data):
@@ -79,6 +82,10 @@ class WeekSerializer(serializers.ModelSerializer):
         representation["dateDisplay"] = week_dates
         representation["headline"] = week.location.headline
         representation["location_logo"] = week.location.logo.name
+        match = re.search(r"<img.*?>", week.footer)
+        representation["footer"] = ""
+        if match:
+            representation["footer"] = match.group()
         return representation
 
     def validate(self, attrs):

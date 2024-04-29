@@ -5,8 +5,16 @@ from django.db import migrations
 
 def create_locations(apps, schema_editor):
     Location = apps.get_model("meals", "Location")
-    Location.data.create(name="Krimis Familienbande", logo="")
-    Location.data.create(name="Luises Familienbande", logo="")
+    Location.data.create(
+        name="Krimis Familienbande",
+        logo="logos/logo.png",
+        # headline='<p><strong>Miersdorfer Chaussee 9, 15738 Zeuthen - Verkauf 11-14 Uhr</strong></p>',
+    )
+    Location.data.create(
+        name="Luises Familienbande",
+        logo="logos/logo-luise.png",
+        # headline='<p><strong>Fontaneallee 27-28, 15738 Zeuthen - Verkauf 11-14 Uhr</strong></p>',
+    )
 
 
 class Migration(migrations.Migration):

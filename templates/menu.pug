@@ -53,7 +53,7 @@ block content
   .page
     .container.speiseplan
       .top
-        if week.background
+        if week.background and week.published
           img.background(src="{{ week.background }}" :class="{a5:a5}")
         img.logo(src="media/{{ week.location.logo }}")
         img.qr-code(src="{% static 'img/qr-code.png' %}")
@@ -88,9 +88,10 @@ block content
         else
           .text-center.undone Der Speiseplan dieser Woche ist noch nicht fertig.
 
-      .footer.red-text
-        span Tel.: 0152 / 27767327
-        span Zusatzstoffe und Allergene bitte beim Personal erfragen
+      if week.published
+        .footer.red-text
+          span Tel.: 0152 / 27767327
+          span Zusatzstoffe und Allergene bitte beim Personal erfragen
 
   .page.two
     .container.speiseplan
@@ -130,9 +131,10 @@ block content
         else
           .text-center.undone Der Speiseplan dieser Woche ist noch nicht fertig.
 
-      .footer.red-text
-        span Tel.: 0152 / 27767327
-        span Zusatzstoffe und Allergene bitte beim Personal erfragen
+      if week.published
+        .footer.red-text
+          span Tel.: 0152 / 27767327
+          span Zusatzstoffe und Allergene bitte beim Personal erfragen
 
 
 block vue

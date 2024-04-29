@@ -45,7 +45,7 @@
         :editor-toolbar="customToolbar"
         @text-change="updateHeadline()"
       )
-    div.text-center.head(v-if="!editHeadline" @click="editHeadline=true")
+    div.text-center.head(v-if="!editHeadline")
       img.logo(:src="this.$root.apiHost + '/media/' + week.location_logo")
       div(v-html="week.headline")
       //div.green-text.bold Speiseplan in der Woche vom {{ week.days[0].dateDisplay }} - {{ week.days[week.days.length - 1].dateDisplay }}
@@ -65,7 +65,7 @@
         :editor-toolbar="customToolbar"
         @text-change="updateFooter()"
       )
-      div.text-center.footer(v-if="!editFooter" v-html="week.safe_footer" @click="editFooter=true")
+      div.text-center.footer(v-if="!editFooter" @click="editFooter=true") Tel.: 0152 / 27767327 Zusatzstoffe und Allergene bitte beim Personal erfragen
       v-btn.imageHint(
           icon v-if="!editFooter && week.background"
           @click="editFooter=true"
@@ -185,6 +185,8 @@ h1
   font-weight: bold
 
 .footer
+  color: #BB171A
+  font-weight: bold
   position: relative
   .imageHint
     position: absolute
