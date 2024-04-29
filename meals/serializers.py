@@ -33,7 +33,6 @@ class PlanSerializer(serializers.ModelSerializer):
             "day",
             "price",
             "order",
-            "published",
         )
 
     def create(self, validated_data):
