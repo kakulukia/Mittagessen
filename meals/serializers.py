@@ -64,7 +64,6 @@ class WeekSerializer(serializers.ModelSerializer):
         model = Week
         fields = (
             "id",
-            "headline",
             "start",
             "days",
             "kw",
@@ -78,6 +77,8 @@ class WeekSerializer(serializers.ModelSerializer):
         representation = super().to_representation(week)
         week_dates = f'{date(week.start, "d.")}-{date(week.end, "d.m.Y")}'
         representation["dateDisplay"] = week_dates
+        representation["headline"] = week.location.headline
+        representation["location_logo"] = week.location.logo.name
         return representation
 
     def validate(self, attrs):

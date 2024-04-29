@@ -29,11 +29,10 @@ block content
           :disabled="{% if week.start_in_past %}true{%else%}false{% endif %}"
         )
           v-icon mdi-arrow-left-bold-circle-outline
-        v-btn(
+        v-btn.location(
           :class="{'inactive-location': location == 2}"
-          icon @click="loadLocation(1)"
-        )
-          v-icon mdi-map-marker
+          @click="loadLocation(1)" text
+        ) Krimis
 
       h1 Speiseplan
         if user.is_authenticated
@@ -41,11 +40,10 @@ block content
             v-icon mdi-file-document-edit-outline
           v-switch.a5(:label="pageSize" v-model="a5" color="#BB181A")
       div
-        v-btn(
-          :class="{'inactive-location': location == 1}"
-          icon @click="loadLocation(2)"
-        )
-          v-icon mdi-map-marker
+        v-btn.location(
+          :class="{'inactive-location': location == 1}" text
+          @click="loadLocation(2)"
+        ) Luises
         v-btn(
           icon @click="switchWeek(true)"
           :disabled="{% if not week.next_week.published %}true{%else%}false{% endif %}"
@@ -56,12 +54,12 @@ block content
     .container.speiseplan
       .top
         if week.background
-          img.background(src="{{week.background}}" :class="{a5:a5}")
-        img.logo(src="{% static 'img/logo-luise.png' %}" :class="{a5:a5}")
+          img.background(src="{{ week.background }}" :class="{a5:a5}")
+        img.logo(src="media/{{ week.location.logo }}")
         img.qr-code(src="{% static 'img/qr-code.png' %}")
-        h2.week.green-text {{ week.kw }}. KW
+        //.green-text KW {{ week.kw }}
         .start
-          | {{ week.headline|safe }}
+          | {{ week.location.headline|safe }}
 
       .middle
         if week.published
@@ -155,7 +153,7 @@ block vue
         }
 
         const locationId = new URL(window.location.href).searchParams.get('location')
-        if (location) {
+        if (locationId) {
           this.location = locationId
         }
 

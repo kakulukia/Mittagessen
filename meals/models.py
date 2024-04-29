@@ -130,6 +130,7 @@ class Week(BaseModel):
         if not qs.exists():
             return
         other_week = qs.get()
+
         for other_day in other_week.days.all():
             this_day = self.days.get(date=other_day.date)
             for plan in other_day.plans.all():
@@ -148,6 +149,9 @@ class Week(BaseModel):
                 this_day.closed = True
                 this_day.alt_text = other_day.alt_text
                 this_day.save()
+
+        self.footer = other_week.footer
+        self.save()
 
 
 class Plan(BaseModel):

@@ -8,9 +8,9 @@
             v-icon mdi-arrow-left-bold-circle-outline
           v-btn(
             :class="{'inactive-location': curLocation === 2}"
-            icon @click="loadLocation(1)"
-          )
-            v-icon mdi-map-marker
+            text @click="loadLocation(1)"
+          ) Krimis
+
         h1 KW{{ week.kw }}
           v-checkbox(
             v-model="week.published"
@@ -34,9 +34,8 @@
         span
           v-btn(
             :class="{'inactive-location': curLocation === 1}"
-            icon @click="loadLocation(2)"
-          )
-            v-icon mdi-map-marker
+            text @click="loadLocation(2)"
+          ) Luises
           v-btn(icon @click="switchWeek(true)")
             v-icon mdi-arrow-right-bold-circle-outline
   .container.speiseplan
@@ -47,8 +46,9 @@
         @text-change="updateHeadline()"
       )
     div.text-center.head(v-if="!editHeadline" @click="editHeadline=true")
+      img.logo(:src="this.$root.apiHost + '/media/' + week.location_logo")
       div(v-html="week.headline")
-      div.green-text.bold Speiseplan in der Woche vom {{ week.days[0].dateDisplay }} - {{ week.days[week.days.length - 1].dateDisplay }}
+      //div.green-text.bold Speiseplan in der Woche vom {{ week.days[0].dateDisplay }} - {{ week.days[week.days.length - 1].dateDisplay }}
 
     div
       a(:href="this.$root.apiHost + '/admin/meals/suggestion/'" target="_blank") Essenswünsche: {{ suggestions }}
@@ -198,5 +198,10 @@ body .v-application a
 
 .inactive-location
   opacity: 0.5
+
+img.logo
+  height: 130px
+  margin: 0 auto
+  display: block
 
 </style>

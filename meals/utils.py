@@ -1,6 +1,7 @@
 from datetime import date
 
 import pendulum
+from django.utils.html import strip_tags
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 
 
@@ -25,5 +26,12 @@ def get_or_create_week(start, location, copy=False):
 
     if copy:
         week.copy_from_other_location()
+
+    footer_text = strip_tags(week.footer)
+    if not footer_text:
+        last_year = pendulum.parse(start.isoformat()).subtract(years=1).start_of("week")
+        last_week = Week.data.filter(start=last_year.date(), footer__isnull=False).first()
+        week.footer = last_week.footer if last_week else ""
+        week.save()
 
     return week

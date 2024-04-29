@@ -1,3 +1,5 @@
+import re
+
 from django.contrib import admin
 from django.db.models import OuterRef, Subquery
 from django.urls import reverse
@@ -6,17 +8,23 @@ from django.utils.safestring import mark_safe
 from meals.models import Day, Meal, Plan, Week, Suggestion, Location, Stats
 
 
-@admin.register(Stats)
-class StatsAdmin(admin.ModelAdmin):
-    list_display = ["date", "page_counter", "alexa_counter"]
-    ordering = ["-date"]
+# @admin.register(Stats)
+# class StatsAdmin(admin.ModelAdmin):
+#     list_display = ["date", "page_counter", "alexa_counter"]
+#     ordering = ["-date"]
 
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ["name"]
+    list_display = ["name", "headline_text", "logo"]
     ordering = ["name"]
     search_fields = ["name"]
+
+    @admin.display(description="Überschrift")
+    def headline_text(self, obj):
+        # headline is html, so we need to strip any tags
+        return re.sub(r"<[^>]*>", "", obj.headline)
+
 
 
 @admin.register(Meal)
