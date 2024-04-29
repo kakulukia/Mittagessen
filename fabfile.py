@@ -53,8 +53,8 @@ def migrate():
     with cd(env.path):
         print(green("updating packages .."))
         # this might cause some trouble: https://github.com/python-poetry/poetry/issues/732
-        run("poetry run pip install --upgrade pip setuptools")
-        run("poetry install")
+        run("/opt/www/mittag/.direnv/python-3.11.9/bin/python -m poetry run pip install --upgrade pip setuptools")
+        run("/opt/www/mittag/.direnv/python-3.11.9/bin/python -m poetry install")
 
         print(green("migrating database .."))
         manage("migrate --noinput")
@@ -75,4 +75,4 @@ def update_static():
 
 
 def manage(command):
-    run("poetry run ./manage.py " + command)
+    run("/opt/www/mittag/.direnv/python-3.11.9/bin/python -m poetry run ./manage.py " + command)
