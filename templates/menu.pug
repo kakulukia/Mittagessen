@@ -170,7 +170,7 @@ block vue
         switchWeek(next) {
           if (next) this.date = this.date.addDays(7)
           else this.date = this.date.addDays(-7)
-          window.location = '/?date=' + this.date.toISODate()
+          window.location = `/?location=${this.location}&date=${this.date.toISODate()}`
         },
         loadLocation(locationId) {
           window.location = `/?location=${locationId}&date=` + this.date.toISODate()
