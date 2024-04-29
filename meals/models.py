@@ -17,9 +17,15 @@ from django_undeletable.models import BaseModel
 from meals.utils import pendulum_instance
 
 
+class Stats(BaseModel):
+    date = models.DateField(unique=True)
+    counter = models.IntegerField(default=0)
+
+
 class Location(BaseModel):
     name = models.CharField(verbose_name="Name", max_length=50)
     headline = RichTextField(verbose_name="Überschrift", blank=True)
+    logo = models.ImageField(verbose_name="Logo", upload_to="logos", blank=True)
 
     def __str__(self):
         return self.name
@@ -136,6 +142,11 @@ class Week(BaseModel):
                     new_plan.price = qs.order_by('-created').first().price
 
                 new_plan.save()
+
+            if other_day.alt_text and other_day.closed:
+                this_day.closed = True
+                this_day.alt_text = other_day.alt_text
+                this_day.save()
 
 
 class Plan(BaseModel):
