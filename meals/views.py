@@ -125,7 +125,7 @@ def show_menu(request):
     else:
         start = pendulum.today().add(days=2).start_of("week")
     week = get_or_create_week(start.date(), location=location)
-    return render(request, "menu.pug", {"week": week})
+    return render(request, "menu.pug", {"week": week, "pages": [1, 2]})
 
 
 def mark_suggestion_as_seen(request, suggestion_id):

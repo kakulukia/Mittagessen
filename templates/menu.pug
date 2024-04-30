@@ -50,109 +50,66 @@ block content
         )
           v-icon mdi-arrow-right-bold-circle-outline
 
-  .page
-    .container.speiseplan
-      .top
-        if week.background and week.published
-          img.background(src="{{ week.background }}" :class="{a5:a5}")
-        img.logo(src="media/{{ week.location.logo }}")
-        img.qr-code(src="{% static 'img/qr-code.png' %}")
-        //.green-text KW {{ week.kw }}
-        .start
-          | {{ week.location.headline|safe }}
+  each val in pages
+    .page(class={'two': val == 2,})
+      .container.speiseplan
+        .top
+          if week.background and week.published
+            img.background(src="{{ week.background }}" :class="{a5:a5}")
+          img.logo(src="media/{{ week.location.logo }}")
+          img.qr-code(src="{% static 'img/qr-code.png' %}")
+          //.green-text KW {{ week.kw }}
+          .start
+            | {{ week.location.headline|safe }}
 
-      .middle
+        .middle
+          if week.published
+            .days
+              if week.special_menu
+                .day.special-menu
+                  .tag
+                    span.orange-text Späzialität der Woche:
+                  .gerichte
+                    .name(class={'heading': week.special_menu.meal.headline, 'highlight': week.special_menu.meal.highlight})
+                      | {{ week.special_menu.meal.name }}
+                      if week.special_menu.meal.vegi
+                        v-icon.leaf(small) mdi-leaf
+                      if week.special_menu.meal.vegan
+                        v-icon.grain(small) mdi-barley
+
+                    .price
+                      if week.special_menu.price and not week.special_menu.headline
+                        span {{ week.special_menu.price }} €
+
+              for day in week.days.all
+                .day
+                  .tag(class={'closed': week.is_closed})
+                    span {{ day.date| date:'l'}}
+                    span.green-text {{ day.date | date:'d.m.y' }}
+                  .gerichte
+                    if day.closed
+                      .altText.text-center
+                        {{ day.safe_alt_text }}
+                    else
+                      for plan in day.plans.all
+                        .name(class={'heading': plan.meal.headline, 'highlight': plan.meal.highlight})
+                          | {{ plan.meal.name }}
+                          if plan.meal.vegi
+                              v-icon.leaf(small) mdi-leaf
+                          if plan.meal.vegan
+                            v-icon.grain(small) mdi-barley
+
+                        .price
+                          if plan.price and not plan.meal.headline
+                            span {{ plan.price }} €
+          else
+            .text-center.undone Der Speiseplan dieser Woche ist noch nicht fertig.
+
         if week.published
-          .days
-            if week.special_menu
-              .day.special-menu
-                .tag
-                  span.orange-text Späzialität der Woche:
-                .gerichte
-                  .name(class={'heading': week.special_menu.meal.headline, 'highlight': week.special_menu.meal.highlight})
-                    | {{ week.special_menu.meal.name }}
-                    if week.special_menu.meal.vegi
-                      v-icon.leaf(small) mdi-leaf
-                    if week.special_menu.meal.vegan
-                      v-icon.grain(small) mdi-barley
-
-                  .price
-                    if week.special_menu.price and not week.special_menu.headline
-                      span {{ week.special_menu.price }} €
-
-            for day in week.days.all
-              .day
-                .tag(class={'closed': week.is_closed})
-                  span {{ day.date| date:'l'}}
-                  span.green-text {{ day.date | date:'d.m.y' }}
-                .gerichte
-                  if day.closed
-                    .altText.text-center
-                      {{ day.safe_alt_text }}
-                  else
-                    for plan in day.plans.all
-                      .name(class={'heading': plan.meal.headline, 'highlight': plan.meal.highlight})
-                        | {{ plan.meal.name }}
-                        if plan.meal.vegi
-                            v-icon.leaf(small) mdi-leaf
-                        if plan.meal.vegan
-                          v-icon.grain(small) mdi-barley
-
-                      .price
-                        if plan.price and not plan.meal.headline
-                          span {{ plan.price }} €
-        else
-          .text-center.undone Der Speiseplan dieser Woche ist noch nicht fertig.
-
-      if week.published
-        .footer.red-text
-          span Tel.:&nbsp;
-            a.red-text(href="tel:+49 152 27767327 ") 0152 / 27767327
-          span Zusatzstoffe und Allergene bitte beim Personal erfragen
-
-  .page.two
-    .container.speiseplan
-      .top
-        if week.background
-          img.background(src="{{ week.background }}" :class="{a5:a5}")
-        img.logo(src="media/{{ week.location.logo }}")
-        img.qr-code(src="{% static 'img/qr-code.png' %}")
-        //.green-text KW {{ week.kw }}
-        .start
-          | {{ week.location.headline|safe }}
-
-      .middle
-        if week.published
-          .days
-            for day in week.days.all
-              .day()
-                .tag(class={'closed': week.is_closed})
-                  span {{ day.date| date:'l'}}
-                  span.green-text {{ day.date | date:'d.m.y' }}
-                .gerichte
-                  if day.closed
-                    .altText.text-center
-                      {{ day.safe_alt_text }}
-                  else
-                    for plan in day.plans.all
-                      .name(class={'heading': plan.meal.headline, 'highlight': plan.meal.highlight})
-                        | {{ plan.meal.name }}
-                        if plan.meal.vegi
-                            v-icon.leaf(small) mdi-leaf
-                        if plan.meal.vegan
-                          v-icon.grain(small) mdi-barley
-
-                      .price
-                        if plan.price and not plan.meal.headline
-                          span {{ plan.price }} €
-        else
-          .text-center.undone Der Speiseplan dieser Woche ist noch nicht fertig.
-
-      if week.published
-        .footer.red-text
-          span Tel.: 0152 / 27767327
-          span Zusatzstoffe und Allergene bitte beim Personal erfragen
-
+          .footer.red-text
+            span Tel.:&nbsp;
+              a.red-text(href="tel:+49 152 27767327 ") 0152 / 27767327
+            span Zusatzstoffe und Allergene bitte beim Personal erfragen
 
 block vue
   script.
