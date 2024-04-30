@@ -6,7 +6,7 @@
         span
           v-btn(icon @click="switchWeek(false)")
             v-icon mdi-arrow-left-bold-circle-outline
-          v-btn(
+          v-btn.location.krimi(
             :class="{'inactive-location': curLocation === 2}"
             text @click="loadLocation(1)"
           ) Krimis
@@ -32,7 +32,7 @@
           )
             v-icon mdi-cog-outline
         span
-          v-btn(
+          v-btn.location.luise(
             :class="{'inactive-location': curLocation === 1}"
             text @click="loadLocation(2)"
           ) Luises
@@ -201,8 +201,15 @@ body .v-application a
   text-decoration: none
   font-weight: bold
 
-.inactive-location
-  opacity: 0.5
+.v-btn.location
+  font-weight: bold
+  &.luise
+    color: #ED7A18
+  &.krimi
+    color: #BB171A
+  &.inactive-location
+    opacity: 0.2
+    color: #555
 
 img.logo
   height: 130px
