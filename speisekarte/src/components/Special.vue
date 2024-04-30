@@ -1,8 +1,10 @@
 <template lang="pug">
 .weekDay.special
   .date
-    h4.orange-text Special
+    h4.orange-text Spezialität
+    h4.orange-text der Woche
   .plans
+    //div &nbsp;
     MealPlan(:plan="week.special_menu" @reload-week="$emit('reload-week')" v-if="week.special_menu")
     .mealPlan(v-if="!week.special_menu")
       v-combobox.left.nonVegi(
