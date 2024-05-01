@@ -53,7 +53,9 @@
     div
       a(:href="this.$root.apiHost + '/admin/meals/suggestion/'" target="_blank") Essenswünsche: {{ suggestions }}
       br
-      a(@click="copyMenu()" v-if="weekIsEmpty") Menü kopieren
+      a(@click="copyMenu()" v-if="weekIsEmpty") Menü kopieren von
+        span(v-if="curLocation === 1")  Luises
+        span(v-if="curLocation === 2")  Krimis
     br
 
     Special(:week="week" @reload-week="reloadWeek()" v-if="curLocation === 2")
