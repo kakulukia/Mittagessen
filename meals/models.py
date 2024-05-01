@@ -147,10 +147,10 @@ class Week(BaseModel):
                 qs = Plan.data.filter(meal=plan.meal, day__week__location=self.location)
                 if qs.exists():
                     new_plan.price = qs.order_by('-created').first().price
-                else:
-                    # automatic price adjustment for the other location
-                    new_plan.price = new_plan.price + 3 if self.location.id == 2 else new_plan.price - 3
-                    # round(4.25 * 1.2 * 2) / 2 << runden auf 0.5er Schritte
+                # else:
+                #     # automatic price adjustment for the other location
+                #     new_plan.price = new_plan.price + 3 if self.location.id == 2 else new_plan.price - 3
+                #     # round(4.25 * 1.2 * 2) / 2 << runden auf 0.5er Schritte
 
                 new_plan.save()
 
