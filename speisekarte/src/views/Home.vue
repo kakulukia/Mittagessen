@@ -1,80 +1,82 @@
 <template lang="pug">
-.week(v-if="week")
-  .menu-wrapper
+div
+  v-progress-linear(v-if="!week" color="red" indeterminate)
+  .week(v-if="week")
+    .menu-wrapper
+      .container.speiseplan
+        .menu
+          span
+            v-btn(icon @click="switchWeek(false)")
+              v-icon mdi-arrow-left-bold-circle-outline
+            v-btn.location.krimi(
+              :class="{'inactive-location': curLocation === 2}"
+              text @click="loadLocation(1)"
+            ) Krimis
+
+          h1 KW{{ week.kw }}
+            v-checkbox(
+              v-model="week.published"
+              label="freigegeben"
+              dense
+              hide-details
+              :success="week.published"
+              :error="!week.published"
+              @click="updatePublished()"
+            )
+            v-btn.print(
+              icon v-if="week.published" target="_blank"
+              :href="this.$root.apiHost + `?date=${this.week.start}&location=${curLocation}`"
+            )
+              v-icon mdi-printer-outline
+            v-btn.print(
+              icon target="_blank"
+              :href="this.$root.apiHost + '/admin/'"
+            )
+              v-icon mdi-cog-outline
+          span
+            v-btn.location.luise(
+              :class="{'inactive-location': curLocation === 1}"
+              text @click="loadLocation(2)"
+            ) Luises
+            v-btn(icon @click="switchWeek(true)")
+              v-icon mdi-arrow-right-bold-circle-outline
     .container.speiseplan
-      .menu
-        span
-          v-btn(icon @click="switchWeek(false)")
-            v-icon mdi-arrow-left-bold-circle-outline
-          v-btn.location.krimi(
-            :class="{'inactive-location': curLocation === 2}"
-            text @click="loadLocation(1)"
-          ) Krimis
-
-        h1 KW{{ week.kw }}
-          v-checkbox(
-            v-model="week.published"
-            label="freigegeben"
-            dense
-            hide-details
-            :success="week.published"
-            :error="!week.published"
-            @click="updatePublished()"
-          )
-          v-btn.print(
-            icon v-if="week.published" target="_blank"
-            :href="this.$root.apiHost + `?date=${this.week.start}&location=${curLocation}`"
-          )
-            v-icon mdi-printer-outline
-          v-btn.print(
-            icon target="_blank"
-            :href="this.$root.apiHost + '/admin/'"
-          )
-            v-icon mdi-cog-outline
-        span
-          v-btn.location.luise(
-            :class="{'inactive-location': curLocation === 1}"
-            text @click="loadLocation(2)"
-          ) Luises
-          v-btn(icon @click="switchWeek(true)")
-            v-icon mdi-arrow-right-bold-circle-outline
-  .container.speiseplan
-    vue-editor.head(
-        v-if="editHeadline"
-        v-model="week.headline"
-        :editor-toolbar="customToolbar"
-        @text-change="updateHeadline()"
-      )
-    div.text-center.head(v-if="!editHeadline")
-      img.logo(:src="this.$root.apiHost + '/media/' + week.location_logo")
-      div(v-html="week.headline")
-      //div.green-text.bold Speiseplan in der Woche vom {{ week.days[0].dateDisplay }} - {{ week.days[week.days.length - 1].dateDisplay }}
-
-    div
-      a(:href="this.$root.apiHost + '/admin/meals/suggestion/'" target="_blank") Essenswünsche: {{ suggestions }}
-      br
-      a(@click="copyMenu()" v-if="weekIsEmpty") Menü kopieren von
-        span(v-if="curLocation === 1")  Luises
-        span(v-if="curLocation === 2")  Krimis
-    br
-
-    Special(:week="week" @reload-week="reloadWeek()" v-if="curLocation === 2")
-
-    WeekDay(v-for="day in week.days" :key="day.id" :day="day" @reload-week="reloadWeek()")
-
-    .footer
-      vue-editor(
-        v-if="editFooter"
-        v-model="week.footer"
-        :editor-toolbar="customToolbar"
-        @text-change="updateFooter()"
-      )
-      div.text-center.footer(v-if="!editFooter" @click="editFooter=true") Tel.: 0152 / 27767327 Zusatzstoffe und Allergene bitte beim Personal erfragen
-      v-btn.imageHint(
-          icon v-if="!editFooter && week.background"
-          @click="editFooter=true"
+      vue-editor.head(
+          v-if="editHeadline"
+          v-model="week.headline"
+          :editor-toolbar="customToolbar"
+          @text-change="updateHeadline()"
         )
-          v-icon mdi-file-image
+      div.text-center.head(v-if="!editHeadline")
+        img.logo(:src="this.$root.apiHost + '/media/' + week.location_logo")
+        div(v-html="week.headline")
+        //div.green-text.bold Speiseplan in der Woche vom {{ week.days[0].dateDisplay }} - {{ week.days[week.days.length - 1].dateDisplay }}
+
+      div
+        a(:href="this.$root.apiHost + '/admin/meals/suggestion/'" target="_blank") Essenswünsche: {{ suggestions }}
+        br
+        a(@click="copyMenu()" v-if="weekIsEmpty") Menü kopieren von
+          span(v-if="curLocation === 1")  Luises
+          span(v-if="curLocation === 2")  Krimis
+      br
+
+      Special(:week="week" @reload-week="reloadWeek()" v-if="curLocation === 2")
+
+      WeekDay(v-for="day in week.days" :key="day.id" :day="day" @reload-week="reloadWeek()")
+
+      .footer
+        vue-editor(
+          v-if="editFooter"
+          v-model="week.footer"
+          :editor-toolbar="customToolbar"
+          @text-change="updateFooter()"
+        )
+        div.text-center.footer(v-if="!editFooter" @click="editFooter=true") Tel.: 0152 / 27767327 Zusatzstoffe und Allergene bitte beim Personal erfragen
+        v-btn.imageHint(
+            icon v-if="!editFooter && week.background"
+            @click="editFooter=true"
+          )
+            v-icon mdi-file-image
 
 </template>
 
@@ -124,6 +126,7 @@ import Special from '@/components/Special'
       },
       loadLocation(locationId) {
         this.curLocation = locationId
+        this.week = undefined
         this.reloadWeek()
       },
       reloadWeek() {
