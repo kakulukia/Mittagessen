@@ -11,7 +11,7 @@ div
             v-btn.location.krimi(
               :class="{'inactive-location': curLocation === 2}"
               text @click="loadLocation(1)"
-            ) Krimis
+            ) Imbis
 
           h1 KW{{ week.kw }}
             v-checkbox(
@@ -57,7 +57,7 @@ div
         br
         a(@click="copyMenu()" v-if="weekIsEmpty") Menü kopieren von
           span(v-if="curLocation === 1")  Luises
-          span(v-if="curLocation === 2")  Krimis
+          span(v-if="curLocation === 2")  Imbis
       br
 
       Special(:week="week" @reload-week="reloadWeek()" v-if="curLocation === 2")
