@@ -28,11 +28,11 @@ SITE_ID = 1
 DEBUG = False
 ALLOWED_HOSTS = [
     "*",
-    "https://menue.mama-filmcatering.de",
+    "https://menue.luises-familienbande.de",
 ]
 CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS = CORS_ORIGIN_WHITELIST = [
     "http://localhost:8080",
-    "https://menue.mama-filmcatering.de",
+    "https://menue.luises-familienbande.de",
 ]
 CORS_ALLOW_CREDENTIALS = True  # allow cookies
 
