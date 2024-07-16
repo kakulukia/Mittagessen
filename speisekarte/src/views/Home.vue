@@ -11,7 +11,7 @@ div
             v-btn.location.krimi(
               :class="{'inactive-location': curLocation === 2}"
               text @click="loadLocation(1)"
-            ) Imbis
+            ) Imbiss
 
           h1 KW{{ week.kw }}
             v-checkbox(
