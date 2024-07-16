@@ -32,7 +32,7 @@ block content
         v-btn.location.krimi(
           :class="{'inactive-location': location == 2}"
           @click="loadLocation(1)" text
-        ) Imbis
+        ) Imbiss
 
       h1 Speiseplan
         if user.is_authenticated
@@ -107,8 +107,7 @@ block content
 
         if week.published
           .footer.red-text
-            span Tel.:&nbsp;
-              a.red-text(href="tel:+49 152 27767327 ") 0152 / 27767327
+            span WhatsApp: 0152 / 27767327
             span Zusatzstoffe und Allergene bitte beim Personal erfragen
 
 block vue
