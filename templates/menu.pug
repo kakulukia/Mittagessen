@@ -57,7 +57,10 @@ block content
           if week.background and week.published
             img.background(src="{{ week.background }}" :class="{a5:a5}")
           img.logo(src="media/{{ week.location.logo }}")
-          img.qr-code(src="{% static 'img/qr-code.png' %}")
+          if week.location.id == 1
+            img.qr-code(src="{% static 'img/qr-code.png' %}")
+          else
+            img.qr-code(src="{% static 'img/qr-code-luise.png' %}")
           //.green-text KW {{ week.kw }}
           .start
             | {{ week.location.headline|safe }}
