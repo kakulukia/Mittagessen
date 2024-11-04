@@ -24,7 +24,7 @@ def get_or_create_week(start, location, copy=False):
     else:
         week = Week.data.create(start=start, location=location)
 
-        if '<img' not in week.footer:
+        if "<img" not in week.footer:
             last_year = pendulum.parse(start.isoformat()).subtract(years=1).start_of("week")
             last_week = Week.data.filter(start=last_year.date(), footer__isnull=False).first()
             week.footer = last_week.footer if last_week else ""

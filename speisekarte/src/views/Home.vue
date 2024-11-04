@@ -8,10 +8,6 @@ div
           span
             v-btn(icon @click="switchWeek(false)")
               v-icon mdi-arrow-left-bold-circle-outline
-            v-btn.location.krimi(
-              :class="{'inactive-location': curLocation === 2}"
-              text @click="loadLocation(1)"
-            ) Imbiss
 
           h1 KW{{ week.kw }}
             v-checkbox(
@@ -34,10 +30,6 @@ div
             )
               v-icon mdi-cog-outline
           span
-            v-btn.location.luise(
-              :class="{'inactive-location': curLocation === 1}"
-              text @click="loadLocation(2)"
-            ) Luises
             v-btn(icon @click="switchWeek(true)")
               v-icon mdi-arrow-right-bold-circle-outline
     .container.speiseplan

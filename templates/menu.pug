@@ -29,21 +29,14 @@ block content
           :disabled="{% if week.start_in_past %}true{%else%}false{% endif %}"
         )
           v-icon mdi-arrow-left-bold-circle-outline
-        v-btn.location.krimi(
-          :class="{'inactive-location': location == 2}"
-          @click="loadLocation(1)" text
-        ) Imbiss
 
       h1 Speiseplan
         if user.is_authenticated
           v-btn(icon href="/kueche/?date={{week.start|date:'Y-m-d'}}&location={{week.location.id}}")
             v-icon mdi-file-document-edit-outline
           v-switch.a5(:label="pageSize" v-model="a5" color="#BB181A")
+          v-text-field(label="Logo-Sichtbarkeit 0,0 - 1", v-model="opacity", type="number", color="#BB181A")
       div
-        v-btn.location.luise(
-          :class="{'inactive-location': location == 1}" text
-          @click="loadLocation(2)"
-        ) Luises
         v-btn(
           icon @click="switchWeek(true)"
           :disabled="{% if not week.next_week.published %}true{%else%}false{% endif %}"
@@ -56,13 +49,15 @@ block content
         .top
           if week.background and week.published
             img.background(src="{{ week.background }}" :class="{a5:a5}")
-          img.logo(src="media/{{ week.location.logo }}")
+          img.logo(src="media/{{ week.location.logo }}" :style="'opacity: ' + opacity")
           if week.location.id == 1
             img.qr-code(src="{% static 'img/qr-code.png' %}")
           else
             img.qr-code(src="{% static 'img/qr-code-luise.png' %}")
           //.green-text KW {{ week.kw }}
           .start
+            br
+            h1 Speiseplan
             | {{ week.location.headline|safe }}
 
         .middle
@@ -122,6 +117,7 @@ block vue
         date: undefined,
         removeSuggestionBox: false,
         a5: false,
+        opacity: 0.2,
         location: 1,
       },
       created() {

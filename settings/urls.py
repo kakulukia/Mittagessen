@@ -12,7 +12,9 @@ from meals.views import (
     DayViewSet,
     MealViewSet,
     show_menu,
-    mark_suggestion_as_seen, create_suggestion, unseen_suggestion_number,
+    mark_suggestion_as_seen,
+    create_suggestion,
+    unseen_suggestion_number,
 )
 
 router = routers.DefaultRouter()
@@ -34,7 +36,6 @@ urlpatterns = [
     path("api/", include(router.urls)),
     path("api/current-user/", CurrentUserView.as_view()),
     path("api/unseen-suggestions", unseen_suggestion_number),
-
     path("create-suggestion/", create_suggestion),
 ]
 

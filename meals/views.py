@@ -136,10 +136,10 @@ def mark_suggestion_as_seen(request, suggestion_id):
 
 
 def create_suggestion(request):
-    name = request.POST.get('name')
+    name = request.POST.get("name")
     Suggestion.data.create(name=name)
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect("/")
 
 
 def unseen_suggestion_number(request):
-    return JsonResponse({'count': Suggestion.data.filter(seen=False).count()})
+    return JsonResponse({"count": Suggestion.data.filter(seen=False).count()})

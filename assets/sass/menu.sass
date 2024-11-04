@@ -102,16 +102,22 @@ body
     display: none
   .container.speiseplan
     max-width: 707px
+  .start h1
+    display: none
 
 
 .container.speiseplan
   position: relative
   font-size: 18px
   img.logo
-    height: 130px
-    margin: 0 auto
+    position: absolute
+    top: 20px
+    right: 20px
+    height: 250px
     z-index: -1
-    display: block
+    opacity: 0.3
+    &.a5
+      opacity: 0.5
 
 .start, .week, .footer
   text-align: center

@@ -35,8 +35,9 @@ class Meal(BaseModel):
     name = models.CharField(verbose_name="Name", max_length=200)
 
     highlight = models.BooleanField(verbose_name="Highlight", default=False)
-    headline = models.BooleanField(verbose_name="Wahlessen", default=False, help_text="Fett geschrieben, "
-                                                                                      "ohne Preisanzeige")
+    headline = models.BooleanField(
+        verbose_name="Wahlessen", default=False, help_text="Fett geschrieben, " "ohne Preisanzeige"
+    )
     vegi = models.BooleanField(verbose_name="vegetarisch", default=False)
     vegan = models.BooleanField(verbose_name="vegan", default=False)
     side_dish = models.BooleanField(verbose_name="Beilage", default=False)
@@ -62,8 +63,11 @@ class Week(BaseModel):
     footer = models.TextField(verbose_name="Fußzeile", blank=True)
     published = models.BooleanField(verbose_name="veröffentlicht", default=False)
     special_menu = models.ForeignKey(
-        to="meals.Plan", on_delete=models.SET_NULL,
-        verbose_name="Gericht der Woche", null=True, blank=True,
+        to="meals.Plan",
+        on_delete=models.SET_NULL,
+        verbose_name="Gericht der Woche",
+        null=True,
+        blank=True,
         editable=False,
     )
 
@@ -71,9 +75,7 @@ class Week(BaseModel):
         ordering = ["-start"]
         verbose_name = "Woche"
         verbose_name_plural = "Wochen"
-        constraints = [
-            UniqueConstraint(fields=["location", "start"], name="unique_week")
-        ]
+        constraints = [UniqueConstraint(fields=["location", "start"], name="unique_week")]
 
     def __str__(self):
         return f"KW {self.kw} ({date(self.start)})"
@@ -146,7 +148,7 @@ class Week(BaseModel):
                 # update price if possible
                 qs = Plan.data.filter(meal=plan.meal, day__week__location=self.location)
                 if qs.exists():
-                    new_plan.price = qs.order_by('-created').first().price
+                    new_plan.price = qs.order_by("-created").first().price
                 # else:
                 #     # automatic price adjustment for the other location
                 #     new_plan.price = new_plan.price + 3 if self.location.id == 2 else new_plan.price - 3
@@ -165,7 +167,9 @@ class Week(BaseModel):
 
 class Plan(BaseModel):
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE, related_name="plans")
-    day = models.ForeignKey("Day", on_delete=models.CASCADE, related_name="plans", null=True, blank=True)
+    day = models.ForeignKey(
+        "Day", on_delete=models.CASCADE, related_name="plans", null=True, blank=True
+    )
 
     price = models.DecimalField(verbose_name="Preis", decimal_places=2, max_digits=7, blank=True)
     order = models.IntegerField(verbose_name="Sortierung", default=0)
@@ -179,9 +183,7 @@ class Plan(BaseModel):
             if self.day:
                 search_location = self.day.week.location_id
             qs = Plan.data.filter(
-                meal=self.meal,
-                price__gt=0,
-                day__week__location=search_location
+                meal=self.meal, price__gt=0, day__week__location=search_location
             ).order_by("-modified")
             if qs:
                 self.price = qs.first().price
@@ -212,7 +214,7 @@ class Plan(BaseModel):
         # else:
         #     string += " €"
 
-        string = f"für {self.price} €".replace('.', ',')
+        string = f"für {self.price} €".replace(".", ",")
         return string
 
 
@@ -227,9 +229,7 @@ class Day(BaseModel):
         ordering = ("date",)
         verbose_name = "Tag"
         verbose_name_plural = "Tage"
-        constraints = [
-            UniqueConstraint(fields=["date", "week"], name="unique_day")
-        ]
+        constraints = [UniqueConstraint(fields=["date", "week"], name="unique_day")]
 
     def __str__(self):
         return date(self.date)
@@ -259,4 +259,4 @@ class Suggestion(BaseModel):
     class Meta(BaseModel.Meta):
         verbose_name = "Vorschlag"
         verbose_name_plural = "Vorschläge"
-        ordering = ['seen', 'created']
+        ordering = ["seen", "created"]

@@ -26,7 +26,6 @@ class LocationAdmin(admin.ModelAdmin):
         return re.sub(r"<[^>]*>", "", obj.headline)
 
 
-
 @admin.register(Meal)
 class MealAdmin(admin.ModelAdmin):
     list_display = ["name", "created", "latest"]
@@ -75,7 +74,7 @@ class DayAdmin(admin.ModelAdmin):
 class SuggestionAdmin(admin.ModelAdmin):
     list_display = ["created", "name", "seen", "seen_button"]
     actions = None
-    list_filter = ['seen']
+    list_filter = ["seen"]
 
     @admin.display(description="gesehen")
     def seen_button(self, suggestion: Suggestion):
