@@ -35,7 +35,7 @@ block content
           v-btn(icon href="/kueche/?date={{week.start|date:'Y-m-d'}}&location={{week.location.id}}")
             v-icon mdi-file-document-edit-outline
           v-switch.a5(:label="pageSize" v-model="a5" color="#BB181A")
-          v-text-field(label="Logo-Sichtbarkeit 0,0 - 1", v-model="opacity", type="number", color="#BB181A")
+          //v-text-field(label="Logo-Sichtbarkeit 0,0 - 1", v-model="opacity", type="number", color="#BB181A")
       div
         v-btn(
           icon @click="switchWeek(true)"
@@ -57,6 +57,8 @@ block content
           //.green-text KW {{ week.kw }}
           .start
             br
+            br.no.print
+            br.no-print
             h1 Speiseplan
             | {{ week.location.headline|safe }}
 
@@ -117,7 +119,7 @@ block vue
         date: undefined,
         removeSuggestionBox: false,
         a5: false,
-        opacity: 0.2,
+        opacity: 0.7,
         location: 1,
       },
       created() {
