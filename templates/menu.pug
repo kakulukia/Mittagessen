@@ -49,7 +49,7 @@ block content
         .top
           if week.background and week.published
             img.background(src="{{ week.background }}" :class="{a5:a5}")
-          img.logo(src="media/{{ week.location.logo }}" :style="'opacity: ' + opacity")
+          img.logo(src="media/{{ week.location.logo }}")
           if week.location.id == 1
             img.qr-code(src="{% static 'img/qr-code.png' %}")
           else
