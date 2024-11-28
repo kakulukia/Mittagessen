@@ -96,6 +96,8 @@ body
     position: absolute
     top: 0
     left: 0
+  .extra-links
+    display: none
 
 @media screen
   .page.two
@@ -319,3 +321,17 @@ body
     .gerichte
       text-align: left
       font-weight: bold
+
+.formatted-text
+  white-space: pre-wrap
+
+#app .extra-links
+  text-align: right
+  position: absolute
+  bottom: 20px
+  right: 20px
+  z-index: 1
+  a
+    color: #afafae
+    &:hover
+      color: #343434

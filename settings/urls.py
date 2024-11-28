@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, TemplateView
 from rest_framework import routers
 
 from meals.views import (
@@ -37,6 +37,8 @@ urlpatterns = [
     path("api/current-user/", CurrentUserView.as_view()),
     path("api/unseen-suggestions", unseen_suggestion_number),
     path("create-suggestion/", create_suggestion),
+    path("impressum", TemplateView.as_view(template_name="imprint.pug")),
+    path("datenschutz", TemplateView.as_view(template_name="privacy.pug")),
 ]
 
 if settings.DEBUG:

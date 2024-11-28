@@ -1,6 +1,6 @@
 # Essensliste
 
-Hier gehts um die Erstellung der wöchentlichen Menükarte von MAMA Catering (https://menu.mama-filmcatering.com/).
+Hier gehts um die Erstellung der wöchentlichen Menükarte von Emmas Imbiss (https://menu.mama-filmcatering.com/).
 
 ##### Deployment
 

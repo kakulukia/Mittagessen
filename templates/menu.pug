@@ -43,6 +43,11 @@ block content
         )
           v-icon mdi-arrow-right-bold-circle-outline
 
+  .extra-links
+    a(href="/impressum") Impressum
+    br
+    a(href="/datenschutz") Datenschutz
+
   each val in pages
     .page(class={'two': val == 2,})
       .container.speiseplan
