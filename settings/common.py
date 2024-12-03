@@ -29,6 +29,7 @@ DEBUG = False
 ALLOWED_HOSTS = [
     "*",
     "https://menue.luises-familienbande.de",
+    "https://emmas-imbiss.de"
 ]
 CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS = CORS_ORIGIN_WHITELIST = [
     "http://localhost:8080",
