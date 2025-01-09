@@ -10,7 +10,7 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/kueche',
+      path: '/',
       name: 'Kueche',
       component: KuecheView,
     },
@@ -18,10 +18,6 @@ export default new Router({
       path: '/abrechnungen',
       name: 'Abrechnungen',
       component: AbrechnungenView,
-    },
-    {
-      path: '/',
-      redirect: '/kueche', // Startseite als Redirect zu Küche
     },
   ],
 });
