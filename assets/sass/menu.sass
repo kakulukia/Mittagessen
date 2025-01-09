@@ -60,7 +60,19 @@ body
           opacity: 0.2
           color: #555
 
+.webseite
+  display: none
+  color: #333
+  position: absolute
+  top: 0
+  left: 2.5cm
+  .protocoll
+    color: #999
+
 @media print
+  .webseite
+    display: block
+
   br.no-print
     display: none
   .header-menu, body .suggestion-container
@@ -333,5 +345,18 @@ body
   z-index: 1
   a
     color: #afafae
+    display: block
     &:hover
       color: #343434
+
+@media screen and (max-width: 450px)
+  #app .extra-links
+    position: initial
+    font-size: 8px // Kleinere Schriftgröße
+    bottom: 10px // Etwas näher am Rand
+    right: 10px // Etwas näher am Rand
+    text-align: center
+    a
+      display: inline
+      padding: 0 5px
+

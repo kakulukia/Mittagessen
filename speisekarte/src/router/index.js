@@ -1,45 +1,27 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-// import WorkingHours from '../views/WorkingHours.vue'
-// import WorkingHoursIndex from '../views/WorkingHoursIndex.vue'
-// import WorkingHoursDetail from '../views/WorkingHoursDetail.vue'
+import Vue from 'vue';
+import Router from 'vue-router';
+import KuecheView from '@/views/KuecheView.vue'; // Deine Küche-Komponente
+import AbrechnungenView from '@/views/AbrechnungenView.vue'; // Neue Abrechnungen-Komponente
 
-Vue.use(VueRouter)
+Vue.use(Router);
 
-const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  }
-  // {
-  //   path: '/Anwesenheiten/',
-  //   // route level code-splitting
-  //   // this generates a separate chunk (about.[hash].js) for this route
-  //   // which is lazy-loaded when the route is visited.
-  //   component: WorkingHoursIndex,
-  //   children: [
-  //     {
-  //       path: '',
-  //       name: 'Anwesenheiten',
-  //       component: WorkingHours,
-  //       props: true
-  //     },
-  //     {
-  //       path: ':id',
-  //       name: 'WorkingDetail',
-  //       component: WorkingHoursDetail,
-  //       props: true
-  //     }
-  //   ]
-  // },
-]
-
-const router = new VueRouter({
-  mode: 'history',
-  base: '/kueche/',
-  routes
-})
-
-export default router
+export default new Router({
+  mode: 'history', // Aktiviert saubere URLs
+  base: process.env.BASE_URL,
+  routes: [
+    {
+      path: '/kueche',
+      name: 'Kueche',
+      component: KuecheView,
+    },
+    {
+      path: '/abrechnungen',
+      name: 'Abrechnungen',
+      component: AbrechnungenView,
+    },
+    {
+      path: '/',
+      redirect: '/kueche', // Startseite als Redirect zu Küche
+    },
+  ],
+});

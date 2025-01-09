@@ -35,6 +35,7 @@ gunicorn = "^20.1.0"
 django-jazzmin = "^2.5.0"
 fabric3 = {git = "https://github.com/kakulukia/fabric3"}
 django-ckeditor = "^6.7.1"
+weasyprint = "^63.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"

@@ -41,6 +41,7 @@ CORS_ALLOW_CREDENTIALS = True  # allow cookies
 INSTALLED_APPS = [
     # our own stuff
     "users",
+    "invoices",
     "meals",
     "jazzmin",
     # Django

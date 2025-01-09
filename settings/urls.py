@@ -4,6 +4,7 @@ from django.urls import include, path
 from django.views.generic import RedirectView, TemplateView
 from rest_framework import routers
 
+from invoices.views import generate_invoice
 from meals.views import (
     WeekViewSet,
     alexa_today,
@@ -14,8 +15,9 @@ from meals.views import (
     show_menu,
     mark_suggestion_as_seen,
     create_suggestion,
-    unseen_suggestion_number,
+    unseen_suggestion_number
 )
+
 
 router = routers.DefaultRouter()
 router.register("weeks", WeekViewSet)
@@ -39,6 +41,7 @@ urlpatterns = [
     path("create-suggestion/", create_suggestion),
     path("impressum", TemplateView.as_view(template_name="imprint.pug")),
     path("datenschutz", TemplateView.as_view(template_name="privacy.pug")),
+    path('invoice/', generate_invoice, name='generate_invoice'),
 ]
 
 if settings.DEBUG:

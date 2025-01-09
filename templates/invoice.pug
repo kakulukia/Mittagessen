@@ -1,0 +1,72 @@
+- load sass_tags compress static
+!!! 5
+
+html(lang='de')
+  head
+      meta(charset="UTF-8")
+      meta(name="viewport" content="width=device-width, initial-scale=1.0")
+      title Rechnung
+      link(href='{% sass_src "sass/invoice.sass" %}' rel="stylesheet" type="text/css")
+      //link(href='static/sass/invoice.css' rel="stylesheet" type="text/css")
+  body
+    div.recipient
+        .gray Jörg Kriminski, Richard-Wagner-Str. 55, 15732 Schulzendorf
+        div  {{ recipient.name }}
+        div  {{ recipient.street }}
+        div  {{ recipient.zip }} {{ recipient.city }}
+
+    div.details
+      img.logo(src="{% static 'img/logo.png' %}" alt="Logo")
+      div
+        strong Datum:
+        span {{ date }}
+      div
+        strong Rechnungsnummer:
+        span  {{ invoice_number }}
+      .extra Rechnungsdatum entspricht Liefer-/Leistungsdatum
+
+    main
+      h1 Rechnung
+      p.raw.
+        Sehr geehrter Herr Müller,
+
+        vielen Dank für Ihren Auftrag. Vereinbarungsgemäß berechnen wir Ihnen folgende Leistungen:
+
+      table
+        thead
+          tr.gray
+            th Position
+            th Anzahl
+            th Einheit
+            th Bezeichnung
+            th.right Einzelpreis
+            th.right Gesamtpreis
+        tbody
+          for item in items
+            tr.border
+              td {{ forloop.counter }}
+              td {{ item.quantity }}
+              td Stück
+              td {{ item.name }}
+              td.right {{ item.price }} €
+              td.right {{ item.total }} €
+      table.no-break
+        tr.border
+          td Nettopreis
+          td.right {{ net }} €
+        tr.border
+          td Zzgl. 7% MwSt.
+          td.right {{ tax }} €
+        tr
+          td
+            strong Rechnungsbetrag
+          td.right
+            strong {{ total }} €
+        tr
+          td(colspan="6")
+            .no-break
+              p.
+                Bitte überweisen Sie den Rechnungsbetrag innerhalb von 7 Tagen auf unser unten genanntes Konto.
+                Für weitere Fragen stehen wir Ihnen sehr gerne zur Verfügung.
+              div Mit freundlichen Grüßen
+              div Jörg Kriminski

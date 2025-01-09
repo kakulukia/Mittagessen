@@ -3,15 +3,17 @@ import re
 from random import choice
 
 import pendulum
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.template.defaultfilters import date
+from django.template.loader import render_to_string
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+from weasyprint import HTML
 
 from meals.models import Day, Meal, Plan, Week, Suggestion, Location
 from meals.serializers import (

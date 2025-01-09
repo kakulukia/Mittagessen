@@ -43,11 +43,6 @@ block content
         )
           v-icon mdi-arrow-right-bold-circle-outline
 
-  .extra-links
-    a(href="/impressum") Impressum
-    br
-    a(href="/datenschutz") Datenschutz
-
   each val in pages
     .page(class={'two': val == 2,})
       .container.speiseplan
@@ -55,10 +50,10 @@ block content
           if week.background and week.published
             img.background(src="{{ week.background }}" :class="{a5:a5}")
           img.logo(src="media/{{ week.location.logo }}")
-          if week.location.id == 1
-            img.qr-code(src="{% static 'img/qr-code.png' %}")
-          else
-            img.qr-code(src="{% static 'img/qr-code-luise.png' %}")
+          img.qr-code(src="{% static 'img/qr-code.png' %}")
+          .webseite
+            span.protocoll https://
+            span emmas-imbiss.de
           //.green-text KW {{ week.kw }}
           .start
             br
@@ -114,6 +109,11 @@ block content
           .footer.red-text
             span WhatsApp: 0152 / 27767327
             span Zusatzstoffe und Allergene bitte beim Personal erfragen
+
+  .extra-links
+    a(href="/impressum") Impressum
+    a(href="/datenschutz") Datenschutz
+
 
 block vue
   script.

@@ -2,7 +2,7 @@ module.exports = {
   transpileDependencies: [
     'vuetify'
   ],
-  publicPath: '/kueche/',
+  publicPath: '/',
   pwa: {
     name: 'Kueche',
     iconPaths: {
