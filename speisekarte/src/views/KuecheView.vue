@@ -29,10 +29,7 @@ div
               :href="this.$root.apiHost + '/admin/'"
             )
               v-icon mdi-cog-outline
-            v-btn.invoices(
-              icon target="_blank"
-              href="abrechnungen"
-            )
+            v-btn.invoices(icon href="abrechnungen")
               v-icon mdi-invoice-text-edit-outline
           span
             v-btn(icon @click="switchWeek(true)")
@@ -78,8 +75,8 @@ div
 </template>
 
 <script>
-import WeekDay from '@/components/WeekDay'
-import Special from '@/components/Special'
+  import WeekDay from '@/components/WeekDay'
+  import Special from '@/components/Special'
 
   export default {
     name: 'Home',

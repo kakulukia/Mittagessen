@@ -1,4 +1,15 @@
+import datetime
+
+from django.db.models import Q
 from django.shortcuts import render
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import serializers
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
+
+from invoices.models import Customer, InvoiceDay, InvoiceMeal
+from invoices.serializers import CustomerSerializer, InvoiceDaySerializer, InvoiceMealSerializer
 
 
 # Create your views here.
@@ -57,3 +68,32 @@ def generate_invoice(request):
 
     return response
     # return render(request, 'invoice.pug', context)
+
+
+class CustomerViewSet(ModelViewSet):
+    queryset = Customer.data.all()
+    serializer_class = CustomerSerializer
+
+    @action(detail=True, methods=['get'], url_path='invoice-days')
+    def invoice_days(self, request, pk=None):
+        customer = self.get_object()
+        # filter for either delivered false or date in the future
+        day_filter = Q(delivered=False) | Q(date__gte=datetime.date.today())
+        return Response(InvoiceDaySerializer(customer.invoice_days.filter(day_filter), many=True).data)
+
+
+class InvoiceDayViewSet(ModelViewSet):
+    queryset = InvoiceDay.objects.all()
+    serializer_class = InvoiceDaySerializer
+
+    @action(detail=True, methods=['get'], url_path='meals')
+    def meals(self, request, pk=None):
+        day = self.get_object()
+        return Response(InvoiceMealSerializer(day.meals.all(), many=True).data)
+
+
+class InvoiceMealViewSet(ModelViewSet):
+    queryset = InvoiceMeal.objects.all()
+    serializer_class = InvoiceMealSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['day']

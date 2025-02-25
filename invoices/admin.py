@@ -5,9 +5,9 @@ from invoices.models import Customer, Invoice
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ["name", "company", "street", "zip", "city", "email"]
+    list_display = ["name", "email"]
     ordering = ["name"]
-    search_fields = ["name", "email", "company"]
+    search_fields = ["name", "email", "address"]
 
 
 @admin.register(Invoice)

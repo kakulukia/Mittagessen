@@ -19,6 +19,7 @@ install()
 
 enable_pug_translations()
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path.cwd()
 SECRET_KEY = secrets.SECRET_KEY
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
     "compressor",
     "corsheaders",
     "django_extensions",
+    "django_filters",
     "django_secrets",
     # "post_office",
     "rest_framework",
@@ -197,12 +199,18 @@ EMAIL_OVERRIDE_ADDRESS = None
 EMAIL_FOOTER = ""
 EMAIL_BACKEND = "post_office.EmailBackend"
 
-SILENCED_SYSTEM_CHECKS = ["debug_toolbar.W006"]
+SILENCED_SYSTEM_CHECKS = ["debug_toolbar.W006", 'ckeditor.W001']
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
-    "DEFAULT_AUTHENTICATION_CLASSES": ["meals.utils.CsrfExemptSessionAuthentication"]
+    "DEFAULT_AUTHENTICATION_CLASSES": ["meals.utils.CsrfExemptSessionAuthentication"],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        # Optional: Hinzufügen von Browsable API, wenn gewünscht
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
 }
 
 JAZZMIN_SETTINGS = {

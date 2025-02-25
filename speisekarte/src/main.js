@@ -58,7 +58,7 @@ Vue.filter('de0', function (value) {
 
 const app = new Vue({
   router,
-  useStore,
+  store: useStore,
   vuetify,
   data: {
     apiHost
@@ -71,7 +71,13 @@ if (!Date.prototype.toISODate) {
   Date.prototype.toISODate = function() {
     return this.getFullYear() + '-' +
       ('0' + (this.getMonth() + 1)).slice(-2) + '-' +
-      ('0' + this.getDate()).slice(-2);
+      ('0' + this.getDate()).slice(-2)
+  }
+}
+if (!Date.prototype.toISOMonth) {
+  Date.prototype.toISOMonth = function() {
+    return this.getFullYear() + '-' +
+      ('0' + (this.getMonth() + 1)).slice(-2)
   }
 }
 Date.prototype.addDays = function(days) {

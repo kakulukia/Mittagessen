@@ -4,7 +4,7 @@ from django.urls import include, path
 from django.views.generic import RedirectView, TemplateView
 from rest_framework import routers
 
-from invoices.views import generate_invoice
+from invoices.views import generate_invoice, CustomerViewSet, InvoiceDayViewSet, InvoiceMealViewSet
 from meals.views import (
     WeekViewSet,
     alexa_today,
@@ -24,6 +24,10 @@ router.register("weeks", WeekViewSet)
 router.register("days", DayViewSet)
 router.register("plans", PlanViewSet)
 router.register("meals", MealViewSet)
+# invoices
+router.register("customers", CustomerViewSet)
+router.register("invoice-days", InvoiceDayViewSet)
+router.register("invoice-meals", InvoiceMealViewSet)
 
 urlpatterns = [
     path(

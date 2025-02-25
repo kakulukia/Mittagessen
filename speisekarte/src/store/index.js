@@ -15,5 +15,11 @@ export const useStore = defineStore('main', {
           this.meals = response.data
       })
     },
+    loadCustomers() {
+      this.api.get('customers')
+        .then((response) => {
+          this.customers = response.data
+      })
+    }
   },
 })

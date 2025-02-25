@@ -1,0 +1,45 @@
+from rest_framework import serializers
+
+from invoices.models import Customer, InvoiceDay, InvoiceMeal
+
+
+class CustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = [
+            "id",
+            "name",
+            "address",
+            "email",
+            "delivery_type",
+        ]
+
+
+class InvoiceDaySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InvoiceDay
+        fields = [
+            "id",
+            "date",
+            "customer",
+            "combining_dates",
+            "delivered",
+        ]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["meals"] = InvoiceMealSerializer(instance.meals.all(), many=True).data
+        return data
+
+
+class InvoiceMealSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InvoiceMeal
+        fields = [
+            "id",
+            "name",
+            "price",
+            "count",
+            "delivered",
+            "day",
+        ]
