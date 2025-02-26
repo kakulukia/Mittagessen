@@ -18,8 +18,9 @@
           v-if="newDay.date"
           :day="newDay"
           :customer="selectedCustomer"
-          @new-day-created="newDayCreated"
+          @new-day-created="newDayCreated()"
           :blockedTimes="blockedTimes"
+          @update="loadInvoiceDays()"
         )
 
 
@@ -97,15 +98,16 @@ export default {
       this.loadInvoiceDays()
     },
     loadInvoiceDays() {
-      console.log('loadInvoiceDays')
+      console.log("loadInvoiceDays")
       this.axios.get(`/customers/${this.selectedCustomer.id}/invoice-days/`)
         .then(response => {
-          this.days = response.data;
+          let days = response.data;
 
           // convert all dates to Date objects
-          this.days.forEach(day => {
+          days.forEach(day => {
             day.date = new Date(day.date);
           });
+          this.days = days
 
         })
         .catch(error => {
@@ -132,7 +134,7 @@ export default {
 
     },
     newDayCreated() {
-      console.log('newDayCreated')
+      console.log("newDayCreated")
       this.newDay = {
         date: '',
         delivered: false,

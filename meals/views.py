@@ -61,6 +61,19 @@ class DayViewSet(ModelViewSet):
     queryset = Day.data.all()
     serializer_class = DaySerializer
 
+    def get_queryset(self):
+        queryset = super().get_queryset().prefetch_related("plans__meal")
+        date_str = self.request.query_params.get("date")
+        if date_str:
+            try:
+                # Parst den String ins Datum (z.B. "2025-02-26")
+                date_obj = pendulum.parse(date_str).date()
+                queryset = queryset.filter(date=date_obj)
+            except Exception:
+                # Hier kannst du auch einen Fehler auslösen, falls das Datum ungültig ist
+                queryset = queryset.none()
+        return queryset
+
 
 class PlanViewSet(ModelViewSet):
     queryset = Plan.data.all()

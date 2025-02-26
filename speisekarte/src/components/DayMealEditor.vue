@@ -25,12 +25,13 @@
     // show existing meals
     v-row.meals(align="center" dense v-for="meal in day.meals" :key="meal.id")
       .col
-        v-select(
+        v-combobox(
+          v-model="meal.name"
           :items="mealItems"
           label="Gericht"
-          v-model="meal.name"
-          @blur="updateMeal(meal)"
+          clearable
           hide-details
+          @change="updateMeal(meal)"
         )
       .col-2
         v-combobox(
@@ -40,7 +41,7 @@
           type="number"
           min="1"
           hide-details
-          @blur="updateMeal(meal)"
+          @change="updateMeal(meal)"
         )
       .col-2
         v-text-field(
@@ -64,11 +65,14 @@
     // add option to add a new meal
     v-row(align="center" dense)
       .col
-        v-select(
+        v-combobox(
+          v-model="newMeal.name"
           :items="mealItems"
           label="Gericht"
-          v-model="newMeal.name"
-          @blur="updateMeal(newMeal)"
+          clearable
+          hide-details
+          dense
+          @blur="updateMeal"
         )
       .col-2
         v-combobox(
@@ -93,6 +97,16 @@
         )
       .col-auto
         .spacer-delivered
+
+    v-btn-toggle.loadPlans(dense borderless v-if="!plannedDay")
+      v-btn(@click="loadPlan")
+        v-icon mdi-silverware-variant
+    .plannedDay(v-if="plannedDay")
+      div
+        strong Geplanter Tag
+      div.plannedMeal(v-for="plan in plannedDay.plans" :key="plan.id")
+        span.pointer(@click="newMealFromPlan(plan)") {{ plan.meal.name }}
+
 </template>
 
 <script>
@@ -127,7 +141,9 @@ export default {
       // Auswahlmöglichkeiten für Gerichte
       mealItems: ['Mittagessen', 'Mittagessen 2', 'Eintopf', 'Nachtisch'],
       // Auswahlmöglichkeiten für die Anzahl
-      countItems: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      countItems: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      plannedDay: undefined,
+      planTimer: undefined,
     }
   },
   computed: {
@@ -150,6 +166,8 @@ export default {
       }
     },
     formattedDate() {
+      // if this.day.date is a string, return ''
+      if (typeof this.day.date === 'string') return ''
       if (!this.day.combining_dates) {
         return this.day.date.toLocaleDateString('de-DE', {
           weekday: 'short',
@@ -164,22 +182,22 @@ export default {
         })
       }
     },
-    blockedDays() {
-      return new Set(
-        this.existingDays
-          .filter(day => !day.combining_dates)
-          .map(day => new Date(day.date).toISODate())
-      )
-    },
-    blockedMonths() {
-      return new Set(
-        this.existingDays
-          .filter(day => day.combining_dates)
-          .map(day => new Date(day.date).toISOMonth())
-      )
-    }
   },
   methods: {
+    newMealFromPlan(plan) {
+      if (this.newMeal.name == plan.meal.name) {
+        this.newMeal.count += 1
+      } else {
+        this.newMeal = {
+          name: plan.meal.name,
+          count: 1,
+          price: plan.price,
+          delivered: false,
+        }
+      }
+      clearTimeout(this.planTimer)
+      this.planTimer = setTimeout(() => { this.updateMeal(this.newMeal) }, 2000)
+    },
     // Löscht den Tag und alle zugehörigen Meals
     deleteDay() {
       this.axios.delete(`invoice-days/${this.day.id}/`)
@@ -193,12 +211,10 @@ export default {
     },
     // updateMeal wird via onBlur der Meal-Felder aufgerufen
     updateMeal(meal) {
-      console.log('updateMeal', meal);
       // Prüfe, ob alle erforderlichen Felder im newMeal gesetzt sind
       if (meal.name && meal.price) {
         // Falls der Tag noch keine id besitzt, muss er zuerst angelegt werden
         if (!this.day.id) {
-          console.log("keine id")
           // Falls day.customer noch nicht gesetzt ist, übernehmen wir den Kunden
           if (!this.day.customer && this.customer && this.customer.id) {
             this.day.customer = this.customer.id;
@@ -208,13 +224,9 @@ export default {
           this.day.date = formattedDate;
           this.axios.post('invoice-days/', this.day)
             .then(response => {
-              console.log("tag gespeichert")
               // Setze die zurückgegebene ID in den day
               this.day.id = response.data.id
-              console.log("jetzt versuchen wirs noch mal")
               this.updateMeal(meal)
-              // Optional: Emitte ein Event, wenn ein neuer Tag erstellt wurde
-              this.$emit('new-day-created', this.day);
             })
         } else {
 
@@ -225,29 +237,28 @@ export default {
           if (meal.id) {
 
             // Meal löschen, wenn count 0 ist
-            if(meal.count === 0) {
+            if(meal.count == 0) {
               this.axios.delete(`invoice-meals/${meal.id}/`)
                 .then(() => {
                   if (this.day.meals.length === 1) {
-                    this.deleteDay();
-                  } else { this.loadMeals(); }
+                    this.deleteDay()
+                  } else { this.loadMeals() }
                 })
             } else {
-              // Meal existiert bereits – Update via PATCH
               this.axios.patch(`invoice-meals/${meal.id}/`, meal)
                 .then(() => {
-                  this.loadMeals();
+                  console.log("Meal updated")
+                  this.loadMeals()
                 })
             }
 
           } else {
 
-            // Neues Meal – per POST erstellen
             this.axios.post('invoice-meals/', meal)
               .then(() => {
-                // Nach erfolgreichem Speichern das newMeal-Formular zurücksetzen
-                this.newMeal = { name: '', count: 1, price: '', delivered: false };
-                this.$emit('update');
+                this.newMeal = { name: '', count: 1, price: '', delivered: false }
+                this.loadMeals()
+                this.$emit('new-day-created')
               })
           }
         }
@@ -257,7 +268,6 @@ export default {
     loadMeals() {
       this.axios.get(`invoice-days/${this.day.id}/meals/`)
         .then(response => {
-          // Aktualisiere den Tag mit der neuen Liste der Meals
           this.$set(this.day, 'meals', response.data);
         })
     },
@@ -284,6 +294,7 @@ export default {
       let ownMonth = date.toISOMonth()
       let ownDate = date.toISODate()
       const direction = plus ? 1 : -1
+      this.plannedDay = undefined
 
       // check if ownMonth or ownDate is in blockedTimes
       // while this is true add a day to the date
@@ -296,7 +307,16 @@ export default {
         ownMonth = date.toISOMonth()
         ownDate = date.toISODate()
       }
+      this.loadPlan()
       return date
+    },
+    loadPlan() {
+      this.axios.get('days/?date=' + this.day.date.toISODate())
+        .then(response => {
+          if (response.data.length) {
+            this.plannedDay = response.data[0]
+          }
+        })
     },
     toggleCombiningDates(day) {
       day.combining_dates = !day.combining_dates;
@@ -310,8 +330,10 @@ export default {
     }
   },
   created () {
-    let newDate = new Date(this.day.date)
-    this.day.date = this.checkDate(newDate)
+    if (!this.day.id) {
+      let newDate = new Date(this.day.date)
+      this.day.date = this.checkDate(newDate)
+    }
   }
 };
 </script>
@@ -327,4 +349,10 @@ export default {
 
 .spacer-delivered
   width: 48px
+
+.plannedMeal
+  padding: 8px 0
+
+.pointer
+  cursor: pointer
 </style>

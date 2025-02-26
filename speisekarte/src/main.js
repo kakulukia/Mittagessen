@@ -25,8 +25,6 @@ if (window.location.hostname === 'localhost' || window.location.hostname.startsW
 let apiHost = apiUrl
 apiUrl += '/api'
 
-console.log(apiUrl)
-
 const client = wrapper(axios.create({
     baseURL: apiUrl,
     jar,

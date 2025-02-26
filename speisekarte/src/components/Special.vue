@@ -62,7 +62,6 @@
         let searchText = this.search ? this.search.trim() : '';
         const box = this.$refs.newEntry
         let itemFound = box.filteredItems.length;
-        console.log(itemFound)
         if (!itemFound && searchText.length) {
           this.axios.post('meals/', {name: searchText})
             .then((response) => {

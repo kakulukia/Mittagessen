@@ -57,7 +57,7 @@ class InvoiceMeal(BaseModel):
     class Meta:
         verbose_name = "Rechnungposition"
         verbose_name_plural = "Rechnungspositionen"
-        ordering = ["name"]
+        ordering = ["created"]
 
     def __str__(self):
         return self.name
