@@ -5,7 +5,7 @@ from django.db.models import OuterRef, Subquery
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from meals.models import Day, Meal, Plan, Week, Suggestion, Location, Stats
+from meals.models import Day, Meal, Plan, Week, Suggestion, Location
 
 
 # @admin.register(Stats)

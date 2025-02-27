@@ -1,7 +1,5 @@
-import datetime
 
 from django.db import models
-from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django_undeletable.models import BaseModel
 from django_weasyprint.utils import django_url_fetcher

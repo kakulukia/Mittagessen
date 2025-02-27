@@ -1,8 +1,7 @@
 from datetime import date
 
 import pendulum
-from django.utils.html import strip_tags
-from rest_framework.authentication import BasicAuthentication, SessionAuthentication
+from rest_framework.authentication import SessionAuthentication
 
 
 def pendulum_instance(value: date):

@@ -11,40 +11,39 @@ homepage = "https://github.com/kakulukia/django-default-project"
 package-mode = false
 
 [tool.poetry.dependencies]
-django = "^4.0"
+django = "^5.1.6"
 django-secrets = "^1.0.2"
 django-undeletable = "1.1.2"
 django-extensions = "^3.1.1"
 dj-static = "^0.0.6"
 django-compressor = "^4.1"
-django-axes = "^5.2.0"
+django-axes = "^7.0.2"
 pypugjs = "^5.8.1"
 django-post-office = "^3.2.1"
 uwsgidecorators = "^1.1.0"
 huepy = "^1.2.1"
 djangorestframework = "^3.11.0"
 requests = "^2.22.0"
-pendulum = "^2.0.5"
-Pillow = "^9.0.1"
-python = "^3.9.9"
-django-cors-headers = "^3.13.0"
+pendulum = "^3.0.0"
+Pillow = "^11.1.0"
+python = "^3.10"
+django-cors-headers = "^4.7.0"
 icecream = "^2.1.3"
-libsass = "^0.22.0"
 django-sass-processor = "^1.2.1"
-gunicorn = "^20.1.0"
-django-jazzmin = "^2.5.0"
+gunicorn = "^23.0.0"
+django-jazzmin = "^3.0.1"
 fabric3 = {git = "https://github.com/kakulukia/fabric3"}
 django-ckeditor = "^6.7.1"
-weasyprint = "^63.1"
-django-filter = {extras = ["template"], version = "^24.3"}
+weasyprint = "^64.1"
+django-filter = "^25.1"
 django-weasyprint = "^2.3.1"
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.10.0"
-django-debug-toolbar = "^4.0.0"
+django-debug-toolbar = "^5.0.1"
 ipdb = "^0.13.6"
-djdt-flamegraph = "^0.2.12"
 django-browser-reload = "^1.6.0"
+ruff = "^0.9.7"
+ipython = "^8.32.0"
 
 [tool.black]
 line-length = 99

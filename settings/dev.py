@@ -2,7 +2,7 @@ from .common import *  # noqa
 
 DEBUG = True
 
-ALLOWED_HOSTS += ["localhost", "127.0.0.1", "0.0.0.0"]
+ALLOWED_HOSTS += ["localhost", "127.0.0.1", "0.0.0.0"]  # noqa
 
 INSTALLED_APPS += [  # noqa
     # debugging
