@@ -10,58 +10,55 @@ html(lang='de')
       //link(href='static/sass/invoice.css' rel="stylesheet" type="text/css")
   body
     div.recipient
-        .gray Jörg Kriminski, Richard-Wagner-Str. 55, 15732 Schulzendorf
-        div  {{ recipient.name }}
-        div  {{ recipient.street }}
-        div  {{ recipient.zip }} {{ recipient.city }}
+        .gray Emmas Imbiss Jörg Kriminski, Richard-Wagner-Str. 55, 15732 Schulzendorf
+        div.address  {{ invoice.customer.address }}
 
     div.details
       img.logo(src="{% static 'img/logo.png' %}" alt="Logo")
       div
         strong Datum:
-        span {{ date }}
+        span {{ invoice.date|date:"d.m.Y" }}
       div
         strong Rechnungsnummer:
-        span  {{ invoice_number }}
+        span  {{ invoice.invoice_number }}
       .extra Rechnungsdatum entspricht Liefer-/Leistungsdatum
 
     main
       h1 Rechnung
       p.raw.
-        Sehr geehrter Herr Müller,
-
-        vielen Dank für Ihren Auftrag. Vereinbarungsgemäß berechnen wir Ihnen folgende Leistungen:
+        Mitagessen für den Monat {{ invoice.date|date:"F Y" }}
 
       table
         thead
           tr.gray
-            th Position
+            th Datum
             th Anzahl
-            th Einheit
             th Bezeichnung
             th.right Einzelpreis
             th.right Gesamtpreis
         tbody
-          for item in items
-            tr.border
-              td {{ forloop.counter }}
-              td {{ item.quantity }}
-              td Stück
-              td {{ item.name }}
-              td.right {{ item.price }} €
-              td.right {{ item.total }} €
+          for day in invoice.days.all
+            for meal in day.meals.all
+              tr.border
+                td
+                  if forloop.counter == 1
+                    span {{ day.date|date:"d.m.Y" }}
+                td {{ meal.count }}
+                td {{ meal.name }}
+                td.right {{ meal.single_net_price }} €
+                td.right {{ meal.net_price }} €
       table.no-break
         tr.border
           td Nettopreis
-          td.right {{ net }} €
+          td.right {{ invoice.net }} €
         tr.border
           td Zzgl. 7% MwSt.
-          td.right {{ tax }} €
+          td.right {{ invoice.tax }} €
         tr
           td
             strong Rechnungsbetrag
           td.right
-            strong {{ total }} €
+            strong {{ invoice.total }} €
         tr
           td(colspan="6")
             .no-break

@@ -5,7 +5,7 @@
       v-row
         .col
           h1 {{ selectedCustomer.name }}
-            v-btn(@click="selectedCustomer = null" icon)
+            v-btn(@click="resetView()" icon)
               v-icon mdi-close
         .col-auto
           v-btn-toggle(dense borderless)
@@ -13,13 +13,13 @@
               v-icon mdi-calendar-blank
             v-btn(@click="loadInvoices()")
               v-icon mdi-invoice-text-clock-outline
-            v-btn
-              a(:href="`${apiHost}/api/customers/${selectedCustomer.id}/generate-invoice/`" target="_blank")
-                v-icon mdi-invoice-text-plus-outline
+            v-btn(@click="generateNewInvoice()")
+              v-icon mdi-invoice-text-plus-outline
       .invoices(v-if="showInvoices")
         div Rechnungen
         br
-        v-list
+        div(v-if="invoices.length === 0") Keine Rechnungen vorhanden
+        v-list(v-if="invoices.length !== 0")
           v-list-item(v-for="invoice in invoices" :key="invoice.id")
             v-list-item-content
               v-list-item-title {{ invoice.date }}
@@ -50,7 +50,7 @@
         )
 
 
-    .customers(v-if="!createNewCustomer && !selectedCustomer")
+    .customers(v-if="!editCustomer && !selectedCustomer")
 
       v-row(align="center")
         .col
@@ -59,19 +59,26 @@
           v-btn-toggle(dense borderless)
             v-btn(@click="create") Neu
 
-      v-list
-        v-list-item.customer(v-for="customer in filteredCustomers" :key="customer.id" @click="selectCustomer(customer)")
-          v-list-item-icon
+      v-list.customerList
+        v-list-item.customer(v-for="customer in filteredCustomers" :key="customer.id")
+          v-list-item-icon.pointer(@click="selectCustomer(customer)")
             v-icon(v-if="customer.delivery_type === 'delivery'") mdi-truck-delivery-outline
             v-icon(v-if="customer.delivery_type === 'takeaway'") mdi-food-takeout-box-outline
-          v-list-item-content
+          v-list-item-content.pointer(@click="selectCustomer(customer)")
             v-list-item-title {{ customer.name }}
-            v-list-item-subtitle {{ customer.email }}
+            v-list-item-subtitle {{ customer.short_address }}
+          v-list-item-action
+            v-btn-toggle(dense borderless)
+              v-btn(@click="setCustomer(customer)" @clicik.stop="true")
+                v-icon mdi-pencil
 
 
+    .newCustomer(v-if="editCustomer")
+      h4(v-if="!newCustomer.id") Neuen Kunden anlegen
+      h4(v-if="newCustomer.id") Kunden bearbeiten
+      br
+      br
 
-    .newCustomer(v-if="createNewCustomer")
-      h4 Neuen Kunden anlegen
       v-textarea(label="Adresse" rows="4" v-model="newCustomer.address")
       v-text-field(label="eMail" v-model="newCustomer.email")
       // wee need radio otion for delivery type
@@ -80,9 +87,9 @@
         v-radio(label="Selbstabholer" value="takeaway")
       v-row
         .col-auto
-          v-btn(@click="addCustomer") Anlegen
+          v-btn(@click="saveCustomer") Speichern
         .col-auto
-          v-btn(@click="createNewCustomer = false") Abbrechen
+          v-btn(@click="editCustomer = false") Abbrechen
 
 </template>
 
@@ -97,7 +104,7 @@ export default {
   },
   data () {
       return {
-        createNewCustomer: false,
+        editCustomer: false,
         newCustomer: {
           address: '',
           email: '',
@@ -122,6 +129,25 @@ export default {
      this.loadCustomers()
   },
   methods: {
+    generateNewInvoice() {
+      this.axios.get(`/customers/${this.selectedCustomer.id}/generate-invoice/`)
+        .then((response) => {
+          let invoice_id = response.data.invoice_id
+          window.open(`${this.apiHost}/api/invoices/${invoice_id}/pdf/`, '_blank')
+          this.loadInvoiceDays()
+        }).catch((error) => {
+          let message = error.response.data.message
+          alert(message)
+        });
+    },
+    setCustomer(customer) {
+      this.newCustomer = customer
+      this.editCustomer = true
+    },
+    resetView() {
+      this.selectedCustomer = null
+      this.showInvoices = false
+    },
     loadInvoices() {
       this.showInvoices = true
       this.axios.get(`/customers/${this.selectedCustomer.id}/invoices/`)
@@ -151,7 +177,7 @@ export default {
         });
     },
     create() {
-      this.createNewCustomer = true
+      this.editCustomer = true
     },
     createNewDay() {
       this.loadInvoiceDays()
@@ -178,19 +204,28 @@ export default {
       }
       this.loadInvoiceDays()
     },
-    addCustomer() {
-      this.axios.post('customers/', this.newCustomer)
-        .then((response) => {
-          this.createNewCustomer = false
-          this.newCustomer = {
-            address: '',
-            email: '',
-            deliveryType: '',
-          }
-
-          this.loadCustomers()
-          this.selectedCustomer = response.data
-        })
+    resetCustomer() {
+      this.editCustomer = false
+      this.newCustomer = {
+        address: '',
+        email: '',
+        deliveryType: '',
+      }
+    },
+    saveCustomer() {
+      if (this.newCustomer.id) {
+        this.axios.put(`customers/${this.newCustomer.id}/`, this.newCustomer)
+          .then(() => {
+            this.resetCustomer()
+            this.loadCustomers()
+          })
+      } else {
+        this.axios.post('customers/', this.newCustomer)
+          .then(() => {
+            this.resetCustomer()
+            this.loadCustomers()
+          })
+      }
     },
     loadCustomers() {
       this.axios.get('customers/', ).then((response) => {
@@ -224,4 +259,9 @@ export default {
   color: lightgray
   &.delivered
     color: green
+.customer:hover
+  background-color: #f0f0f0
+
+.pointer
+  cursor: pointer
 </style>

@@ -14,6 +14,11 @@ class CustomerSerializer(serializers.ModelSerializer):
             "delivery_type",
         ]
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["short_address"] = ', '.join(instance.address.split("\n")[1:]).replace(', ,', ',')
+        return data
+
 
 class InvoiceDaySerializer(serializers.ModelSerializer):
     class Meta:

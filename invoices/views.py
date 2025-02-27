@@ -18,22 +18,24 @@ class CustomerViewSet(ModelViewSet):
     @action(detail=True, methods=['get'], url_path='invoice-days')
     def invoice_days(self, request, pk=None):
         customer = self.get_object()
-        # filter for either delivered false or date in the future
-        day_filter = Q(delivered=False) | Q(date__gte=datetime.date.today())
-        return Response(InvoiceDaySerializer(customer.invoice_days.filter(day_filter), many=True).data)
+        qs = customer.invoice_days.filter(invoice__isnull=True)
+        return Response(InvoiceDaySerializer(qs, many=True).data)
 
     @action(detail=True, methods=['get'], url_path='generate-invoice')
     def generate_invoice(self, request, pk=None):
         customer = self.get_object()
 
-        new_invoice = Invoice.create_from_open_days(customer)
-        if new_invoice is None:
-            return Response({"error": "No open invoice days available for invoicing."}, status=400)
-        pdf_data = new_invoice.generate_pdf()
+        # Check if there are undelivered days in the month to be invoiced
+        invoice_days = customer.invoice_days.filter(invoice__isnull=True)
+        if not invoice_days.exists():
+            return Response({"message": "Es gibt keine offenen Tage für eine neue Rechnung."}, status=400)
+        first = invoice_days.first().date
+        undelivered = invoice_days.filter(date__month=first.month, date__year=first.year, delivered=False)
+        if undelivered.exists():
+            return Response({"message": "Es gibt noch offene Tage. Die Rechnung kann noch nicht erstellt werden."}, status=400)
 
-        response = HttpResponse(pdf_data, content_type='application/pdf')
-        response['Content-Disposition'] = 'inline; filename="Rechnung.pdf"'
-        return response
+        new_invoice = Invoice.create_from_open_days(customer)
+        return Response({"invoice_id": new_invoice.id})
 
     @action(detail=True, methods=['get'], url_path='invoices')
     def invoices(self, request, pk=None):

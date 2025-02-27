@@ -1,3 +1,4 @@
+from decimal import Decimal
 
 from django.db import models
 from django.template.loader import render_to_string
@@ -8,12 +9,7 @@ from weasyprint import HTML
 
 # Create your models here.
 class Customer(BaseModel):
-    # salutation = models.CharField("Anrede", max_length=200, choices=[("Herr", "Herr"), ("Frau", "Frau")])
-    # company = models.CharField("Firma", max_length=200, blank=True)
     name = models.CharField(max_length=200, blank=True)
-    # street = models.CharField("Straße", max_length=200)
-    # zip = models.CharField("PLZ", max_length=5)
-    # city = models.CharField("Stadt", max_length=200)
     address = models.TextField("Adresse")
 
     email = models.EmailField("E-Mail", blank=True)
@@ -68,6 +64,14 @@ class InvoiceMeal(BaseModel):
     def __str__(self):
         return self.name
 
+    @property
+    def single_net_price(self):
+        return round(self.price / Decimal(1.07), 2)
+
+    @property
+    def net_price(self):
+        return self.single_net_price * self.count
+
 
 class Invoice(BaseModel):
     invoice_number = models.CharField("Rechnungsnummer", max_length=200)
@@ -83,7 +87,7 @@ class Invoice(BaseModel):
         ordering = ["-date"]
 
     def __str__(self):
-        return f"{self.invoice_number} ({self.date})"
+        return f"{self.invoice_number} ({self.date} - {self.total} €)"
 
     @classmethod
     def create_from_open_days(cls, customer):
@@ -110,15 +114,13 @@ class Invoice(BaseModel):
             invoice_number='',
             date=invoice_date,
             customer=customer,
-            net=0,
-            tax=0,
-            total=0
         )
 
         new_invoice.invoice_number = f"{invoice_date.year}-{new_invoice.pk + 1000}"
         new_invoice.save()
 
         month_open_days.update(invoice=new_invoice)
+        new_invoice.update_prices()
 
         return new_invoice
 
@@ -126,39 +128,8 @@ class Invoice(BaseModel):
         """
         Generate a PDF for this invoice using sample items.
         """
-        items = [
-            {'name': 'Mittagessen', 'quantity': 4, 'price': 8, 'total': 32},
-            {'name': 'Suppen', 'quantity': 1, 'price': 5, 'total': 15},
-            {'name': 'Mittagessen', 'quantity': 4, 'price': 8, 'total': 32},
-            {'name': 'Suppen', 'quantity': 1, 'price': 5, 'total': 15},
-            {'name': 'Suppen', 'quantity': 1, 'price': 5, 'total': 15},
-            {'name': 'Suppen', 'quantity': 1, 'price': 5, 'total': 15},
-            {'name': 'Mittagessen', 'quantity': 4, 'price': 8, 'total': 32},
-            {'name': 'Suppen', 'quantity': 1, 'price': 5, 'total': 15},
-            {'name': 'Mittagessen', 'quantity': 4, 'price': 8, 'total': 32},
-            {'name': 'Suppen', 'quantity': 1, 'price': 5, 'total': 15},
-            {'name': 'Mittagessen', 'quantity': 4, 'price': 8, 'total': 32},
-            {'name': 'Suppen', 'quantity': 1, 'price': 5, 'total': 15},
-            {'name': 'Suppen', 'quantity': 1, 'price': 5, 'total': 15},
-            {'name': 'Mittagessen', 'quantity': 4, 'price': 8, 'total': 32},
-        ]
-        net = sum(item['total'] for item in items)
-        tax = round(net * 0.07, 2)
-        total = net + tax
-
         context = {
-            'invoice_number': self.invoice_number,
-            'date': self.date.strftime('%d.%m.%Y'),
-            'items': items,
-            'net': net,
-            'tax': tax,
-            'total': total,
-            'recipient': {
-                'name': 'Max Mustermann',
-                'street': 'Musterstraße 12',
-                'zip': '12345',
-                'city': 'Musterstadt',
-            },
+            'invoice': self,
         }
 
         html_string = render_to_string('invoice.pug', context)
@@ -170,3 +141,17 @@ class Invoice(BaseModel):
         pdf_data = html.write_pdf()
         return pdf_data
 
+    def update_prices(self):
+
+        # update net, tax total
+        net = sum(sum(meal.net_price for meal in day.meals.all()) for day in self.days.all())
+        tax = round(net * Decimal(0.07), 2)
+        total = net + tax
+
+        if self.customer.delivery_type == "delivery":
+            total += Decimal(5)
+
+        self.net = net
+        self.tax = tax
+        self.total = total
+        self.save()

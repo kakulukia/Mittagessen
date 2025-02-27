@@ -23,7 +23,6 @@ DEBUG_TOOLBAR_PANELS = (
     "debug_toolbar.panels.signals.SignalsPanel",
     "debug_toolbar.panels.logging.LoggingPanel",
     "debug_toolbar.panels.redirects.RedirectsPanel",
-    "djdt_flamegraph.FlamegraphPanel",  # needs --nothreading --noreload
 )
 
 DEBUG_TOOLBAR_CONFIG = {
@@ -40,7 +39,6 @@ DEBUG_TOOLBAR_CONFIG = {
         "debug_toolbar.panels.signals.SignalsPanel",
         "debug_toolbar.panels.logging.LoggingPanel",
         "debug_toolbar.panels.redirects.RedirectsPanel",
-        "djdt_flamegraph.FlamegraphPanel",
     )
 }
 
