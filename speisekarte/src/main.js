@@ -58,10 +58,10 @@ const app = new Vue({
   router,
   store: useStore,
   vuetify,
-  data: {
+  pinia,
+  provide: {
     apiHost
   },
-  pinia,
   render: h => h(App)
 })
 

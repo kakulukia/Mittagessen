@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from invoices.models import Customer, InvoiceDay, InvoiceMeal
+from invoices.models import Customer, InvoiceDay, InvoiceMeal, Invoice
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -49,3 +49,18 @@ class InvoiceMealSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data["showComment"] = False
         return data
+
+
+class InvoiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invoice
+        fields = [
+            "id",
+            "invoice_number",
+            "date",
+            "customer",
+            "net",
+            "tax",
+            "total",
+        ]
+

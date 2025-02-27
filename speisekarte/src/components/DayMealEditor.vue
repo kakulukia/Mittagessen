@@ -76,7 +76,7 @@
         v-combobox(
           v-model="newMeal.name"
           :items="mealItems"
-          label="Gericht"
+          label="Neues Gericht"
           clearable
           hide-details
           dense
@@ -322,6 +322,8 @@ export default {
     toggleDelivered() {
       // Wenn der Tag auf delivered gesetzt wird, sorgt der computed setter dafür, dass alle Meals ebenfalls delivered true sind
       this.allMealsDelivered = !this.day.delivered;
+      this.axios.patch(`invoice-days/${this.day.id}/`, { delivered: this.day.delivered }).then(() => {
+      });
     },
     toggleMealDelivered(meal) {
       meal.delivered = !meal.delivered;

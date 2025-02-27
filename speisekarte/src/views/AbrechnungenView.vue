@@ -2,10 +2,35 @@
   .container
     h1(v-if="!selectedCustomer") Kundenübersicht
     .overview(v-if="selectedCustomer")
-      h1 {{ selectedCustomer.name }}
-        v-btn(@click="selectedCustomer = null" icon)
-          v-icon mdi-close
-      .days
+      v-row
+        .col
+          h1 {{ selectedCustomer.name }}
+            v-btn(@click="selectedCustomer = null" icon)
+              v-icon mdi-close
+        .col-auto
+          v-btn-toggle(dense borderless)
+            v-btn(@click="showInvoices = false")
+              v-icon mdi-calendar-blank
+            v-btn(@click="loadInvoices()")
+              v-icon mdi-invoice-text-clock-outline
+            v-btn
+              a(:href="`${apiHost}/api/customers/${selectedCustomer.id}/generate-invoice/`" target="_blank")
+                v-icon mdi-invoice-text-plus-outline
+      .invoices(v-if="showInvoices")
+        div Rechnungen
+        br
+        v-list
+          v-list-item(v-for="invoice in invoices" :key="invoice.id")
+            v-list-item-content
+              v-list-item-title {{ invoice.date }}
+              v-list-item-subtitle {{ invoice.total }} €
+            v-list-item-action
+              v-btn-toggle(dense borderless)
+                v-btn
+                  a(:href="`${apiHost}/api/invoices/${invoice.id}/pdf/`" target="_blank")
+                    v-icon mdi-file-download-outline
+
+      .days(v-if="!showInvoices")
         div Tagesübersicht
         br
 
@@ -66,6 +91,7 @@ import DayMealEditor from '@/components/DayMealEditor';
 
 export default {
   name: 'AbrechnungenView',
+  inject: ['apiHost'],
   components: {
     DayMealEditor,
   },
@@ -87,6 +113,8 @@ export default {
           combining_dates: false,
         },
         toggle_exclusive: 2,
+        showInvoices: false,
+        invoices: [],
       }
     },
 
@@ -94,6 +122,13 @@ export default {
      this.loadCustomers()
   },
   methods: {
+    loadInvoices() {
+      this.showInvoices = true
+      this.axios.get(`/customers/${this.selectedCustomer.id}/invoices/`)
+        .then(response => {
+          this.invoices = response.data
+        })
+    },
     selectCustomer(customer) {
       this.selectedCustomer = customer
       this.loadInvoiceDays()

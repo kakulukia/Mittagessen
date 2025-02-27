@@ -4,7 +4,7 @@ from django.urls import include, path
 from django.views.generic import RedirectView, TemplateView
 from rest_framework import routers
 
-from invoices.views import generate_invoice, CustomerViewSet, InvoiceDayViewSet, InvoiceMealViewSet
+from invoices.views import CustomerViewSet, InvoiceDayViewSet, InvoiceMealViewSet, InvoiceViewSet
 from meals.views import (
     WeekViewSet,
     alexa_today,
@@ -28,6 +28,7 @@ router.register("meals", MealViewSet)
 router.register("customers", CustomerViewSet)
 router.register("invoice-days", InvoiceDayViewSet)
 router.register("invoice-meals", InvoiceMealViewSet)
+router.register("invoices", InvoiceViewSet)
 
 urlpatterns = [
     path(
@@ -45,7 +46,6 @@ urlpatterns = [
     path("create-suggestion/", create_suggestion),
     path("impressum", TemplateView.as_view(template_name="imprint.pug")),
     path("datenschutz", TemplateView.as_view(template_name="privacy.pug")),
-    path('invoice/', generate_invoice, name='generate_invoice'),
 ]
 
 if settings.DEBUG:

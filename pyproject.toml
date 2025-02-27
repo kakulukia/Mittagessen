@@ -37,6 +37,7 @@ fabric3 = {git = "https://github.com/kakulukia/fabric3"}
 django-ckeditor = "^6.7.1"
 weasyprint = "^63.1"
 django-filter = {extras = ["template"], version = "^24.3"}
+django-weasyprint = "^2.3.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
