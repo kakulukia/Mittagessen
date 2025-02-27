@@ -1,6 +1,6 @@
 <template lang="pug">
   .day(v-if="day.date")
-    v-row(align="center" dense)
+    v-row.dayDisplay(align="center" dense)
       .col
         strong {{ formattedDate }}
       .col-auto
@@ -18,48 +18,56 @@
           )
             v-icon mdi-calendar-month-outline
           v-btn.delivery(
-            v-if="day.id"
+            v-if="day.id && day.date < new Date()"
             :class="{delivered: day.delivered}"
             @click="toggleDelivered") ✓
 
     // show existing meals
-    v-row.meals(align="center" dense v-for="meal in day.meals" :key="meal.id")
-      .col
-        v-combobox(
-          v-model="meal.name"
-          :items="mealItems"
-          label="Gericht"
-          clearable
-          hide-details
-          @change="updateMeal(meal)"
-        )
-      .col-2
-        v-combobox(
-          v-model="meal.count"
-          :items="countItems"
-          label="Anzahl"
-          type="number"
-          min="1"
-          hide-details
-          @change="updateMeal(meal)"
-        )
-      .col-2
-        v-text-field(
-          v-model="meal.price"
-          label="Preis"
-          type="number"
-          min="0"
-          step="0.50"
-          suffix="€"
-          @blur="updateMeal(meal)"
-          hide-details
-        )
-      .col-auto
-        v-btn-toggle(dense borderless)
-          v-btn.delivery(
-            :class="{delivered: meal.delivered}"
-            @click="toggleMealDelivered(meal); updateMeal(meal)"
-          ) ✓
+    div(v-for="meal in day.meals" :key="meal.id")
+      v-row.meals(align="center" dense :class="{withComment: meal.showComment}")
+        .col
+          v-combobox(
+            v-model="meal.name"
+            :items="mealItems"
+            label="Gericht"
+            clearable
+            hide-details
+            @change="updateMeal(meal)"
+          )
+        .col-auto
+          v-btn-toggle(dense borderless)
+            v-btn(@click="meal.showComment = !meal.showComment" :color="meal.comment ? 'yellow' : 'default'")
+              v-icon mdi-comment-alert-outline
+        .col-2
+          v-combobox(
+            v-model="meal.count"
+            :items="countItems"
+            label="Anzahl"
+            type="number"
+            min="1"
+            hide-details
+            @change="updateMeal(meal)"
+          )
+        .col-2
+          v-text-field(
+            v-model="meal.price"
+            label="Preis"
+            type="number"
+            min="0"
+            step="0.50"
+            suffix="€"
+            @blur="updateMeal(meal)"
+            hide-details
+          )
+      v-expand-transition
+        v-row.withComment.comment(align="center" dense v-if="meal.showComment")
+          .col
+            v-text-field(
+              v-model="meal.comment"
+              label="Änderungswünsche"
+              hide-details
+              @blur="updateMeal(meal)"
+            )
 
 
     // add option to add a new meal
@@ -95,8 +103,6 @@
           suffix="€"
           @blur="updateMeal(newMeal)"
         )
-      .col-auto
-        .spacer-delivered
 
     v-btn-toggle.loadPlans(dense borderless v-if="!plannedDay")
       v-btn(@click="loadPlan")
@@ -130,7 +136,6 @@ export default {
   },
   data() {
     return {
-      // Formularzustand für ein neues Meal – immer pro Tag vorhanden
       newMeal: {
         name: '',
         count: 1,
@@ -138,9 +143,7 @@ export default {
         delivered: false,
         // day wird später gesetzt via: this.newMeal.day = this.day.id
       },
-      // Auswahlmöglichkeiten für Gerichte
       mealItems: ['Mittagessen', 'Mittagessen 2', 'Eintopf', 'Nachtisch'],
-      // Auswahlmöglichkeiten für die Anzahl
       countItems: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       plannedDay: undefined,
       planTimer: undefined,
@@ -196,9 +199,8 @@ export default {
         }
       }
       clearTimeout(this.planTimer)
-      this.planTimer = setTimeout(() => { this.updateMeal(this.newMeal) }, 2000)
+      this.planTimer = setTimeout(() => { this.updateMeal(this.newMeal) }, 1000)
     },
-    // Löscht den Tag und alle zugehörigen Meals
     deleteDay() {
       this.axios.delete(`invoice-days/${this.day.id}/`)
         .then(() => {
@@ -209,7 +211,6 @@ export default {
           console.error("Fehler beim Löschen des Tages:", error);
         });
     },
-    // updateMeal wird via onBlur der Meal-Felder aufgerufen
     updateMeal(meal) {
       // Prüfe, ob alle erforderlichen Felder im newMeal gesetzt sind
       if (meal.name && meal.price) {
@@ -247,8 +248,6 @@ export default {
             } else {
               this.axios.patch(`invoice-meals/${meal.id}/`, meal)
                 .then(() => {
-                  console.log("Meal updated")
-                  this.loadMeals()
                 })
             }
 
@@ -264,7 +263,6 @@ export default {
         }
       }
     },
-    // Lädt die aktuelle Liste der Meals für den Tag über die Action im InvoiceDayViewSet
     loadMeals() {
       this.axios.get(`invoice-days/${this.day.id}/meals/`)
         .then(response => {
@@ -339,8 +337,24 @@ export default {
 </script>
 
 <style scoped lang="sass">
+.dayDisplay
+  margin-top: 1em
 .meals
-  padding: 12px 0
+  margin: 12px -4px 12px -8px
+  transition: all 0.5s
+
+  &.withComment
+    margin-bottom: 0
+  border-left: 4px solid transparent
+
+.withComment
+  transition: all 0.5s
+  border-left: 4px solid #ccc
+  margin-left: -8px
+  background-color: #f9f9f9
+  &.comment
+    margin-top: 0
+
 .v-btn.delivery
   color: lightgray
 

@@ -42,4 +42,10 @@ class InvoiceMealSerializer(serializers.ModelSerializer):
             "count",
             "delivered",
             "day",
+            "comment",
         ]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["showComment"] = False
+        return data

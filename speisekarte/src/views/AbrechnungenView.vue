@@ -11,6 +11,7 @@
 
         day-meal-editor(v-for="day in days" :day="day" :customer="selectedCustomer" @update="loadInvoiceDays" :key="day.id")
 
+        br
         v-btn-toggle(dense borderless)
           v-btn(@click="createNewDay()" v-if="!newDay.date") +
 
@@ -105,8 +106,8 @@ export default {
 
           // convert all dates to Date objects
           days.forEach(day => {
-            day.date = new Date(day.date);
-          });
+            day.date = new Date(day.date)
+          })
           this.days = days
 
         })

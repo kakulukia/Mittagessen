@@ -53,6 +53,7 @@ class InvoiceMeal(BaseModel):
     price = models.DecimalField("Preis", max_digits=10, decimal_places=2)
     count = models.IntegerField(default=1)
     delivered = models.BooleanField("Geliefert", default=False)
+    comment = models.TextField("Kommentar", blank=True)
 
     class Meta:
         verbose_name = "Rechnungposition"
