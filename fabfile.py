@@ -62,8 +62,7 @@ def migrate():
 
         update_static()
 
-        with cd("speisekarte"):
-            run("yarn build")
+        build_frontend()
 
     restart()
 
@@ -80,3 +79,9 @@ def update_static():
 
 def manage(command):
     run("poetry run ./manage.py " + command)
+
+
+def build_frontend():
+    with cd(env.path):
+        with cd("speisekarte"):
+            run("yarn build")
