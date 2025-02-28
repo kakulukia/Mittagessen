@@ -2,10 +2,9 @@ from decimal import Decimal
 
 from django.db import models
 from django.template.loader import render_to_string
-from django_weasyprint.utils import django_url_fetcher
 from weasyprint import HTML
 
-from invoices.utils import BaseModel
+from invoices.utils import BaseModel, django_url_fetcher
 
 
 # Create your models here.

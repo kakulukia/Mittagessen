@@ -33,9 +33,8 @@ gunicorn = "^23.0.0"
 django-jazzmin = "^3.0.1"
 fabric3 = {git = "https://github.com/kakulukia/fabric3"}
 django-ckeditor = "^6.7.1"
-weasyprint = "^64.1"
+weasyprint = "52.5"
 django-filter = "^25.1"
-django-weasyprint = "^2.3.1"
 libsass = "^0.23.0"
 django-undeletable = "^1.1.2"
 
