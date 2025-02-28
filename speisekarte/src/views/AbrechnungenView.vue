@@ -178,6 +178,11 @@ export default {
     },
     create() {
       this.editCustomer = true
+      this.newCustomer = {
+        address: '',
+        email: '',
+        deliveryType: '',
+      }
     },
     createNewDay() {
       this.loadInvoiceDays()
