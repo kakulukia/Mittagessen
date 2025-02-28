@@ -42,4 +42,6 @@ export default {
 </script>
 
 <style lang="sass">
+h1
+  font-size: 18px
 </style>
