@@ -11,6 +11,7 @@ import {storeToRefs} from 'pinia'
 
 export default {
   name: 'App',
+  inject: ['apiHost'],
   setup(){
     const store = useStore()
     const { meals } = storeToRefs(store)
