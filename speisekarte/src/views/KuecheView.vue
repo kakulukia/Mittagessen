@@ -24,10 +24,10 @@ div
               :href="apiHost + `?date=${this.week.start}&location=${curLocation}`"
             )
               v-icon mdi-printer-outline
-            v-btn.print(
-              icon target="_blank"
-              :href="apiHost + '/admin/'"
-            )
+            //v-btn.print(
+            //  icon target="_blank"
+            //  :href="apiHost + '/admin/'"
+            //)
               v-icon mdi-cog-outline
             v-btn.invoices(icon href="abrechnungen")
               v-icon mdi-invoice-text-edit-outline
