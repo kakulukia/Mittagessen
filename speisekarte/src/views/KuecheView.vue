@@ -21,12 +21,12 @@ div
             )
             v-btn.print(
               icon v-if="week.published" target="_blank"
-              :href="this.$root.apiHost + `?date=${this.week.start}&location=${curLocation}`"
+              :href="apiHost + `?date=${this.week.start}&location=${curLocation}`"
             )
               v-icon mdi-printer-outline
             v-btn.print(
               icon target="_blank"
-              :href="this.$root.apiHost + '/admin/'"
+              :href="apiHost + '/admin/'"
             )
               v-icon mdi-cog-outline
             v-btn.invoices(icon href="abrechnungen")
@@ -42,12 +42,12 @@ div
           @text-change="updateHeadline()"
         )
       div.text-center.head(v-if="!editHeadline")
-        img.logo(:src="this.$root.apiHost + '/media/' + week.location_logo")
+        img.logo(:src="apiHost + '/media/' + week.location_logo")
         div(v-html="week.headline")
         //div.green-text.bold Speiseplan in der Woche vom {{ week.days[0].dateDisplay }} - {{ week.days[week.days.length - 1].dateDisplay }}
 
       div
-        a(:href="this.$root.apiHost + '/admin/meals/suggestion/'" target="_blank") Essenswünsche: {{ suggestions }}
+        a(:href="apiHost + '/admin/meals/suggestion/'" target="_blank") Essenswünsche: {{ suggestions }}
         br
         a(@click="copyMenu()" v-if="weekIsEmpty") Menü kopieren von
           span(v-if="curLocation === 1")  Luises
@@ -81,6 +81,7 @@ div
   export default {
     name: 'Home',
     components: {WeekDay, Special},
+    inject: ['apiHost'],
     data () {
       return {
         week: null,
