@@ -98,23 +98,31 @@ table, th, td
   padding-bottom: 2cm
 
 th, td
-    padding: 4px 8px
+  padding: 4px 8px
 td.raw
   padding: 0
 
+tr
+  vertical-align: top
+
 tr.gray
-    background-color: $light-grey
+  vertical-align: bottom
+  background-color: $light-grey
+  th
+    padding: 9px 8px 5px 8px
 tr.border
-    border-bottom: 1px solid $light-grey
-    vertical-align: top
+  border-bottom: 1px solid $light-grey
+tr.border-top
+  border-top: 1px solid $near-black
+  border-bottom: 1px solid $light-grey
 td.right, th.right
-    text-align: right
+  text-align: right
 
 tfoot
-    display: table-footer-group /* Footer bleibt auf jeder Seite */
+  display: table-footer-group /* Footer bleibt auf jeder Seite */
 
 thead
-    display: table-header-group /* Kopfzeile wiederholt sich */
+  display: table-header-group /* Kopfzeile wiederholt sich */
 
 
 

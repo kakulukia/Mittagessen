@@ -13,7 +13,6 @@ package-mode = false
 [tool.poetry.dependencies]
 django = "^5.1.6"
 django-secrets = "^1.0.2"
-django-undeletable = "1.1.2"
 django-extensions = "^3.1.1"
 dj-static = "^0.0.6"
 django-compressor = "^4.1"
@@ -38,6 +37,7 @@ weasyprint = "^64.1"
 django-filter = "^25.1"
 django-weasyprint = "^2.3.1"
 libsass = "^0.23.0"
+django-undeletable = "^1.1.2"
 
 [tool.poetry.group.dev.dependencies]
 django-debug-toolbar = "^5.0.1"

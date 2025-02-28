@@ -11,8 +11,8 @@ from django.template.defaultfilters import date
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.timezone import now
-from django_undeletable.models import BaseModel
 
+from invoices.utils import BaseModel
 from meals.utils import pendulum_instance
 
 

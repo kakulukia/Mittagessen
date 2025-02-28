@@ -2,9 +2,10 @@ from decimal import Decimal
 
 from django.db import models
 from django.template.loader import render_to_string
-from django_undeletable.models import BaseModel
 from django_weasyprint.utils import django_url_fetcher
 from weasyprint import HTML
+
+from invoices.utils import BaseModel
 
 
 # Create your models here.
@@ -66,7 +67,10 @@ class InvoiceMeal(BaseModel):
 
     @property
     def single_net_price(self):
-        return round(self.price / Decimal(1.07), 2)
+        price = round(self.price / Decimal(1.07), 2)
+        if self.day.invoice.customer.delivery_type == "delivery":
+            price += Decimal(0.5)
+        return price
 
     @property
     def net_price(self):
@@ -148,8 +152,8 @@ class Invoice(BaseModel):
         tax = round(net * Decimal(0.07), 2)
         total = net + tax
 
-        if self.customer.delivery_type == "delivery":
-            total += Decimal(5)
+        # if self.customer.delivery_type == "delivery":
+        #     total += Decimal(5)
 
         self.net = net
         self.tax = tax

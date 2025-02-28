@@ -32,7 +32,7 @@ html(lang='de')
         thead
           tr.gray
             th Datum
-            th Anzahl
+            th.right Anzahl
             th Bezeichnung
             th.right Einzelpreis
             th.right Gesamtpreis
@@ -43,12 +43,12 @@ html(lang='de')
                 td
                   if forloop.counter == 1
                     span {{ day.date|date:"d.m.Y" }}
-                td {{ meal.count }}
+                td.right {{ meal.count }}
                 td {{ meal.name }}
                 td.right {{ meal.single_net_price }} €
                 td.right {{ meal.net_price }} €
       table.no-break
-        tr.border
+        tr.border-top
           td Nettopreis
           td.right {{ invoice.net }} €
         tr.border

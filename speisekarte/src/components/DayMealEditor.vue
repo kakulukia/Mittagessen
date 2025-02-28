@@ -188,11 +188,15 @@ export default {
   },
   methods: {
     newMealFromPlan(plan) {
-      if (this.newMeal.name == plan.meal.name) {
+      let name = plan.meal.name
+      if (name.startsWith('- ')) {
+        name = 'Schnitzel ' + name.replace('- ', '')
+      }
+      if (this.newMeal.name === name) {
         this.newMeal.count += 1
       } else {
         this.newMeal = {
-          name: plan.meal.name,
+          name: name,
           count: 1,
           price: plan.price,
           delivered: false,
