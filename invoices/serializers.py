@@ -21,6 +21,7 @@ class CustomerSerializer(serializers.ModelSerializer):
 
 
 class InvoiceDaySerializer(serializers.ModelSerializer):
+
     class Meta:
         model = InvoiceDay
         fields = [
@@ -35,6 +36,10 @@ class InvoiceDaySerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data["meals"] = InvoiceMealSerializer(instance.meals.all(), many=True).data
         return data
+
+
+class InvoiceDayWithCustomerSerializer(InvoiceDaySerializer):
+    customer = CustomerSerializer(read_only=True)
 
 
 class InvoiceMealSerializer(serializers.ModelSerializer):

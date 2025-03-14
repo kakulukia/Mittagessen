@@ -1,5 +1,8 @@
 <template lang="pug">
   .container
+    v-btn.auslieferung(icon href="/lieferungen")
+      v-icon mdi-truck-fast
+
     h1(v-if="!selectedCustomer") Kundenübersicht
     .overview(v-if="selectedCustomer")
       v-row
@@ -147,6 +150,11 @@ export default {
     resetView() {
       this.selectedCustomer = null
       this.showInvoices = false
+      this.newDay = {
+        date: '',
+        delivered: false,
+        combining_dates: false,
+      }
     },
     loadInvoices() {
       this.showInvoices = true
@@ -160,7 +168,6 @@ export default {
       this.loadInvoiceDays()
     },
     loadInvoiceDays() {
-      console.log("loadInvoiceDays")
       this.axios.get(`/customers/${this.selectedCustomer.id}/invoice-days/`)
         .then(response => {
           let days = response.data;
@@ -269,4 +276,12 @@ export default {
 
 .pointer
   cursor: pointer
+
+.auslieferung
+  position: fixed
+  bottom: 50px
+  right: 50px
+  .v-icon
+    font-size: 50px
+
 </style>

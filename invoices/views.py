@@ -8,7 +8,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from invoices.models import Customer, InvoiceDay, InvoiceMeal, Invoice
-from invoices.serializers import CustomerSerializer, InvoiceDaySerializer, InvoiceMealSerializer, InvoiceSerializer
+from invoices.serializers import CustomerSerializer, InvoiceDaySerializer, InvoiceMealSerializer, InvoiceSerializer, \
+    InvoiceDayWithCustomerSerializer
 
 
 class CustomerViewSet(ModelViewSet):
@@ -55,6 +56,12 @@ class InvoiceDayViewSet(ModelViewSet):
     def meals(self, request, pk=None):
         day = self.get_object()
         return Response(InvoiceMealSerializer(day.meals.all(), many=True).data)
+
+    @action(detail=False, methods=['get'], url_path='today')
+    def today(self, request):
+        today = datetime.date.today()
+        qs = InvoiceDay.objects.filter(date=today)
+        return Response(InvoiceDayWithCustomerSerializer(qs, many=True).data)
 
 
 class InvoiceMealViewSet(ModelViewSet):

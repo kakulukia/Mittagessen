@@ -104,12 +104,14 @@
           @blur="updateMeal(newMeal)"
         )
 
-    v-btn-toggle.loadPlans(dense borderless v-if="!plannedDay")
+    v-btn-toggle.loadPlans(dense borderless v-if="!plannedDay && !day.combining_dates &&!isWeekend")
       v-btn(@click="loadPlan")
         v-icon mdi-silverware-variant
-    .plannedDay(v-if="plannedDay")
+    .plannedDay(v-if="plannedDay && !day.combining_dates")
       div
         strong Geplanter Tag
+      div(v-if="plannedDay.plans.length === 0")
+        p Noch kein Plan vorhanden
       div.plannedMeal(v-for="plan in plannedDay.plans" :key="plan.id")
         span.pointer(@click="newMealFromPlan(plan)") {{ plan.meal.name }}
 
@@ -185,6 +187,9 @@ export default {
         })
       }
     },
+    isWeekend() {
+      return this.day.date.getDay() === 0 || this.day.date.getDay() === 6
+    }
   },
   methods: {
     newMealFromPlan(plan) {
@@ -309,7 +314,11 @@ export default {
         ownMonth = date.toISOMonth()
         ownDate = date.toISODate()
       }
-      this.loadPlan()
+
+      setTimeout(() => {
+        this.loadPlan()
+      }, 50)
+
       return date
     },
     loadPlan() {
@@ -337,6 +346,7 @@ export default {
     if (!this.day.id) {
       let newDate = new Date(this.day.date)
       this.day.date = this.checkDate(newDate)
+
     }
   }
 };
