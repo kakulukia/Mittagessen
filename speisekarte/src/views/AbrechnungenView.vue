@@ -1,6 +1,6 @@
 <template lang="pug">
   .container
-    v-btn.auslieferung(icon href="/lieferungen")
+    v-btn.auslieferung(icon href="lieferungen")
       v-icon mdi-truck-fast
 
     h1(v-if="!selectedCustomer") Kundenübersicht
