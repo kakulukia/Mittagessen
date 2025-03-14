@@ -15,6 +15,7 @@
           item-text="name"
           item-value="id"
           @keydown.stop.prevent.enter="handleEnter($event)"
+          @keydown.tab="handleTab"
           :search-input.sync="search"
           dense
           hide-details="auto"
@@ -50,7 +51,7 @@
     data () {
       return {
         newMeal: "",
-        search: "",
+        search: "huhui",
         customToolbar: [
           ["bold", "italic", "image", { 'color': [] }],
           // [{ list: "ordered" }, { list: "bullet" }],
@@ -60,12 +61,26 @@
     created () {
     },
     methods: {
+      handleTab() {
+        // Hole das Vuetify-Combobox-Element
+        const combobox = this.$refs.newEntry;
+
+        // Prüfe, ob das Dropdown-Menü geöffnet ist und ein Element hervorgehoben ist
+        if (combobox.isMenuActive && combobox.filteredItems.length > 0) {
+          // Wähle das aktuell hervorgehobene Element aus
+          const highlightedIndex = combobox.getMenuIndex()
+          if (highlightedIndex !== -1) {
+            this.newMeal = combobox.filteredItems[highlightedIndex];
+            console.log(combobox.filteredItems[highlightedIndex])
+            this.addPlan(this.newMeal.id)
+          }
+        }
+      },
       handleEnter(event) {
         event.preventDefault()
         let searchText = this.search ? this.search.trim() : '';
         const box = this.$refs.newEntry
         let itemFound = box.filteredItems.length;
-        console.log(itemFound)
         if (!itemFound && searchText.length) {
           this.axios.post('meals/', {name: searchText})
             .then((response) => {

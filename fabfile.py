@@ -29,7 +29,7 @@ def clear_cache():
 
 def restart():
     """Restart nginx and the backend worker."""
-    print(green("restarting server .."))
+    print(green("\nrestarting server .."))
     run(f"pm2 restart {APP_NAME}")
 
     clear_cache()

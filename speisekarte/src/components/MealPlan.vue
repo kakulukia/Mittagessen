@@ -13,6 +13,7 @@
       hide-details="auto"
       tabindex="1"
       @keydown.stop.prevent.enter="handleEnter($event)"
+      @keydown.tab="handleTab"
       :search-input.sync="search"
       :class="{vegi: plan.meal.vegi, nonVegi: !plan.meal.vegi, bold: plan.meal.headline}"
     )
@@ -69,12 +70,30 @@
     },
     data () {
       return {
-        search: ""
+        search: "huhu"
       }
     },
     created () {
     },
     methods: {
+      handleTab() {
+        // Hole das Vuetify-Combobox-Element
+        const combobox = this.$refs.newEntry;
+
+        // Prüfe, ob das Dropdown-Menü geöffnet ist und ein Element hervorgehoben ist
+        if (combobox.isMenuActive && combobox.filteredItems.length > 0) {
+          // Wähle das aktuell hervorgehobene Element aus
+          const highlightedIndex = combobox.getMenuIndex()
+          if (highlightedIndex !== -1) {
+            const meal = combobox.filteredItems[highlightedIndex]
+            const plan = this.plan
+            plan.meal_id = meal.id
+            plan.meal = meal
+            this.axios.put('plans/' + plan.id + '/', plan)
+              .then(() => {this.$emit('reload-week')})
+          }
+        }
+      },
       nameDisplay(data) {
         let name = data.item.name
         if (data.item.vegi) { name += ' <span class="vegi">*</span>'}
@@ -89,11 +108,14 @@
             .then((firstResponse) => {
               this.store.loadItems()
               box.isMenuActive = false
-              this.plan.meal = firstResponse.data
-              this.plan.meal_id = firstResponse.data.id
-              this.axios.put('plans/' + this.plan.id + '/', this.plan)
+              const plan = this.plan
+              plan.meal = firstResponse.data
+              plan.meal_id = firstResponse.data.id
+              this.axios.put('plans/' + plan.id + '/', plan)
                 .then(() => {this.$emit('reload-week')})
             })
+        } else {
+          this.handleTab()
         }
       },
       deleteMe() {
@@ -101,6 +123,8 @@
             .then(() => {this.$emit('reload-week')})
       },
       updatePlan() {
+        console.log("UPDATE PLAN")
+        console.log(this.plan)
         if (this.plan.meal_id !== this.plan.meal.id) {
           this.plan.meal_id = this.plan.meal.id
           this.plan.price = 0.00
