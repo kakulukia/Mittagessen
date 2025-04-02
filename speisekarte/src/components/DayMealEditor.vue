@@ -20,7 +20,7 @@
           v-btn.delivery(
             v-if="day.id && day.date < new Date()"
             :class="{delivered: day.delivered}"
-            @click="toggleDelivered") ✓
+            @click="toggleDelivered" :color="day.delivered ? 'success' : 'error'") ✓
 
     // show existing meals
     div(v-for="meal in day.meals" :key="meal.id")
@@ -373,9 +373,6 @@ export default {
 
 .v-btn.delivery
   color: lightgray
-
-.v-btn.delivery.delivered
-  color: green
 
 .spacer-delivered
   width: 48px

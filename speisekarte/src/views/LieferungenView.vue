@@ -15,7 +15,7 @@
 
             v-btn-toggle.delivery(dense borderless)
               v-btn(
-                :color="invoiceDay.delivered ? 'success' : 'default'"
+                :color="invoiceDay.delivered ? 'success' : 'error'"
                 :class="{delivered: invoiceDay.delivered}"
                 @click="toggleDelivered(invoiceDay)") ✓
 
