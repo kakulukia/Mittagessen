@@ -42,6 +42,15 @@ export default {
 </script>
 
 <style lang="sass">
+html, body
+  height: 100svh
+  overflow: hidden
+#app
+  height: 100svh
+  overflow-y: scroll
 h1
   font-size: 18px
+
+#app
+  overflow-y: scroll
 </style>
