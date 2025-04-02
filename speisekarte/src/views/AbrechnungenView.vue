@@ -25,7 +25,7 @@
         v-list(v-if="invoices.length !== 0")
           v-list-item(v-for="invoice in invoices" :key="invoice.id")
             v-list-item-content
-              v-list-item-title {{ invoice.date }}
+              v-list-item-title {{ invoice.invoice_number }} ({{ invoice.date}})
               v-list-item-subtitle {{ invoice.total }} €
             v-list-item-action
               v-btn-toggle(dense borderless)
@@ -37,7 +37,7 @@
         div Tagesübersicht
         br
 
-        day-meal-editor(v-for="day in days" :day="day" :customer="selectedCustomer" @update="loadInvoiceDays" :key="day.id")
+        day-meal-editor(v-for="day in days.filter(d => !d.invoice)" :day="day" :customer="selectedCustomer" @update="loadInvoiceDays" :key="day.id")
 
         br
         v-btn-toggle(dense borderless)

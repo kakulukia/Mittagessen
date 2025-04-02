@@ -26,7 +26,7 @@ html(lang='de')
     main
       h1 Rechnung
       p.raw.
-        Mitagessen für den Monat {{ invoice.date|date:"F Y" }}
+        Mittagessen für den Monat {{ invoice.for_month|date:"F Y" }}
 
       table
         thead

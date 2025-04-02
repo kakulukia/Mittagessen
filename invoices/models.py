@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.db import models
 from django.template.loader import render_to_string
+from django.utils.timezone import now
 from weasyprint import HTML
 
 from invoices.utils import BaseModel, django_url_fetcher
@@ -46,6 +47,12 @@ class InvoiceDay(BaseModel):
     def __str__(self):
         return f"{self.date}"
 
+    def save(self, *args, **kwargs):
+        # if the date is in the past, set delivered to true already
+        if self.date < now().date():
+            self.delivered = True
+        super().save(*args, **kwargs)
+
 
 class InvoiceMeal(BaseModel):
     day = models.ForeignKey("InvoiceDay", on_delete=models.CASCADE, related_name="meals", verbose_name="Rechnungstag")
@@ -66,9 +73,11 @@ class InvoiceMeal(BaseModel):
 
     @property
     def single_net_price(self):
-        price = round(self.price / Decimal(1.07), 2)
+        # keep the price as is for takeaway + so its 7% plus for delivery
         if self.day.invoice.customer.delivery_type == "delivery":
-            price += Decimal(0.5)
+            return self.price
+
+        price = round(self.price / Decimal(1.07), 2)
         return price
 
     @property
@@ -87,7 +96,7 @@ class Invoice(BaseModel):
     class Meta(BaseModel.Meta):
         verbose_name = "Rechnung"
         verbose_name_plural = "Rechnungen"
-        ordering = ["-date"]
+        ordering = ["-invoice_number"]
 
     def __str__(self):
         return f"{self.invoice_number} ({self.date} - {self.total} €)"
@@ -110,8 +119,8 @@ class Invoice(BaseModel):
 
         month_open_days = open_days.filter(date__year=target_year, date__month=target_month)
 
-        # Set invoice date as the latest date in the month
-        invoice_date = max(day.date for day in month_open_days)
+        # Set invoice date to the current date
+        invoice_date = now().date()
 
         new_invoice = cls.data.create(
             invoice_number='',
@@ -119,7 +128,10 @@ class Invoice(BaseModel):
             customer=customer,
         )
 
-        new_invoice.invoice_number = f"{invoice_date.year}-{new_invoice.pk + 1000}"
+        invoice_count = Invoice.data.filter(date__year=invoice_date.year).count()
+        if invoice_date.year == 2025:
+            invoice_count += 50
+        new_invoice.invoice_number = f"{invoice_date.year}-{invoice_count:04d}"
         new_invoice.save()
 
         month_open_days.update(invoice=new_invoice)
@@ -151,10 +163,12 @@ class Invoice(BaseModel):
         tax = round(net * Decimal(0.07), 2)
         total = net + tax
 
-        # if self.customer.delivery_type == "delivery":
-        #     total += Decimal(5)
-
         self.net = net
         self.tax = tax
         self.total = total
         self.save()
+
+    @property
+    def for_month(self):
+        return self.days.last().date
+

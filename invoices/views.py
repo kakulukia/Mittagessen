@@ -19,7 +19,7 @@ class CustomerViewSet(ModelViewSet):
     @action(detail=True, methods=['get'], url_path='invoice-days')
     def invoice_days(self, request, pk=None):
         customer = self.get_object()
-        qs = customer.invoice_days.filter(invoice__isnull=True)
+        qs = customer.invoice_days.filter()  # TODO: nur die letzten 90 Tage oder so übertragen
         return Response(InvoiceDaySerializer(qs, many=True).data)
 
     @action(detail=True, methods=['get'], url_path='generate-invoice')

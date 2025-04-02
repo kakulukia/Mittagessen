@@ -30,6 +30,7 @@ class InvoiceDaySerializer(serializers.ModelSerializer):
             "customer",
             "combining_dates",
             "delivered",
+            "invoice",
         ]
 
     def to_representation(self, instance):
