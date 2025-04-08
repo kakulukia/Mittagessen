@@ -334,7 +334,7 @@ CKEDITOR_CONFIGS = {
     "default": {
         "toolbar": "Custom",
         "toolbar_Custom": [
-            ["Bold", "Italic", "Underline"],
+            ["Bold", "Italic", "Underline", 'TextColor'], ["Source"]
         ],
     }
 }
