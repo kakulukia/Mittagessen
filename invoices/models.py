@@ -130,7 +130,7 @@ class Invoice(BaseModel):
 
         invoice_count = Invoice.data.filter(date__year=invoice_date.year).count()
         if invoice_date.year == 2025:
-            invoice_count += 50
+            invoice_count += 52
         new_invoice.invoice_number = f"{invoice_date.year}-{invoice_count:04d}"
         new_invoice.save()
 
