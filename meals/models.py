@@ -177,14 +177,18 @@ class Plan(BaseModel):
     class Meta(BaseModel.Meta):
         ordering = ("order", "created")
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        if not self.price and not self.id:
+    def save(self, *args, **kwargs):
+
+        original = Plan.data.get(pk=self.pk) if self.pk else None
+
+        if (not self.price and not self.id) or (original and original.meal != self.meal):
             search_location = 2
             if self.day:
                 search_location = self.day.week.location_id
             qs = Plan.data.filter(
                 meal=self.meal, price__gt=0, day__week__location=search_location
             ).order_by("-modified")
+            ic("meal search", qs,)
             if qs:
                 self.price = qs.first().price
             else:
@@ -193,7 +197,7 @@ class Plan(BaseModel):
         if not self.order and self.day:
             self.order = self.day.plans.count() + 1
 
-        super().save(force_insert, force_update, using, update_fields)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"({self.order}) {self.meal.name}"

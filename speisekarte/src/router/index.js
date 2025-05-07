@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import KuecheView from '@/views/KuecheView.vue'; // Deine Küche-Komponente
 import AbrechnungenView from '@/views/AbrechnungenView.vue'; // Neue Abrechnungen-Komponente
 import LieferungenView from '@/views/LieferungenView.vue'; // Neue Lieferungen-Komponente
+import RechnungenView from '@/views/RechnungenView.vue'; // Neue Rechnungen-Komponente
 
 Vue.use(Router);
 
@@ -25,5 +26,10 @@ export default new Router({
       name: 'Lieferungen',
       component: LieferungenView,
     },
+    {
+      path: '/rechnungen',
+      name: 'Rechnungen',
+      component: RechnungenView,
+    }
   ],
 });

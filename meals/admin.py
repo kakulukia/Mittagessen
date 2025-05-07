@@ -1,7 +1,7 @@
 import re
 
 from django.contrib import admin
-from django.db.models import OuterRef, Subquery
+from django.db.models import OuterRef, Subquery, Count
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
@@ -28,11 +28,20 @@ class LocationAdmin(admin.ModelAdmin):
 
 @admin.register(Meal)
 class MealAdmin(admin.ModelAdmin):
-    list_display = ["name", "created", "latest"]
+    list_display = [
+        "name",
+        "created",
+        "latest",
+        "num_plans"
+    ]
     list_filter = ["vegi"]
     ordering = ["-created"]
     search_fields = ["name"]
-    actions = None
+    # actions = None
+
+    @admin.display(description="Anzahl", ordering="num_plans")
+    def num_plans(self, obj):
+        return obj.num_plans
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -40,6 +49,11 @@ class MealAdmin(admin.ModelAdmin):
             Plan.data.filter(meal=OuterRef("pk")).order_by("-created").values("day__date")[:1]
         )
         qs = qs.annotate(latest=Subquery(latest_plan_subquery))
+        qs = qs.annotate(
+            num_plans=Subquery(
+                Plan.data.filter(meal=OuterRef("pk")).values("meal").annotate(count=Count("meal")).values("count")[:1]
+            )
+        )
         return qs
 
     def latest(self, obj):

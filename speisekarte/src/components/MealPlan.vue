@@ -31,7 +31,7 @@
     v-btn(icon x-small)
       v-icon(
         small @click="switchVegi()"
-        :color="plan.meal.vegi ? 'success darken-2' : 'grey lighten-1'") mdi-leaf
+        :color="(plan.meal && plan.meal.vegi) ? 'success darken-2' : 'grey lighten-1'") mdi-leaf
     //v-btn(icon x-small)
       v-icon(
         small @click="switchVegan()"
@@ -74,6 +74,7 @@
       }
     },
     created () {
+
     },
     methods: {
       handleTab() {
@@ -125,6 +126,7 @@
       updatePlan() {
         console.log("UPDATE PLAN")
         console.log(this.plan)
+        if (!this.plan.meal) return;
         if (this.plan.meal_id !== this.plan.meal.id) {
           this.plan.meal_id = this.plan.meal.id
           this.plan.price = 0.00

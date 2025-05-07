@@ -75,3 +75,8 @@ class InvoiceSerializer(serializers.ModelSerializer):
             "total",
         ]
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["customer_name"] = instance.customer.name
+        return data
+

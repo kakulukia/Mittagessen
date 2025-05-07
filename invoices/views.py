@@ -22,9 +22,13 @@ class CustomerViewSet(ModelViewSet):
         qs = customer.invoice_days.filter()  # TODO: nur die letzten 90 Tage oder so übertragen
         return Response(InvoiceDaySerializer(qs, many=True).data)
 
-    @action(detail=True, methods=['get'], url_path='generate-invoice')
+    @action(detail=True, methods=['post'], url_path='generate-invoice')
     def generate_invoice(self, request, pk=None):
         customer = self.get_object()
+
+        invoice_text = request.data.get("invoiceText", None)
+        if not invoice_text:
+            return Response({"message": "Es muss ein Text für die Rechnung angegeben werden."}, status=400)
 
         # Check if there are undelivered days in the month to be invoiced
         invoice_days = customer.invoice_days.filter(invoice__isnull=True)
@@ -35,7 +39,7 @@ class CustomerViewSet(ModelViewSet):
         if undelivered.exists():
             return Response({"message": "Es gibt noch offene Tage. Die Rechnung kann noch nicht erstellt werden."}, status=400)
 
-        new_invoice = Invoice.create_from_open_days(customer)
+        new_invoice = Invoice.create_from_open_days(customer, invoice_text)
         return Response({"invoice_id": new_invoice.id})
 
     @action(detail=True, methods=['get'], url_path='invoices')

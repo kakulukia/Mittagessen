@@ -1,7 +1,12 @@
+[project]
+name = "Speiseplan"
+version = "0.9.0"
+requires-python = ">=3.10"
+editable = false
+
+
 [tool.poetry]
-name = "speiseplan"
-version = "0.8.0"
-description = "Its not always good to start from scratch .. lets have some sane defaults .."
+description = "Jörgs Speisekartenplaner"
 authors = ["Andy Grabow <andy@freilandkiwis.de>"]
 license = "MIT"
 readme = 'README.md'
@@ -11,39 +16,39 @@ homepage = "https://github.com/kakulukia/django-default-project"
 package-mode = false
 
 [tool.poetry.dependencies]
-django = "^5.1.6"
-django-secrets = "^1.0.2"
-django-extensions = "^3.1.1"
+django = "^5.2"
+django-secrets = "^1.2.4"
+django-extensions = "^3.2.3"
 dj-static = "^0.0.6"
-django-compressor = "^4.1"
-django-axes = "^7.0.2"
-pypugjs = "^5.8.1"
-django-post-office = "^3.2.1"
+django-compressor = "^4.5.1"
+django-axes = "^7.1.0"
+pypugjs = "^5.12.0"
+django-post-office = "^3.9.1"
 uwsgidecorators = "^1.1.0"
 huepy = "^1.2.1"
-djangorestframework = "^3.11.0"
-requests = "^2.22.0"
-pendulum = "^3.0.0"
-Pillow = "^11.1.0"
+djangorestframework = "^3.16.0"
+requests = "^2.32.3"
+pendulum = "^3.1.0"
+Pillow = "^11.2.1"
 python = "^3.10"
 django-cors-headers = "^4.7.0"
-icecream = "^2.1.3"
-django-sass-processor = "^1.2.1"
+icecream = "^2.1.4"
+django-sass-processor = "^1.4.1"
 gunicorn = "^23.0.0"
 django-jazzmin = "^3.0.1"
-fabric3 = {git = "https://github.com/kakulukia/fabric3"}
-django-ckeditor = "^6.7.1"
+django-ckeditor = "^6.7.2"
 weasyprint = "52.5"
 django-filter = "^25.1"
 libsass = "^0.23.0"
 django-undeletable = "^1.1.2"
 
 [tool.poetry.group.dev.dependencies]
-django-debug-toolbar = "^5.0.1"
-ipdb = "^0.13.6"
-django-browser-reload = "^1.6.0"
-ruff = "^0.9.7"
-ipython = "^8.32.0"
+django-debug-toolbar = "^5.2.0"
+ipdb = "^0.13.13"
+django-browser-reload = "^1.18.0"
+ruff = "^0.9.10"
+ipython = "^8.36.0"
+fab-classic = {git = "https://github.com/kakulukia/fab-classic.git", rev = "master"}
 
 [tool.black]
 line-length = 99

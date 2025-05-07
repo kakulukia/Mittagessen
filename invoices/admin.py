@@ -18,7 +18,7 @@ class InvoiceAdmin(admin.ModelAdmin):
     list_filter = ["date", "customer"]
 
     fieldsets = [
-        (None, {"fields": ["invoice_number", "date", "customer", "net", "tax", "total"]}),
+        (None, {"fields": ["invoice_number", "date", "customer", "net", "tax", "total", "text"]}),
     ]
 
     readonly_fields = ["invoice_number", "net", "tax", "total"]

@@ -1,7 +1,26 @@
 <template lang="pug">
   .container
-    v-btn.auslieferung(icon href="lieferungen" v-if="!selectedCustomer")
-      v-icon mdi-truck-fast
+    v-dialog(max-width="500" v-model="showInvoiceTextDialog")
+      template(v-slot:default="{ isActive }")
+        v-card
+          v-card-title Rechnungstext
+          v-card-text
+
+            v-textarea(v-model="invoiceText" rows="2" auto-grow)
+
+          v-card-actions
+            v-spacer
+
+            v-btn(@click="showInvoiceTextDialog = false") Abbrechen
+            v-btn(@click="generateNewInvoice()" color="primary") Rechnung erstellen
+
+    v-row.my-5(v-if="!selectedCustomer")
+      .v-col.auto.px-2
+        v-btn(href="lieferungen") Aktuelle Lieferungen
+          v-icon mdi-truck-fast
+      .v-col.auto.px-2
+        v-btn(href="rechnungen") Alle Rechnungen
+          v-icon mdi-file-document-multiple-outline
 
     h1(v-if="!selectedCustomer") Kundenübersicht
     .overview(v-if="selectedCustomer")
@@ -11,13 +30,15 @@
             v-btn(@click="resetView()" icon)
               v-icon mdi-close
         .col-auto
-          v-btn-toggle(dense borderless)
-            v-btn(@click="showInvoices = false")
-              v-icon mdi-calendar-blank
-            v-btn(@click="loadInvoices()")
-              v-icon mdi-invoice-text-clock-outline
-            v-btn(@click="generateNewInvoice()")
-              v-icon mdi-invoice-text-plus-outline
+          v-btn(@click="showInvoices = false") Tagesansicht
+            v-icon mdi-calendar-blank
+        .col-auto
+          v-btn(@click="loadInvoices()" ) Alte Rechnungen
+            v-icon mdi-invoice-text-clock-outline
+        .col-auto
+          v-btn(@click="prepareInvoiceText()") Neue Rechnung
+            v-icon mdi-invoice-text-plus-outline
+
       .invoices(v-if="showInvoices")
         div Rechnungen
         br
@@ -30,7 +51,7 @@
             v-list-item-action
               v-btn-toggle(dense borderless)
                 v-btn
-                  a(:href="`${apiHost}/api/invoices/${invoice.id}/pdf/`" target="_blank")
+                  a(:href="`${apiHost}/api/invoices/${invoice.id}/pdf/`" target="_blank") Rechnung Runterladen
                     v-icon mdi-file-download-outline
 
       .days(v-if="!showInvoices")
@@ -125,6 +146,8 @@ export default {
         toggle_exclusive: 2,
         showInvoices: false,
         invoices: [],
+        invoiceText: '',
+        showInvoiceTextDialog: false,
       }
     },
 
@@ -132,8 +155,23 @@ export default {
      this.loadCustomers()
   },
   methods: {
+    prepareInvoiceText() {
+      if (this.days.length === 0) {
+        alert("Es muss mindestens ein nicht abgerechneter Tag existieren.")
+        return
+      }
+      const invoiceDay = this.days[0]
+      const invoiceDate = new Date(invoiceDay.date)
+      const month = invoiceDate.toLocaleString('default', { month: 'long' })
+      const year = invoiceDate.getFullYear()
+      this.invoiceText = `Mittagessen für den Monat ${month} ${year}`
+
+      console.log("prepareInvoiceText")
+      this.showInvoiceTextDialog = true
+    },
     generateNewInvoice() {
-      this.axios.get(`/customers/${this.selectedCustomer.id}/generate-invoice/`)
+
+      this.axios.post(`/customers/${this.selectedCustomer.id}/generate-invoice/`, {invoiceText: this.invoiceText})
         .then((response) => {
           let invoice_id = response.data.invoice_id
           window.open(`${this.apiHost}/api/invoices/${invoice_id}/pdf/`, '_blank')
@@ -283,5 +321,8 @@ export default {
   right: 50px
   .v-icon
     font-size: 50px
+
+.v-btn .v-icon
+  padding: 0 5px
 
 </style>

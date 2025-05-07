@@ -93,6 +93,8 @@ class Invoice(BaseModel):
     tax = models.DecimalField("MwSt.", max_digits=10, decimal_places=2, null=True)
     total = models.DecimalField("Brutto", max_digits=10, decimal_places=2, null=True)
 
+    text = models.TextField("Rechnungstext", blank=True, default="")
+
     class Meta(BaseModel.Meta):
         verbose_name = "Rechnung"
         verbose_name_plural = "Rechnungen"
@@ -102,7 +104,7 @@ class Invoice(BaseModel):
         return f"{self.invoice_number} ({self.date} - {self.total} €)"
 
     @classmethod
-    def create_from_open_days(cls, customer):
+    def create_from_open_days(cls, customer, invoice_text):
         """
         Create a new invoice for the customer based on open days.
         Only includes days that are delivered and not yet invoiced,
@@ -126,6 +128,7 @@ class Invoice(BaseModel):
             invoice_number='',
             date=invoice_date,
             customer=customer,
+            text=invoice_text,
         )
 
         invoice_count = Invoice.data.filter(date__year=invoice_date.year).count()

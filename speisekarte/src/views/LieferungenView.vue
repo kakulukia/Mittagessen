@@ -1,5 +1,9 @@
 <template lang="pug">
   .container
+    v-row.my-5
+      .v-col.auto.px-2
+        v-btn(href="/abrechnungen") Zurück
+
     h1 Anstehende Lieferungen für {{ new Date() | moment('dddd') }} den {{ new Date() | moment('DD.MM.YYYY') }}
 
     div(v-if="invoiceDays.length === 0") Heute keine Lieferungen vorhanden

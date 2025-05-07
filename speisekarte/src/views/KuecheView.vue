@@ -134,6 +134,8 @@ div
         if (next) this.date = this.date.addDays(7)
         else this.date = this.date.addDays(-7)
         this.reloadWeek()
+        // save the date in the location as query parameter
+        this.$router.push({query: {date: this.isoDate}})
       },
       updatePublished() {
         const week = this.week
