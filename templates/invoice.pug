@@ -11,7 +11,7 @@ html(lang='de')
   body
     div.recipient
         .gray Emmas Imbiss Jörg Kriminski, Richard-Wagner-Str. 55, 15732 Schulzendorf
-        div.address  {{ invoice.customer.address }}
+        div.address {{ invoice.customer.address }}
 
     div.details
       img.logo(src="{% static 'img/logo.png' %}" alt="Logo")

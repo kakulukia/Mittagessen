@@ -1,7 +1,7 @@
 [project]
 name = "Speiseplan"
 version = "0.9.0"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 editable = false
 
 
@@ -16,9 +16,9 @@ homepage = "https://github.com/kakulukia/django-default-project"
 package-mode = false
 
 [tool.poetry.dependencies]
-django = "^5.2"
+django = "^5.2.1"
 django-secrets = "^1.2.4"
-django-extensions = "^3.2.3"
+django-extensions = "^4.1"
 dj-static = "^0.0.6"
 django-compressor = "^4.5.1"
 django-axes = "^7.1.0"
@@ -30,7 +30,7 @@ djangorestframework = "^3.16.0"
 requests = "^2.32.3"
 pendulum = "^3.1.0"
 Pillow = "^11.2.1"
-python = "^3.10"
+python = "^3.11"
 django-cors-headers = "^4.7.0"
 icecream = "^2.1.4"
 django-sass-processor = "^1.4.1"
@@ -46,8 +46,8 @@ django-undeletable = "^1.1.2"
 django-debug-toolbar = "^5.2.0"
 ipdb = "^0.13.13"
 django-browser-reload = "^1.18.0"
-ruff = "^0.9.10"
-ipython = "^8.36.0"
+ruff = "^0.11.8"
+ipython = "^9.2.0"
 fab-classic = {git = "https://github.com/kakulukia/fab-classic.git", rev = "master"}
 
 [tool.black]
