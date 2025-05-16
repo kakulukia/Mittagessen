@@ -94,3 +94,8 @@ class InvoiceViewSet(ModelViewSet):
         invoice = self.get_object()
         qs = InvoiceDay.data.filter(invoice=invoice)
         return Response(InvoiceDaySerializer(qs, many=True).data)
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        instance.update_prices()
+        instance.save()
