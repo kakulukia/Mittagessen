@@ -5,7 +5,7 @@
       .v-col.auto.px-2
         v-btn(to="/abrechnungen") Zurück
 
-    h1 Rechnungenübersicht
+    h1 Rechnungsübersicht
 
     div(v-if="invoices.length === 0") Keine Rechnungen vorhanden
     v-list(v-if="invoices.length !== 0")
@@ -15,9 +15,11 @@
           v-list-item-subtitle {{ invoice.total }} € - {{ invoice.customer_name }}
         v-list-item-action
           v-btn-toggle(dense borderless)
-            v-btn
-              a(:href="`${apiHost}/api/invoices/${invoice.id}/pdf/`" target="_blank") Rechnung Runterladen
-                v-icon mdi-file-download-outline
+            v-btn(:to="`/abrechnungen/${invoice.id}`")
+              v-icon mdi-pencil
+            v-btn(:href="`${apiHost}/api/invoices/${invoice.id}/pdf/`" target="_blank")
+              | Rechnung Herunterladen
+              v-icon mdi-file-download-outline
 
 </template>
 
@@ -48,5 +50,8 @@ export default {
 </script>
 
 <style scoped lang="sass">
-
+:deep(.v-list-item)
+  transition: background-color .3s
+  &:hover
+    background-color: rgba(0, 0, 0, 0.04)
 </style>

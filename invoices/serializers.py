@@ -73,6 +73,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
             "net",
             "tax",
             "total",
+            "text",
         ]
 
     def to_representation(self, instance):

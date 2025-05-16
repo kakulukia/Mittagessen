@@ -21,6 +21,9 @@
       .v-col.auto.px-2
         v-btn(href="rechnungen") Alle Rechnungen
           v-icon mdi-file-document-multiple-outline
+      .v-col.auto.px-2
+        v-btn(:to="{ name: 'Kueche' }") Küche
+          v-icon mdi-silverware-variant
 
     h1(v-if="!selectedCustomer") Kundenübersicht
     .overview(v-if="selectedCustomer")

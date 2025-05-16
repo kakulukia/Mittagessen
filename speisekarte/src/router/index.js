@@ -4,6 +4,7 @@ import KuecheView from '@/views/KuecheView.vue'; // Deine Küche-Komponente
 import AbrechnungenView from '@/views/AbrechnungenView.vue'; // Neue Abrechnungen-Komponente
 import LieferungenView from '@/views/LieferungenView.vue'; // Neue Lieferungen-Komponente
 import RechnungenView from '@/views/RechnungenView.vue'; // Neue Rechnungen-Komponente
+import RechnungEditView from '@/views/RechnungEditView.vue';
 
 Vue.use(Router);
 
@@ -30,6 +31,11 @@ export default new Router({
       path: '/rechnungen',
       name: 'Rechnungen',
       component: RechnungenView,
+    },
+    {
+      path: '/abrechnungen/:id',
+      name: 'RechnungEdit',
+      component: RechnungEditView,
     }
   ],
 });

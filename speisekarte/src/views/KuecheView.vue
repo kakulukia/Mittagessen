@@ -47,7 +47,7 @@ div
         //div.green-text.bold Speiseplan in der Woche vom {{ week.days[0].dateDisplay }} - {{ week.days[week.days.length - 1].dateDisplay }}
 
       div
-        a(:href="apiHost + '/admin/meals/suggestion/'" target="_blank") Essenswünsche: {{ suggestions }}
+        a.green-text(:href="apiHost + '/admin/meals/suggestion/'" target="_blank") Essenswünsche: {{ suggestions }}
         br
         a(@click="copyMenu()" v-if="weekIsEmpty") Menü kopieren von
           span(v-if="curLocation === 1")  Luises
@@ -197,11 +197,6 @@ h1
     position: absolute
     top: 0
     right: 0
-
-body .v-application a
-  color: green
-  text-decoration: none
-  font-weight: bold
 
 .v-btn.location
   font-weight: bold

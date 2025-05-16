@@ -53,4 +53,8 @@ h1
 
 #app
   overflow-y: scroll
+
+body .v-application a
+  color: purple
+  text-decoration: none
 </style>

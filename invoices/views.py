@@ -88,3 +88,9 @@ class InvoiceViewSet(ModelViewSet):
         response = HttpResponse(pdf_data, content_type='application/pdf')
         response['Content-Disposition'] = 'inline; filename="Rechnung.pdf"'
         return response
+
+    @action(detail=True, methods=['get'], url_path='days')
+    def days(self, request, pk=None):
+        invoice = self.get_object()
+        qs = InvoiceDay.data.filter(invoice=invoice)
+        return Response(InvoiceDaySerializer(qs, many=True).data)
