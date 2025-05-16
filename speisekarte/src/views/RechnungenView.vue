@@ -3,7 +3,7 @@
 
     v-row.my-5
       .v-col.auto.px-2
-        v-btn(href="/abrechnungen") Zurück
+        v-btn(to="/abrechnungen") Zurück
 
     h1 Rechnungenübersicht
 

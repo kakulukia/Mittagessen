@@ -2,7 +2,7 @@
   .container
     v-row.my-5
       .v-col.auto.px-2
-        v-btn(href="/abrechnungen") Zurück
+        v-btn(to="/abrechnungen") Zurück
 
     h1 Anstehende Lieferungen für {{ new Date() | moment('dddd') }} den {{ new Date() | moment('DD.MM.YYYY') }}
 
