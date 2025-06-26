@@ -293,7 +293,7 @@ export default {
       }
       // Return filtered customers based on search input
       return this.customers.filter(customer =>
-        customer.name.toLowerCase().includes(this.search.toLowerCase())
+        customer.address.toLowerCase().includes(this.search.toLowerCase())
       );
     },
     blockedTimes() {
