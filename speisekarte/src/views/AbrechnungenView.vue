@@ -159,11 +159,14 @@ export default {
   },
   methods: {
     prepareInvoiceText() {
-      if (this.days.length === 0) {
-        alert("Es muss mindestens ein nicht abgerechneter Tag existieren.")
+
+      const unbilledDays = this.days.filter(day => day.invoice === null)
+
+      if (unbilledDays.length === 0) {
+        alert("Es gibt keine nicht abgerechneten Tage für eine neue Rechnung.")
         return
       }
-      const invoiceDay = this.days[0]
+      const invoiceDay = unbilledDays[0]
       const invoiceDate = new Date(invoiceDay.date)
       const month = invoiceDate.toLocaleString('default', { month: 'long' })
       const year = invoiceDate.getFullYear()
