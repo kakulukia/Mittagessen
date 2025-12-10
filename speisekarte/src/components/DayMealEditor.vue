@@ -53,7 +53,6 @@
             v-model="meal.price"
             label="Preis"
             type="number"
-            min="0"
             step="0.50"
             suffix="€"
             @blur="updateMeal(meal)"

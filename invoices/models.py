@@ -18,6 +18,10 @@ class Customer(BaseModel):
         "Lieferart", max_length=200, blank=True,
         choices=[("takeaway", "Abholung"), ("delivery", "Lieferung")])
 
+    bank_account = models.CharField(
+        "Zahlungsart", max_length=200, blank=False,
+        choices=[("bank", "Sparkasse"), ("sumup", "SumUp")], default="bank")
+
     class Meta(BaseModel.Meta):
         verbose_name = "Kunde"
         verbose_name_plural = "Kunden"
@@ -150,7 +154,11 @@ class Invoice(BaseModel):
             'invoice': self,
         }
 
-        html_string = render_to_string('invoice.pug', context)
+        template_name = "invoice.pug"
+        if self.customer.bank_account == "sumup":
+            template_name = "invoice_sum.pug"
+
+        html_string = render_to_string(template_name, context)
         html = HTML(
             string=html_string,
             url_fetcher=django_url_fetcher,

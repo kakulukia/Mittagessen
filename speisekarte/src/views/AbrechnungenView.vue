@@ -94,6 +94,8 @@
           v-list-item-content.pointer(@click="selectCustomer(customer)")
             v-list-item-title {{ customer.name }}
             v-list-item-subtitle {{ customer.short_address }}
+              br
+              | {{ customer.bank_account === 'bank' ? 'Sparkasse' : 'SumUp' }}
           v-list-item-action
             v-btn-toggle(dense borderless)
               v-btn(@click="setCustomer(customer)" @clicik.stop="true")
@@ -108,11 +110,14 @@
 
       v-textarea(label="Adresse" rows="4" v-model="newCustomer.address")
       v-text-field(label="eMail" v-model="newCustomer.email")
-      // wee need radio otion for delivery type
       v-radio-group(inline v-model="newCustomer.delivery_type")
         v-radio(label="Belieferung" value="delivery")
         v-radio(label="Selbstabholer" value="takeaway")
-      v-row
+      v-radio-group(inline v-model="newCustomer.bank_account" label="Zahlungsart")
+        v-radio(label="Sparkasse" value="bank")
+        v-radio(label="SumUp" value="sumup")
+
+      v-row.mt-4
         .col-auto
           v-btn(@click="saveCustomer") Speichern
         .col-auto

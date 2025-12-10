@@ -12,6 +12,7 @@ class CustomerSerializer(serializers.ModelSerializer):
             "address",
             "email",
             "delivery_type",
+            "bank_account",
         ]
 
     def to_representation(self, instance):

@@ -6,7 +6,8 @@ html(lang='de')
       meta(charset="UTF-8")
       meta(name="viewport" content="width=device-width, initial-scale=1.0")
       title Rechnung
-      link(href='{% sass_src "sass/invoice.sass" %}' rel="stylesheet" type="text/css")
+      block styles
+        link(href='{% sass_src "sass/invoice.sass" %}' rel="stylesheet" type="text/css")
       //link(href='static/sass/invoice.css' rel="stylesheet" type="text/css")
   body
     div.recipient
