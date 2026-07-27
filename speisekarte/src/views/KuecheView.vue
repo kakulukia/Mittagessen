@@ -21,7 +21,7 @@ div
             )
             v-btn.print(
               icon v-if="week.published" target="_blank"
-              :href="apiHost + `?date=${this.week.start}&location=${curLocation}`"
+              :href="apiHost + `?date=${this.week.start}`"
             )
               v-icon mdi-printer-outline
             //v-btn.print(
@@ -48,13 +48,7 @@ div
 
       div
         a.green-text(:href="apiHost + '/admin/meals/suggestion/'" target="_blank") Essenswünsche: {{ suggestions }}
-        br
-        a(@click="copyMenu()" v-if="weekIsEmpty") Menü kopieren von
-          span(v-if="curLocation === 1")  Luises
-          span(v-if="curLocation === 2")  Imbis
       br
-
-      Special(:week="week" @reload-week="reloadWeek()" v-if="curLocation === 2")
 
       WeekDay(v-for="day in week.days" :key="day.id" :day="day" @reload-week="reloadWeek()")
 
@@ -76,16 +70,14 @@ div
 
 <script>
   import WeekDay from '@/components/WeekDay'
-  import Special from '@/components/Special'
 
   export default {
     name: 'Home',
-    components: {WeekDay, Special},
+    components: {WeekDay},
     inject: ['apiHost'],
     data () {
       return {
         week: null,
-        curLocation: 1,
         date: undefined,
         editHeadline: false,
         editFooter: false,
@@ -102,10 +94,6 @@ div
       } else {
         this.date = new Date()
       }
-      if (this.$route.query.location) {
-        this.curLocation = parseInt(this.$route.query.location)
-      }
-
       this.axios.get('unseen-suggestions').then((response) => {
         this.suggestions = response.data.count
       })
@@ -113,19 +101,8 @@ div
       this.reloadWeek()
     },
     methods: {
-      copyMenu() {
-        this.axios.get('weeks/copy-menu/', {params: {date: this.isoDate, location: this.curLocation}})
-          .then(() => {
-            this.reloadWeek()
-          })
-      },
-      loadLocation(locationId) {
-        this.curLocation = locationId
-        this.week = undefined
-        this.reloadWeek()
-      },
       reloadWeek() {
-        this.axios.get('weeks/get-week/',{params: {date: this.isoDate, location: this.curLocation}})
+        this.axios.get('weeks/get-week/',{params: {date: this.isoDate}})
         .then((response) => {
           this.week = response.data
         })
@@ -134,7 +111,7 @@ div
         if (next) this.date = this.date.addDays(7)
         else this.date = this.date.addDays(-7)
         this.reloadWeek()
-        // save the date in the location as query parameter
+        // save the date as query parameter
         this.$router.push({query: {date: this.isoDate}})
       },
       updatePublished() {
@@ -155,9 +132,6 @@ div
     computed: {
       isoDate () {
         return this.date.toISODate()
-      },
-      weekIsEmpty () {
-        return this.week && this.week.days.every(day => day.plans.length === 0)
       }
     }
   }
@@ -197,16 +171,6 @@ h1
     position: absolute
     top: 0
     right: 0
-
-.v-btn.location
-  font-weight: bold
-  &.luise
-    color: #ED7A18
-  &.krimi
-    color: #BB171A
-  &.inactive-location
-    opacity: 0.2
-    color: #555
 
 img.logo
   height: 130px

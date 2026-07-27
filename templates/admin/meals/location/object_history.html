@@ -1,0 +1,55 @@
+{% extends "admin/object_history.html" %}
+
+{% block content %}
+{{ block.super }}
+
+<div class="row col-md-12">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header with-border">
+                <h4 class="card-title">Überschriftsversionen</h4>
+            </div>
+            <div class="card-body">
+                {% if headline_revisions %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Wiederherstellen</th>
+                                    <th scope="col">Zeitpunkt</th>
+                                    <th scope="col">Bearbeitet von</th>
+                                    <th scope="col">Überschrift</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for revision in headline_revisions %}
+                                    <tr>
+                                        <td>
+                                            {% if revision.headline == object.headline %}
+                                                <span class="badge badge-success">Aktuell</span>
+                                            {% elif can_restore_headline %}
+                                                <input type="radio" name="headline_revision" value="{{ revision.pk }}" required aria-label="Version vom {{ revision.created|date:'DATETIME_FORMAT' }} wiederherstellen">
+                                            {% else %}
+                                                –
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ revision.created|date:"DATETIME_FORMAT" }}</td>
+                                        <td>{{ revision.created_by|default:"–" }}</td>
+                                        <td>{{ revision.headline|striptags|truncatechars:120 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% if can_restore_headline %}
+                            <button type="submit" class="btn btn-warning">Ausgewählte Version wiederherstellen</button>
+                        {% endif %}
+                    </form>
+                {% else %}
+                    <p>Noch keine Überschriftsversion vorhanden.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

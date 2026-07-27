@@ -1,11 +1,23 @@
 import re
 
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models import OuterRef, Subquery, Count
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from meals.models import Day, Meal, Plan, Week, Suggestion, Location
+from meals.models import (
+    Day,
+    Location,
+    LocationHeadlineRevision,
+    Meal,
+    Plan,
+    Suggestion,
+    Week,
+)
 
 
 # @admin.register(Stats)
@@ -17,13 +29,81 @@ from meals.models import Day, Meal, Plan, Week, Suggestion, Location
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     list_display = ["name", "headline_text", "logo"]
+    object_history_template = "admin/meals/location/object_history.html"
     ordering = ["name"]
     search_fields = ["name"]
+
+    def save_model(self, request, obj, form, change):
+        headline_changed = "headline" in form.changed_data
+        super().save_model(request, obj, form, change)
+        if headline_changed:
+            LocationHeadlineRevision.objects.create(
+                location=obj, headline=obj.headline, created_by=request.user
+            )
 
     @admin.display(description="Überschrift")
     def headline_text(self, obj):
         # headline is html, so we need to strip any tags
         return re.sub(r"<[^>]*>", "", obj.headline)
+
+    def history_view(self, request, object_id, extra_context=None):
+        location = self.get_object(request, object_id)
+        if location is None:
+            return super().history_view(request, object_id, extra_context)
+
+        if request.method == "POST":
+            if not self.has_change_permission(request, location):
+                raise PermissionDenied
+
+            revision_ids = request.POST.getlist("headline_revision")
+            if len(revision_ids) != 1:
+                self.message_user(
+                    request, "Bitte genau eine Version auswählen.", messages.ERROR
+                )
+                return HttpResponseRedirect(request.path)
+
+            revision = get_object_or_404(
+                LocationHeadlineRevision, pk=revision_ids[0], location=location
+            )
+            with transaction.atomic():
+                location = Location.data.select_for_update().get(pk=location.pk)
+                if location.headline == revision.headline:
+                    self.message_user(
+                        request, "Diese Version ist bereits aktiv.", messages.INFO
+                    )
+                    return HttpResponseRedirect(request.path)
+
+                location.headline = revision.headline
+                location.save(update_fields=["headline", "modified"])
+                LocationHeadlineRevision.objects.create(
+                    location=location,
+                    headline=location.headline,
+                    created_by=request.user,
+                )
+                self.log_change(
+                    request,
+                    location,
+                    f"Überschrift aus Version #{revision.pk} wiederhergestellt.",
+                )
+
+            self.message_user(
+                request, "Überschrift wurde wiederhergestellt.", messages.SUCCESS
+            )
+            return HttpResponseRedirect(request.path)
+
+        revisions = location.headline_revisions.select_related("created_by")
+        return super().history_view(
+            request,
+            object_id,
+            {
+                **(extra_context or {}),
+                "headline_revisions": revisions,
+                "can_restore_headline": self.has_change_permission(
+                    request, location
+                )
+                and revisions.exclude(headline=location.headline).exists(),
+            },
+        )
 
 
 @admin.register(Meal)

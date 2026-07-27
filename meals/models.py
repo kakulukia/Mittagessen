@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from functools import cached_property
 
 from ckeditor.fields import RichTextField
+from django.conf import settings
 from django.db import models
 from django.db.models import UniqueConstraint
 
@@ -29,6 +30,32 @@ class Location(BaseModel):
 
     def __str__(self):
         return self.name
+
+
+class LocationHeadlineRevision(models.Model):
+    location = models.ForeignKey(
+        Location, on_delete=models.CASCADE, related_name="headline_revisions"
+    )
+    headline = models.TextField(verbose_name="Überschrift")
+    created = models.DateTimeField(
+        auto_now_add=True, db_index=True, verbose_name="Erstellt"
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+        verbose_name="Bearbeitet von",
+    )
+
+    class Meta:
+        ordering = ["-created", "-pk"]
+        verbose_name = "Überschriftsversion"
+        verbose_name_plural = "Überschriftsversionen"
+
+    def __str__(self):
+        return f"{self.location} – {self.created}"
 
 
 class Meal(BaseModel):
@@ -126,44 +153,6 @@ class Week(BaseModel):
             return match.groups()[0]
         return None
 
-    def copy_from_other_location(self):
-
-        if Plan.data.filter(day__week=self).count() > 0:
-            return
-
-        other_location_id = 2 if self.location_id == 1 else 1
-
-        qs = Week.data.filter(start=self.start, location=other_location_id)
-        if not qs.exists():
-            return
-        other_week = qs.get()
-
-        for other_day in other_week.days.all():
-            this_day = self.days.get(date=other_day.date)
-            for plan in other_day.plans.all():
-                new_plan = plan
-                new_plan.pk = None
-                new_plan.day = this_day
-
-                # update price if possible
-                qs = Plan.data.filter(meal=plan.meal, day__week__location=self.location)
-                if qs.exists():
-                    new_plan.price = qs.order_by("-created").first().price
-                # else:
-                #     # automatic price adjustment for the other location
-                #     new_plan.price = new_plan.price + 3 if self.location.id == 2 else new_plan.price - 3
-                #     # round(4.25 * 1.2 * 2) / 2 << runden auf 0.5er Schritte
-
-                new_plan.save()
-
-            if other_day.alt_text and other_day.closed:
-                this_day.closed = True
-                this_day.alt_text = other_day.alt_text
-                this_day.save()
-
-        self.footer = other_week.footer
-        self.save()
-
 
 class Plan(BaseModel):
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE, related_name="plans")
@@ -182,13 +171,13 @@ class Plan(BaseModel):
         original = Plan.data.get(pk=self.pk) if self.pk else None
 
         if (not self.price and not self.id) or (original and original.meal != self.meal):
-            search_location = 2
+            qs = Plan.data.none()
             if self.day:
-                search_location = self.day.week.location_id
-            qs = Plan.data.filter(
-                meal=self.meal, price__gt=0, day__week__location=search_location
-            ).order_by("-modified")
-            ic("meal search", qs,)
+                qs = Plan.data.filter(
+                    meal=self.meal,
+                    price__gt=0,
+                    day__week__location=self.day.week.location,
+                ).order_by("-modified")
             if qs:
                 self.price = qs.first().price
             else:

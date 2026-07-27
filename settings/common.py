@@ -29,12 +29,10 @@ SITE_ID = 1
 DEBUG = False
 ALLOWED_HOSTS = [
     "*",
-    "https://menue.luises-familienbande.de",
     "https://emmas-imbiss.de",
 ]
 CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS = CORS_ORIGIN_WHITELIST = [
     "http://localhost:8080",
-    "https://menue.luises-familienbande.de",
     "https://emmas-imbiss.de",
     "http://192.168.188.198:8080"
 ]

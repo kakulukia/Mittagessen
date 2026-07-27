@@ -39,7 +39,7 @@ class WeekViewSet(ModelViewSet):
         return Response(WeekSerializer(week).data)
 
     @action(url_path="get-week", detail=False, methods=["GET"])
-    def get_week(self, request, copy=False):
+    def get_week(self, request):
         if "date" not in request.GET:
             return Response(status=400, data={"error": "date is required"})
 
@@ -47,12 +47,8 @@ class WeekViewSet(ModelViewSet):
         location = get_object_or_404(Location, id=location_id)
 
         start = pendulum.parse(request.GET.get("date")).add(days=2).start_of("week")
-        week = get_or_create_week(start.date(), location=location, copy=copy)
+        week = get_or_create_week(start.date(), location=location)
         return Response(WeekSerializer(week).data)
-
-    @action(url_path="copy-menu", detail=False, methods=["GET"])
-    def copy_menu(self, request):
-        return self.get_week(request, copy=True)
 
 
 class DayViewSet(ModelViewSet):
