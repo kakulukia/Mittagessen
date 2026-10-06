@@ -47,7 +47,7 @@ class CustomerViewSet(ModelViewSet):
         Return all invoices associated with this customer.
         """
         customer = self.get_object()
-        invoices = customer.invoices.all()
+        invoices = customer.invoices.select_related("customer").prefetch_related("days")
         return Response(InvoiceSerializer(invoices, many=True).data)
 
 
@@ -75,7 +75,7 @@ class InvoiceMealViewSet(ModelViewSet):
 
 
 class InvoiceViewSet(ModelViewSet):
-    queryset = Invoice.data.all()
+    queryset = Invoice.data.select_related("customer").prefetch_related("days")
     serializer_class = InvoiceSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['customer']

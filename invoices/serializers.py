@@ -64,6 +64,11 @@ class InvoiceMealSerializer(serializers.ModelSerializer):
 
 
 class InvoiceSerializer(serializers.ModelSerializer):
+    delivery_months = serializers.SerializerMethodField()
+
+    def get_delivery_months(self, instance):
+        return sorted({day.date.strftime("%Y-%m") for day in instance.days.all()})
+
     class Meta:
         model = Invoice
         fields = [
@@ -75,10 +80,10 @@ class InvoiceSerializer(serializers.ModelSerializer):
             "tax",
             "total",
             "text",
+            "delivery_months",
         ]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data["customer_name"] = instance.customer.name
         return data
-
