@@ -22,9 +22,23 @@ assert.equal(view.totals.total, 0.32)
 assert.equal(view.availableMonths.join(','), '2026-09,2025-09')
 view.search = '  MÜLLER  '
 assert.equal(view.filteredInvoices.length, 1)
-assert.equal(view.totals.total, 0.32)
+assert.equal(view.totals.net, 0.10)
+assert.equal(view.totals.tax, 0.01)
+assert.equal(view.totals.total, 0.11)
+view.selectedMonth = ''
+assert.equal(view.filteredInvoices.length, 2)
+assert.equal(view.totals.net, 100.10)
+assert.equal(view.totals.tax, 7.01)
+assert.equal(view.totals.total, 107.11)
+view.invoices[1].total = null
+assert.equal(view.totals.total, 107.11)
+view.invoices[1].total = '0.21'
+view.selectedMonth = '2026-09'
 view.search = '<script>不存在'
 assert.equal(view.filteredInvoices.length, 0)
+assert.equal(view.totals.net, 0)
+assert.equal(view.totals.tax, 0)
+assert.equal(view.totals.total, 0)
 view.search = null
 assert.equal(view.filteredInvoices.length, 2)
 view.selectedMonth = '2026-10'
@@ -60,12 +74,19 @@ assert.equal(view.totals.total, 481.50)
 view.page = 3
 assert.equal(view.paginatedInvoices.length, 5)
 assert.equal(view.paginatedInvoices[0].id, 41)
+view.search = 'Anderer Kunde'
+component.watch.filteredInvoices.call(view)
+assert.equal(view.pageCount, 3)
+assert.equal(view.totals.total, 470.80)
+view.page = 3
+assert.equal(view.paginatedInvoices.length, 4)
+assert.equal(view.totals.total, 470.80)
 view.search = 'Gesuchter Kunde'
 component.watch.filteredInvoices.call(view)
 assert.equal(view.page, 1)
 assert.equal(view.pageCount, 1)
 assert.equal(view.paginatedInvoices[0].id, 45)
-assert.equal(view.totals.total, 481.50)
+assert.equal(view.totals.total, 10.70)
 view.search = ''
 
 ;(async () => {

@@ -27,7 +27,7 @@
           v-row
             v-col(cols="6" sm="3")
               div Rechnungen
-              strong.text-h6 {{ monthInvoices.length }}
+              strong.text-h6 {{ filteredInvoices.length }}
             v-col(cols="6" sm="3")
               div Netto
               strong.text-h6 {{ formatAmount(totals.net) }}
@@ -38,7 +38,7 @@
               div Brutto
               strong.text-h6 {{ formatAmount(totals.total) }}
           p.mt-3.mb-0(v-if="Object.values(totals).includes(null)") Summen unvollständig: Bei mindestens einer Rechnung fehlt ein Betrag.
-          p.mt-3.mb-0(v-if="searchTerm") Die Summen beziehen sich auf alle Rechnungen im gewählten Zeitraum.
+          p.mt-3.mb-0(v-if="searchTerm") Die Summen beziehen sich auf alle gefundenen Kundenrechnungen im gewählten Zeitraum.
 
       p(v-if="searchTerm" role="status") {{ filteredInvoices.length }} von {{ monthInvoices.length }} Rechnungen gefunden.
       p(v-if="!invoices.length" role="status") Keine Rechnungen vorhanden.
@@ -156,9 +156,9 @@ export default {
     totals() {
       const totals = {}
       for (const field of ['net', 'tax', 'total']) {
-        totals[field] = this.monthInvoices.some(invoice => invoice[field] === null || invoice[field] === '' || !Number.isFinite(Number(invoice[field])))
+        totals[field] = this.filteredInvoices.some(invoice => invoice[field] === null || invoice[field] === '' || !Number.isFinite(Number(invoice[field])))
           ? null
-          : this.monthInvoices.reduce((sum, invoice) => sum + Math.round(Number(invoice[field]) * 100), 0) / 100
+          : this.filteredInvoices.reduce((sum, invoice) => sum + Math.round(Number(invoice[field]) * 100), 0) / 100
       }
       return totals
     },
