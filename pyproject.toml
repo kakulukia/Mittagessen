@@ -1,54 +1,60 @@
 [project]
 name = "Speiseplan"
 version = "0.9.0"
-requires-python = ">=3.11"
+description = "Jörgs Speisekartenplaner"
+authors = [{ name = "Andy Grabow", email = "andy@freilandkiwis.de" }]
+requires-python = ">=3.11,<4.0"
+readme = "README.md"
+license = "MIT"
+dependencies = [
+    "django==5.2.17",
+    "django-secrets==1.2.4",
+    "django-extensions==4.1",
+    "dj-static==0.0.6",
+    "django-compressor==4.6.0",
+    "django-axes==7.1.0",
+    "pypugjs==5.13.0",
+    "django-post-office==3.11.3",
+    "uwsgidecorators==1.1.0",
+    "huepy==1.2.1",
+    "djangorestframework==3.18.1",
+    "requests==2.34.2",
+    "pendulum==3.2.0",
+    "pillow==11.3.0",
+    "django-cors-headers==4.9.0",
+    "icecream==2.2.0",
+    "django-sass-processor==1.4.2",
+    "gunicorn==23.0.0",
+    "django-jazzmin==3.0.5",
+    "django-ckeditor==6.7.3",
+    "weasyprint==52.5",
+    "django-filter==25.2",
+    "libsass==0.23.0",
+    "django-undeletable==1.1.2",
+]
 editable = false
 
+[project.urls]
+Homepage = "https://github.com/kakulukia/django-default-project"
+Repository = "https://github.com/kakulukia/django-default-project"
 
-[tool.poetry]
-description = "Jörgs Speisekartenplaner"
-authors = ["Andy Grabow <andy@freilandkiwis.de>"]
-license = "MIT"
-readme = 'README.md'
+[dependency-groups]
+dev = [
+    "django-debug-toolbar==5.2.0",
+    "ipdb==0.13.13",
+    "django-browser-reload==1.21.0",
+    "ruff==0.16.10",
+    "ipython==9.17.1",
+    "fab-classic==1.21.0",
+    "paramiko==3.5.1",
+]
 
-repository = "https://github.com/kakulukia/django-default-project"
-homepage = "https://github.com/kakulukia/django-default-project"
-package-mode = false
+[tool.uv]
+package = false
+default-groups = "all"
 
-[tool.poetry.dependencies]
-django = "^5.2.3"
-django-secrets = "^1.2.4"
-django-extensions = "^4.1"
-dj-static = "^0.0.6"
-django-compressor = "^4.5.1"
-django-axes = "^7.1.0"
-pypugjs = "^5.12.0"
-django-post-office = "^3.9.1"
-uwsgidecorators = "^1.1.0"
-huepy = "^1.2.1"
-djangorestframework = "^3.16.0"
-requests = "^2.32.4"
-pendulum = "^3.1.0"
-Pillow = "^11.2.1"
-python = "^3.11"
-django-cors-headers = "^4.7.0"
-icecream = "^2.1.5"
-django-sass-processor = "^1.4.1"
-gunicorn = "^23.0.0"
-django-jazzmin = "^3.0.1"
-django-ckeditor = "^6.7.3"
-weasyprint = "52.5"
-django-filter = "^25.1"
-libsass = "^0.23.0"
-django-undeletable = "^1.1.2"
-
-[tool.poetry.group.dev.dependencies]
-django-debug-toolbar = "^5.2.0"
-ipdb = "^0.13.13"
-django-browser-reload = "^1.18.0"
-ruff = "^0.11.13"
-ipython = "^9.3.0"
-fab-classic = {git = "https://github.com/kakulukia/fab-classic.git", rev = "master"}
+[tool.uv.sources]
+fab-classic = { git = "https://github.com/kakulukia/fab-classic.git", rev = "master" }
 
 [tool.black]
 line-length = 99
