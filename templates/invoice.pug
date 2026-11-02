@@ -5,7 +5,10 @@ html(lang='de')
   head
       meta(charset="UTF-8")
       meta(name="viewport" content="width=device-width, initial-scale=1.0")
-      title Rechnung
+      if invoice.total < 0
+        title Stornorechnung
+      else
+        title Rechnung
       block styles
         link(href='{% sass_src "sass/invoice.sass" %}' rel="stylesheet" type="text/css")
       //link(href='static/sass/invoice.css' rel="stylesheet" type="text/css")
@@ -22,10 +25,17 @@ html(lang='de')
       div
         strong Rechnungsnummer:
         span  {{ invoice.invoice_number }}
-      .extra Rechnungsdatum entspricht Liefer-/Leistungsdatum
+      if invoice.total < 0
+        .extra Leistungsdatum siehe Rechnungspositionen
+      else
+        .extra Rechnungsdatum entspricht Liefer-/Leistungsdatum
 
     main
-      h1 Rechnung
+      h1
+        if invoice.total < 0
+          | Stornorechnung
+        else
+          | Rechnung
       p.raw.
         {{ invoice.text }}
 
@@ -57,14 +67,21 @@ html(lang='de')
           td.right {{ invoice.tax }} €
         tr
           td
-            strong Rechnungsbetrag
+            strong
+              if invoice.total < 0
+                | Stornobetrag
+              else
+                | Rechnungsbetrag
           td.right
             strong {{ invoice.total }} €
         tr
           td(colspan="6")
             .no-break
-              p.
-                Bitte überweisen Sie den Rechnungsbetrag innerhalb von 7 Tagen auf unser unten genanntes Konto.
-                Für weitere Fragen stehen wir Ihnen sehr gerne zur Verfügung.
+              if invoice.total < 0
+                p Diese Stornorechnung hebt die im Rechnungstext genannte Rechnung vollständig auf. Sie ist keine Zahlungsaufforderung.
+              else
+                p.
+                  Bitte überweisen Sie den Rechnungsbetrag innerhalb von 7 Tagen auf unser unten genanntes Konto.
+                  Für weitere Fragen stehen wir Ihnen sehr gerne zur Verfügung.
               div Mit freundlichen Grüßen
               div Jörg Kriminski
