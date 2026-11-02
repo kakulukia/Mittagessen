@@ -1,6 +1,7 @@
 from datetime import date
 from decimal import Decimal
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
@@ -11,6 +12,7 @@ from invoices.models import Customer, Invoice, InvoiceDay
 class InvoiceDeliveryMonthsTests(TestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.user = get_user_model().data.create_user(username="billing-user")
         cls.customer = Customer.data.create(address="Beispielkunde\nTeststraße 1")
         cls.invoice = Invoice.data.create(
             customer=cls.customer,
@@ -25,8 +27,12 @@ class InvoiceDeliveryMonthsTests(TestCase):
                 customer=cls.customer, invoice=cls.invoice, date=delivery_date
             )
 
+    def setUp(self):
+        self.client = APIClient()
+        self.client.force_authenticate(self.user)
+
     def test_list_uses_delivery_month_instead_of_invoice_date(self):
-        response = APIClient().get(reverse("invoice-list"))
+        response = self.client.get(reverse("invoice-list"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data[0]["date"], "2026-10-06")
         self.assertEqual(response.data[0]["delivery_months"], ["2026-09"])
@@ -36,18 +42,18 @@ class InvoiceDeliveryMonthsTests(TestCase):
         InvoiceDay.data.create(
             customer=self.customer, invoice=self.invoice, date=date(2026, 10, 1)
         )
-        response = APIClient().get(reverse("invoice-detail", args=[self.invoice.pk]))
+        response = self.client.get(reverse("invoice-detail", args=[self.invoice.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["delivery_months"], ["2026-09", "2026-10"])
 
     def test_invoice_without_deliveries_has_no_month(self):
         self.invoice.days.all().delete()
-        response = APIClient().get(reverse("invoice-detail", args=[self.invoice.pk]))
+        response = self.client.get(reverse("invoice-detail", args=[self.invoice.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["delivery_months"], [])
 
     def test_customer_invoice_list_includes_delivery_month(self):
-        response = APIClient().get(
+        response = self.client.get(
             reverse("customer-invoices", args=[self.customer.pk])
         )
         self.assertEqual(response.status_code, 200)
@@ -59,6 +65,6 @@ class InvoiceDeliveryMonthsTests(TestCase):
             customer=other_customer, invoice_number="2026-0002", date=date(2026, 10, 6)
         )
         with self.assertNumQueries(2):
-            response = APIClient().get(reverse("invoice-list"))
+            response = self.client.get(reverse("invoice-list"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
