@@ -10,6 +10,18 @@
           v-btn(@click="addToDay")
             v-icon mdi-chevron-down
       .col-auto
+        v-btn(
+          v-if="day.id"
+          :color="day.reviewed ? 'green darken-3' : 'deep-orange darken-4'"
+          outlined
+          :title="day.reviewed ? 'Prüfung zurücknehmen' : 'Bestellung als geprüft markieren'"
+          :disabled="!canReview"
+          :aria-pressed="day.reviewed ? 'true' : 'false'"
+          @click="updateDay({ reviewed: !day.reviewed })"
+        )
+          v-icon(left) {{ day.reviewed ? 'mdi-check-circle-outline' : 'mdi-clipboard-check-outline' }}
+          | {{ day.reviewed ? 'Geprüft' : 'Ungeprüft' }}
+      .col-auto
         v-btn-toggle(dense borderless)
           v-btn(
             v-if="!day.id"
@@ -18,9 +30,28 @@
           )
             v-icon mdi-calendar-month-outline
           v-btn.delivery(
-            v-if="day.id && day.date < new Date()"
+            v-if="showDelivery && day.id && day.date < new Date()"
             :class="{delivered: day.delivered}"
             @click="toggleDelivered" :color="day.delivered ? 'success' : 'error'") ✓
+
+    v-alert.mt-3(v-if="saveError" type="error" dense role="alert") {{ saveError }}
+    v-expansion-panels.mt-3(v-if="day.id" flat)
+      v-expansion-panel
+        v-expansion-panel-header Originalnachricht{{ day.source_message ? '' : ' hinzufügen' }}
+        v-expansion-panel-content
+          v-textarea(
+            v-model="sourceMessage"
+            label="Originalnachricht"
+            placeholder="WhatsApp-Nachricht hier einfügen"
+            rows="3"
+            auto-grow
+            outlined
+            hide-details
+          )
+          v-btn.mt-3(
+            :disabled="pendingRequests > 0 || sourceMessage === (day.source_message || '')"
+            @click="updateDay({ source_message: sourceMessage })"
+          ) Nachricht speichern
 
     // show existing meals
     div(v-for="meal in day.meals" :key="meal.id")
@@ -54,10 +85,12 @@
             label="Preis"
             type="number"
             step="0.50"
-            suffix="€"
+            :suffix="meal.price_needs_review ? '' : '€'"
             @blur="updateMeal(meal)"
             hide-details
           )
+            template(v-if="meal.price_needs_review" v-slot:append)
+              span.red--text.text--darken-4.font-weight-bold(title="Preis prüfen" role="img" aria-label="Preis prüfen") €?
       v-expand-transition
         v-row.withComment.comment(align="center" dense v-if="meal.showComment")
           .col
@@ -79,7 +112,7 @@
           clearable
           hide-details
           dense
-          @blur="updateMeal"
+          @blur="updateMeal(newMeal)"
         )
       .col-2
         v-combobox(
@@ -120,6 +153,10 @@
 export default {
   name: 'DayMealEditor',
   props: {
+    showDelivery: {
+      type: Boolean,
+      default: true
+    },
     // Der Tag, der entweder neu (ohne id) oder bereits bestehend ist
     day: {
       type: Object,
@@ -148,9 +185,15 @@ export default {
       countItems: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       plannedDay: undefined,
       planTimer: undefined,
+      sourceMessage: this.day.source_message || '',
+      pendingRequests: 0,
+      saveError: '',
     }
   },
   computed: {
+    canReview() {
+      return this.pendingRequests === 0 && !this.saveError && this.sourceMessage === (this.day.source_message || '')
+    },
     // Computed, um zu gewährleisten, dass wenn day.delivered gesetzt wird,
     // alle Meals (und newMeal) ebenfalls delivered true haben
     allMealsDelivered: {
@@ -190,6 +233,14 @@ export default {
       return this.day.date.getDay() === 0 || this.day.date.getDay() === 6
     }
   },
+  watch: {
+    canReview: {
+      immediate: true,
+      handler(value) {
+        this.$emit('review-availability', value)
+      }
+    }
+  },
   methods: {
     newMealFromPlan(plan) {
       let name = plan.meal.name
@@ -219,56 +270,69 @@ export default {
           console.error("Fehler beim Löschen des Tages:", error);
         });
     },
-    updateMeal(meal) {
-      // Prüfe, ob alle erforderlichen Felder im newMeal gesetzt sind
-      if (meal.name && meal.price) {
-        // Falls der Tag noch keine id besitzt, muss er zuerst angelegt werden
+    async updateMeal(meal) {
+      if (!meal.id && (!meal.name || meal.price === '' || meal.price == null)) return
+      // Ignore a second blur while a new position is being created.
+      if (!meal.id && this.pendingRequests) return
+      this.pendingRequests++
+      this.saveError = ''
+      try {
         if (!this.day.id) {
-          // Falls day.customer noch nicht gesetzt ist, übernehmen wir den Kunden
-          if (!this.day.customer && this.customer && this.customer.id) {
-            this.day.customer = this.customer.id;
-          }
-          // Formatieren des Datums (nur Datum, ohne Uhrzeit)
-          const formattedDate = new Date(this.day.date).toISOString().split('T')[0];
-          this.day.date = formattedDate;
-          this.axios.post('invoice-days/', this.day)
-            .then(response => {
-              // Setze die zurückgegebene ID in den day
-              this.day.id = response.data.id
-              this.updateMeal(meal)
-            })
-        } else {
-
-          if (!meal.day) {
-            meal.day = this.day.id
-          }
-
-          if (meal.id) {
-
-            // Meal löschen, wenn count 0 ist
-            if(meal.count == 0) {
-              this.axios.delete(`invoice-meals/${meal.id}/`)
-                .then(() => {
-                  if (this.day.meals.length === 1) {
-                    this.deleteDay()
-                  } else { this.loadMeals() }
-                })
-            } else {
-              this.axios.patch(`invoice-meals/${meal.id}/`, meal)
-                .then(() => {
-                })
-            }
-
-          } else {
-
-            this.axios.post('invoice-meals/', meal)
-              .then(() => {
-                this.newMeal = { name: '', count: 1, price: '', delivered: false }
-                this.loadMeals()
-                this.$emit('new-day-created')
-              })
-          }
+          const response = await this.axios.post('invoice-days/', {
+            ...this.day,
+            customer: this.customer.id,
+            date: this.day.date.toISODate(),
+          })
+          this.$set(this.day, 'id', response.data.id)
+          this.$set(this.day, 'source_message', response.data.source_message)
         }
+        meal.day = this.day.id
+        if (meal.id && meal.count == 0) {
+          await this.axios.delete(`invoice-meals/${meal.id}/`)
+          if (this.day.meals.length === 1) {
+            this.deleteDay()
+            return
+          }
+          this.loadMeals()
+        } else if (meal.id) {
+          await this.axios.patch(`invoice-meals/${meal.id}/`, meal)
+        } else {
+          await this.axios.post('invoice-meals/', meal)
+          this.newMeal = { name: '', count: 1, price: '', delivered: false }
+          this.loadMeals()
+          this.$emit('new-day-created')
+        }
+        const response = await this.axios.get(`invoice-days/${this.day.id}/`)
+        this.$set(this.day, 'reviewed', response.data.reviewed)
+        const savedMeal = response.data.meals.find(saved => saved.id === meal.id)
+        if (savedMeal) this.$set(meal, 'price_needs_review', savedMeal.price_needs_review)
+      } catch (error) {
+        this.showSaveError(error)
+      } finally {
+        this.pendingRequests--
+      }
+    },
+    showSaveError(error) {
+      const data = error.response && error.response.data
+      const messages = data && typeof data === 'object' ? Object.values(data).flat().join(' ') : ''
+      this.saveError = messages || 'Speichern fehlgeschlagen. Bitte erneut versuchen.'
+    },
+    async updateDay(changes) {
+      this.pendingRequests++
+      this.saveError = ''
+      try {
+        const response = await this.axios.patch(`invoice-days/${this.day.id}/`, changes)
+        this.$set(this.day, 'source_message', response.data.source_message)
+        this.sourceMessage = response.data.source_message
+        this.$set(this.day, 'reviewed', response.data.reviewed)
+        this.day.meals.forEach(meal => {
+          const savedMeal = response.data.meals.find(saved => saved.id === meal.id)
+          if (savedMeal) this.$set(meal, 'price_needs_review', savedMeal.price_needs_review)
+        })
+      } catch (error) {
+        this.showSaveError(error)
+      } finally {
+        this.pendingRequests--
       }
     },
     loadMeals() {

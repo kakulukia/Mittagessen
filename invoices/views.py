@@ -1,14 +1,21 @@
 import datetime
 
+from django.db.models import Q
 from django.http import HttpResponse
+from django.utils.timezone import localdate
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from invoices.models import Customer, InvoiceDay, InvoiceMeal, Invoice
-from invoices.serializers import CustomerSerializer, InvoiceDaySerializer, InvoiceMealSerializer, InvoiceSerializer, \
-    InvoiceDayWithCustomerSerializer
+from invoices.models import Customer, Invoice, InvoiceDay, InvoiceMeal
+from invoices.serializers import (
+    CustomerSerializer,
+    InvoiceDaySerializer,
+    InvoiceDayWithCustomerSerializer,
+    InvoiceMealSerializer,
+    InvoiceSerializer,
+)
 
 
 class CustomerViewSet(ModelViewSet):
@@ -63,8 +70,22 @@ class InvoiceDayViewSet(ModelViewSet):
     @action(detail=False, methods=['get'], url_path='today')
     def today(self, request):
         today = datetime.date.today()
-        qs = InvoiceDay.objects.filter(date=today)
+        qs = InvoiceDay.objects.filter(date=today, reviewed=True)
         return Response(InvoiceDayWithCustomerSerializer(qs, many=True).data)
+
+    @action(detail=False, methods=['get'], url_path='deliveries')
+    def deliveries(self, request):
+        qs = self.get_queryset().filter(invoice__isnull=True, meals__isnull=False).filter(
+            Q(date=localdate()) | Q(reviewed=False)
+        ).distinct().select_related('customer').prefetch_related('meals')
+        return Response(InvoiceDayWithCustomerSerializer(qs, many=True).data)
+
+    @action(detail=False, methods=['get'], url_path='pending-count')
+    def pending_count(self, request):
+        count = self.get_queryset().filter(
+            reviewed=False, invoice__isnull=True, meals__isnull=False
+        ).distinct().count()
+        return Response({'count': count})
 
 
 class InvoiceMealViewSet(ModelViewSet):

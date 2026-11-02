@@ -8,6 +8,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 from pypugjs.ext.django.compiler import enable_pug_translations
@@ -22,6 +23,8 @@ enable_pug_translations()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path.cwd()
+WHATSAPP_OLLAMA_URL = os.environ.get("WHATSAPP_OLLAMA_URL", "http://127.0.0.1:11434")
+WHATSAPP_OLLAMA_MODEL = os.environ.get("WHATSAPP_OLLAMA_MODEL", "qwen3:8b-q4_K_M")
 SECRET_KEY = secrets.SECRET_KEY
 SITE_ID = 1
 

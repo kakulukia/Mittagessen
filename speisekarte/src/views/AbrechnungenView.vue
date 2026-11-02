@@ -16,8 +16,9 @@
 
     v-row.my-5(v-if="!selectedCustomer")
       .v-col.auto.px-2
-        v-btn(href="lieferungen") Aktuelle Lieferungen
-          v-icon mdi-truck-fast
+        v-badge(:content="pendingCount" :value="pendingCount > 0" color="deep-orange darken-4" overlap)
+          v-btn(:to="{ name: 'Lieferungen', query: { status: pendingCount > 0 ? 'pending' : 'all' } }" :aria-label="pendingCount > 0 ? `Aktuelle Lieferungen, offene Bestelltage: ${pendingCount}` : 'Aktuelle Lieferungen'") Aktuelle Lieferungen
+            v-icon mdi-truck-fast
       .v-col.auto.px-2
         v-btn(href="rechnungen") Alle Rechnungen
           v-icon mdi-file-document-multiple-outline
@@ -25,6 +26,7 @@
         v-btn(:to="{ name: 'Kueche' }") Küche
           v-icon mdi-silverware-variant
 
+    v-alert(v-if="!selectedCustomer && pendingCountError" type="error" dense) Offene Bestellungen konnten nicht gezählt werden. Bitte die Seite neu laden.
     h1(v-if="!selectedCustomer") Kundenübersicht
     .overview(v-if="selectedCustomer")
       v-row
@@ -110,6 +112,17 @@
 
       v-textarea(label="Adresse" rows="4" v-model="newCustomer.address")
       v-text-field(label="eMail" v-model="newCustomer.email")
+      v-text-field(
+        label="WhatsApp-Telefonnummer"
+        v-model="newCustomer.whatsapp_phone"
+        type="tel"
+        autocomplete="tel"
+        placeholder="+49 151 23456789"
+        hint="Mit Ländervorwahl eingeben."
+        persistent-hint
+        :error-messages="customerErrors.whatsapp_phone"
+      )
+      v-alert(v-if="customerSaveError" type="error" dense role="alert") {{ customerSaveError }}
       v-radio-group(inline v-model="newCustomer.delivery_type")
         v-radio(label="Belieferung" value="delivery")
         v-radio(label="Selbstabholer" value="takeaway")
@@ -140,9 +153,14 @@ export default {
         newCustomer: {
           address: '',
           email: '',
+          whatsapp_phone: '',
           delivery_type: '',
         },
+        customerErrors: {},
+        customerSaveError: '',
         customers: [],
+        pendingCount: 0,
+        pendingCountError: false,
         selectedCustomer: null,
         search : '',
         days: [],
@@ -161,8 +179,18 @@ export default {
 
   created () {
      this.loadCustomers()
+     this.loadPendingCount()
   },
   methods: {
+    async loadPendingCount() {
+      try {
+        const response = await this.axios.get('/invoice-days/pending-count/')
+        this.pendingCount = response.data.count
+        this.pendingCountError = false
+      } catch (error) {
+        this.pendingCountError = true
+      }
+    },
     prepareInvoiceText() {
 
       const unbilledDays = this.days.filter(day => day.invoice === null)
@@ -193,10 +221,13 @@ export default {
         });
     },
     setCustomer(customer) {
+      this.customerErrors = {}
+      this.customerSaveError = ''
       this.newCustomer = customer
       this.editCustomer = true
     },
     resetView() {
+      this.loadPendingCount()
       this.selectedCustomer = null
       this.showInvoices = false
       this.newDay = {
@@ -233,10 +264,13 @@ export default {
         });
     },
     create() {
+      this.customerErrors = {}
+      this.customerSaveError = ''
       this.editCustomer = true
       this.newCustomer = {
         address: '',
         email: '',
+        whatsapp_phone: '',
         deliveryType: '',
       }
     },
@@ -270,22 +304,26 @@ export default {
       this.newCustomer = {
         address: '',
         email: '',
+        whatsapp_phone: '',
         deliveryType: '',
       }
     },
-    saveCustomer() {
-      if (this.newCustomer.id) {
-        this.axios.put(`customers/${this.newCustomer.id}/`, this.newCustomer)
-          .then(() => {
-            this.resetCustomer()
-            this.loadCustomers()
-          })
-      } else {
-        this.axios.post('customers/', this.newCustomer)
-          .then(() => {
-            this.resetCustomer()
-            this.loadCustomers()
-          })
+    async saveCustomer() {
+      this.customerErrors = {}
+      this.customerSaveError = ''
+      try {
+        if (this.newCustomer.id) {
+          await this.axios.put(`customers/${this.newCustomer.id}/`, this.newCustomer)
+        } else {
+          await this.axios.post('customers/', this.newCustomer)
+        }
+        this.resetCustomer()
+        this.loadCustomers()
+      } catch (error) {
+        this.customerErrors = (error.response && error.response.data) || {}
+        if (!this.customerErrors.whatsapp_phone) {
+          this.customerSaveError = 'Kunde konnte nicht gespeichert werden. Bitte Eingaben prüfen und erneut versuchen.'
+        }
       }
     },
     loadCustomers() {

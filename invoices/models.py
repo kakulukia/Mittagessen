@@ -1,11 +1,15 @@
 from decimal import Decimal
+from typing import ClassVar
 
-from django.db import models
+from django.db import models, transaction
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.utils.timezone import now
 from weasyprint import HTML
 
 from invoices.utils import BaseModel, django_url_fetcher
+from invoices.validators import normalize_whatsapp_number
 
 
 # Create your models here.
@@ -14,6 +18,11 @@ class Customer(BaseModel):
     address = models.TextField("Adresse")
 
     email = models.EmailField("E-Mail", blank=True)
+    whatsapp_phone = models.CharField(
+        "WhatsApp-Telefonnummer", max_length=32, blank=True, default="",
+        db_index=True, validators=[normalize_whatsapp_number],
+        help_text="Mit Ländervorwahl, zum Beispiel +49 151 23456789.",
+    )
     delivery_type = models.CharField(
         "Lieferart", max_length=200, blank=True,
         choices=[("takeaway", "Abholung"), ("delivery", "Lieferung")])
@@ -33,6 +42,7 @@ class Customer(BaseModel):
     def save(self, *args, **kwargs):
         # name will be the first line of address
         self.name = self.address.split("\n")[0]
+        self.whatsapp_phone = normalize_whatsapp_number(self.whatsapp_phone)
         super().save(*args, **kwargs)
 
 
@@ -41,6 +51,8 @@ class InvoiceDay(BaseModel):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="invoice_days", verbose_name="Kunde")
     combining_dates = models.BooleanField("Kombinierte Rechnungen", default=False)
     delivered = models.BooleanField("Geliefert", default=False)
+    reviewed = models.BooleanField("Bestellung geprüft", default=False)
+    source_message = models.TextField("Originalnachricht", blank=True, default="")
     invoice = models.ForeignKey("Invoice", on_delete=models.SET_NULL, related_name="days", null=True, blank=True)
 
     class Meta:
@@ -52,6 +64,15 @@ class InvoiceDay(BaseModel):
         return f"{self.date}"
 
     def save(self, *args, **kwargs):
+        if self.pk:
+            original = InvoiceDay.data.get(pk=self.pk)
+            if any(
+                getattr(original, field) != getattr(self, field)
+                for field in ("date", "customer_id", "combining_dates", "source_message")
+            ):
+                self.reviewed = False
+                if kwargs.get("update_fields") is not None:
+                    kwargs["update_fields"] = set(kwargs["update_fields"]) | {"reviewed"}
         # if the date is in the past, set delivered to true already
         if self.date < now().date():
             self.delivered = True
@@ -66,6 +87,7 @@ class InvoiceMeal(BaseModel):
     count = models.IntegerField(default=1)
     delivered = models.BooleanField("Geliefert", default=False)
     comment = models.TextField("Kommentar", blank=True)
+    price_needs_review = models.BooleanField("Preis prüfen", default=False)
 
     class Meta:
         verbose_name = "Rechnungposition"
@@ -74,6 +96,24 @@ class InvoiceMeal(BaseModel):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        original = InvoiceMeal.data.filter(pk=self.pk).first() if self.pk else None
+        if original and original.price != self.price:
+            self.price_needs_review = False
+            if kwargs.get("update_fields") is not None:
+                kwargs["update_fields"] = set(kwargs["update_fields"]) | {"price_needs_review"}
+        changed = original is None or any(
+            getattr(original, field) != getattr(self, field)
+            for field in ("day_id", "name", "price", "count", "comment", "price_needs_review")
+        )
+        with transaction.atomic():
+            super().save(*args, **kwargs)
+            if changed:
+                day_ids = {self.day_id}
+                if original:
+                    day_ids.add(original.day_id)
+                InvoiceDay.data.filter(pk__in=day_ids).update(reviewed=False)
 
     @property
     def single_net_price(self):
@@ -87,6 +127,60 @@ class InvoiceMeal(BaseModel):
     @property
     def net_price(self):
         return self.single_net_price * self.count
+
+
+@receiver(post_delete, sender=InvoiceMeal)
+def invalidate_deleted_meal_review(sender, instance, **kwargs):
+    InvoiceDay.data.filter(pk=instance.day_id).update(reviewed=False)
+
+
+class WhatsAppMessage(BaseModel):
+    sender = models.CharField("Absendername", max_length=200)
+    sender_phone = models.CharField(
+        "Absendernummer", max_length=32, blank=True, default="",
+        validators=[normalize_whatsapp_number],
+        help_text="Mit Ländervorwahl, zum Beispiel +49 151 23456789.",
+    )
+    customer = models.ForeignKey(
+        Customer, on_delete=models.SET_NULL, null=True, blank=True,
+        verbose_name="Kunde",
+        help_text="Bei eindeutiger Absendernummer automatisch zugeordnet. "
+        "Sonst den passenden Kunden manuell auswählen.",
+    )
+    received_at = models.DateTimeField("Empfangen am", default=now)
+    text = models.TextField("Nachrichtentext")
+    processed_at = models.DateTimeField("Bestellungen angelegt am", null=True, blank=True, editable=False)
+    processing_error = models.TextField("Verarbeitungshinweis", blank=True, default="", editable=False)
+
+    class Meta(BaseModel.Meta):
+        verbose_name = "WhatsApp-Nachricht"
+        verbose_name_plural = "WhatsApp-Nachrichten"
+        ordering: ClassVar = ["-received_at", "-pk"]
+
+    def __str__(self):
+        return f"{self.sender}: {self.text[:80]}"
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        self.sender_phone = normalize_whatsapp_number(self.sender_phone)
+        original = WhatsAppMessage.data.select_for_update().filter(pk=self.pk).first() if self.pk else None
+        if original and original.processed_at:
+            self.processed_at = original.processed_at
+            self.processing_error = original.processing_error
+        manual_customer = self.customer_id and (
+            original is None or self.customer_id != original.customer_id
+        )
+        number_changed = original is not None and self.sender_phone != original.sender_phone
+        if not manual_customer and (not self.customer_id or number_changed):
+            matches = list(Customer.data.filter(whatsapp_phone=self.sender_phone)[:2]) if self.sender_phone else []
+            self.customer = matches[0] if len(matches) == 1 else None
+            if kwargs.get("update_fields") is not None:
+                kwargs["update_fields"] = set(kwargs["update_fields"]) | {"customer"}
+        super().save(*args, **kwargs)
+        if not self.processed_at:
+            from invoices.intake import process_message
+
+            process_message(self)
 
 
 class Invoice(BaseModel):
@@ -182,4 +276,3 @@ class Invoice(BaseModel):
     @property
     def for_month(self):
         return self.days.last().date
-
