@@ -54,12 +54,12 @@ block content
           .webseite
             span www.emmas-imbiss.de
           //.green-text KW {{ week.kw }}
-          .start
+          .start(v-pre)
             br
             br.no.print
             br.no-print
             h1 Speiseplan
-            | {{ week.location.headline|safe }}
+            | {{ week.location.safe_headline }}
 
         .middle
           if week.published
@@ -70,7 +70,7 @@ block content
                     span.orange-text Spezialität der Woche:
                   .gerichte
                     .name(class={'heading': week.special_menu.meal.headline, 'highlight': week.special_menu.meal.highlight})
-                      | {{ week.special_menu.meal.name }}
+                      span(v-pre) {{ week.special_menu.meal.name }}
                       if week.special_menu.meal.vegi
                         v-icon.leaf(small) mdi-leaf
                       if week.special_menu.meal.vegan
@@ -87,12 +87,12 @@ block content
                     span.green-text {{ day.date | date:'d.m.y' }}
                   .gerichte
                     if day.closed
-                      .altText.text-center
+                      .altText.text-center(v-pre)
                         {{ day.safe_alt_text }}
                     else
                       for plan in day.plans.all
                         .name(class={'heading': plan.meal.headline, 'highlight': plan.meal.highlight})
-                          | {{ plan.meal.name }}
+                          span(v-pre) {{ plan.meal.name }}
                           if plan.meal.vegi
                               v-icon.leaf(small) mdi-leaf
                           if plan.meal.vegan

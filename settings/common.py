@@ -212,14 +212,16 @@ EMAIL_BACKEND = "post_office.EmailBackend"
 SILENCED_SYSTEM_CHECKS = ["debug_toolbar.W006", 'ckeditor.W001']
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
+    # Public menu reads are allowed; API writes require a signed-in user.
     "DEFAULT_AUTHENTICATION_CLASSES": ["meals.utils.CsrfExemptSessionAuthentication"],
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly"
+    ],
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
         # Optional: Hinzufügen von Browsable API, wenn gewünscht
-        'rest_framework.renderers.BrowsableAPIRenderer',
+        "rest_framework.renderers.BrowsableAPIRenderer",
     ],
 }
 

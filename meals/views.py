@@ -3,8 +3,8 @@ import re
 from random import choice
 
 import pendulum
-from django.http import JsonResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404, render
 from django.template.defaultfilters import date
 from django.urls import reverse
 from rest_framework import status
@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from meals.models import Day, Meal, Plan, Week, Suggestion, Location
+from meals.models import Day, Location, Meal, Plan, Suggestion, Week
 from meals.serializers import (
     DaySerializer,
     MealSerializer,
@@ -28,6 +28,11 @@ class WeekViewSet(ModelViewSet):
     queryset = Week.data.all()
     serializer_class = WeekSerializer
 
+    def _get_week(self, start, location):
+        if self.request.user.is_authenticated:
+            return get_or_create_week(start, location=location)
+        return get_object_or_404(Week, start=start, location=location)
+
     @action(url_path="current-week", detail=False, methods=["GET"])
     def get_current_week(self, request):
 
@@ -35,7 +40,7 @@ class WeekViewSet(ModelViewSet):
         location = get_object_or_404(Location, id=location_id)
 
         start = pendulum.today().add(days=2).start_of("week")
-        week = get_or_create_week(start.date(), location=location)
+        week = self._get_week(start.date(), location)
         return Response(WeekSerializer(week).data)
 
     @action(url_path="get-week", detail=False, methods=["GET"])
@@ -47,7 +52,7 @@ class WeekViewSet(ModelViewSet):
         location = get_object_or_404(Location, id=location_id)
 
         start = pendulum.parse(request.GET.get("date")).add(days=2).start_of("week")
-        week = get_or_create_week(start.date(), location=location)
+        week = self._get_week(start.date(), location)
         return Response(WeekSerializer(week).data)
 
 
@@ -133,7 +138,12 @@ def show_menu(request):
         start = pendulum.parse(request.GET.get("date")).add(days=2).start_of("week")
     else:
         start = pendulum.today().add(days=2).start_of("week")
-    week = get_or_create_week(start.date(), location=location)
+    if request.user.is_authenticated:
+        week = get_or_create_week(start.date(), location=location)
+    else:
+        week = Week.data.filter(start=start.date(), location=location).first()
+        if week is None:
+            week = Week(start=start.date(), location=location)
     return render(request, "menu.pug", {"week": week, "pages": [1, 2]})
 
 

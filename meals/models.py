@@ -1,4 +1,3 @@
-import re
 from datetime import datetime, timedelta
 from functools import cached_property
 
@@ -14,6 +13,7 @@ from django.utils.safestring import mark_safe
 from django.utils.timezone import now
 
 from invoices.utils import BaseModel
+from meals.html import menu_background, sanitize_menu_html
 from meals.utils import pendulum_instance
 
 
@@ -30,6 +30,10 @@ class Location(BaseModel):
 
     def __str__(self):
         return self.name
+
+    @property
+    def safe_headline(self):
+        return mark_safe(sanitize_menu_html(self.headline, images=True))
 
 
 class LocationHeadlineRevision(models.Model):
@@ -63,7 +67,9 @@ class Meal(BaseModel):
 
     highlight = models.BooleanField(verbose_name="Highlight", default=False)
     headline = models.BooleanField(
-        verbose_name="Wahlessen", default=False, help_text="Fett geschrieben, " "ohne Preisanzeige"
+        verbose_name="Wahlessen",
+        default=False,
+        help_text="Fett geschrieben, ohne Preisanzeige",
     )
     vegi = models.BooleanField(verbose_name="vegetarisch", default=False)
     vegan = models.BooleanField(verbose_name="vegan", default=False)
@@ -77,14 +83,18 @@ class Meal(BaseModel):
     def __str__(self):
         return self.name
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
         self.side_dish = self.name.startswith("-")
 
         super().save(force_insert, force_update, using, update_fields)
 
 
 class Week(BaseModel):
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="weeks")
+    location = models.ForeignKey(
+        Location, on_delete=models.CASCADE, related_name="weeks"
+    )
     start = models.DateField(verbose_name="Wochenstart", blank=True)
     headline = models.TextField(verbose_name="Überschrift", blank=True)
     footer = models.TextField(verbose_name="Fußzeile", blank=True)
@@ -102,12 +112,16 @@ class Week(BaseModel):
         ordering = ["-start"]
         verbose_name = "Woche"
         verbose_name_plural = "Wochen"
-        constraints = [UniqueConstraint(fields=["location", "start"], name="unique_week")]
+        constraints = [
+            UniqueConstraint(fields=["location", "start"], name="unique_week")
+        ]
 
     def __str__(self):
         return f"KW {self.kw} ({date(self.start)})"
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
         super().save(force_insert, force_update, using, update_fields)
 
         if not self.days.count():
@@ -142,16 +156,11 @@ class Week(BaseModel):
 
     @property
     def safe_footer(self):
-        text = re.sub("<img[^>]*>", "", self.footer)
-        return mark_safe(text)
+        return mark_safe(sanitize_menu_html(self.footer))
 
     @property
     def background(self):
-        match = re.search('<img src="([^>]*)">', self.footer)
-
-        if match:
-            return match.groups()[0]
-        return None
+        return menu_background(self.footer)
 
 
 class Plan(BaseModel):
@@ -160,7 +169,9 @@ class Plan(BaseModel):
         "Day", on_delete=models.CASCADE, related_name="plans", null=True, blank=True
     )
 
-    price = models.DecimalField(verbose_name="Preis", decimal_places=2, max_digits=7, blank=True)
+    price = models.DecimalField(
+        verbose_name="Preis", decimal_places=2, max_digits=7, blank=True
+    )
     order = models.IntegerField(verbose_name="Sortierung", default=0)
 
     class Meta(BaseModel.Meta):
@@ -170,7 +181,9 @@ class Plan(BaseModel):
 
         original = Plan.data.get(pk=self.pk) if self.pk else None
 
-        if (not self.price and not self.id) or (original and original.meal != self.meal):
+        if (not self.price and not self.id) or (
+            original and original.meal != self.meal
+        ):
             qs = Plan.data.none()
             if self.day:
                 qs = Plan.data.filter(
@@ -233,16 +246,11 @@ class Day(BaseModel):
 
     @property
     def safe_alt_text(self):
-        text = re.sub("<img[^>]*>", "", self.alt_text)
-        return mark_safe(text)
+        return mark_safe(sanitize_menu_html(self.alt_text))
 
     @property
     def background(self):
-        match = re.search('<img src="([^>]*)">', self.alt_text)
-
-        if match:
-            return match.groups()[0]
-        return None
+        return menu_background(self.alt_text)
 
 
 class Suggestion(BaseModel):

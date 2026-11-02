@@ -31,6 +31,7 @@ dependencies = [
     "django-filter==25.2",
     "libsass==0.23.0",
     "django-undeletable==1.1.2",
+    "nh3==0.3.7",
 ]
 editable = false
 
